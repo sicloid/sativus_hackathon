@@ -9,7 +9,7 @@ export default async function ReceteYazPage() {
   });
 
   const products = await prisma.product.findMany({
-    where: { category: { in: ["İlaç", "Vitamin", "Sağlık", "Bakım"] } },
+    where: { category: { in: ["Reçeteli İlaç", "İlaç", "Vitamin", "Sağlık", "Bakım"] } },
     orderBy: { name: "asc" },
   });
 
