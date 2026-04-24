@@ -14,6 +14,9 @@ export async function login(formData: FormData) {
     return { error: 'E-posta ve şifre gereklidir.' }
   }
 
+  // Önceki oturumu temizle (zombie session önleme)
+  await supabase.auth.signOut()
+
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -49,7 +52,7 @@ export async function signup(formData: FormData) {
     password,
     options: {
       data: {
-        role: 'patient',  // Hasta portalından kayıt olan = patient
+        role: 'patient',
       }
     }
   })

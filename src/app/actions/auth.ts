@@ -4,6 +4,7 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 
 export async function loginAction(prevState: any, formData: FormData) {
   const email = formData.get('email') as string
@@ -15,6 +16,9 @@ export async function loginAction(prevState: any, formData: FormData) {
 
   const supabase = await createClient()
 
+  // Önceki oturumu temizle (hatalı deneme sonrası kalan zombie session'ı önler)
+  await supabase.auth.signOut()
+
   const { error } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -25,6 +29,7 @@ export async function loginAction(prevState: any, formData: FormData) {
   }
 
   // Mağaza login herkese açık — rol kontrolü yok
+  revalidatePath('/', 'layout')
   redirect('/urunler')
 }
 
@@ -45,7 +50,7 @@ export async function registerAction(prevState: any, formData: FormData) {
     options: {
       data: {
         username: username,
-        role: 'store_customer',  // Mağazadan kayıt olan = store_customer
+        role: 'store_customer',
       }
     }
   })
@@ -60,5 +65,6 @@ export async function registerAction(prevState: any, formData: FormData) {
 export async function logoutAction() {
   const supabase = await createClient()
   await supabase.auth.signOut()
+  revalidatePath('/', 'layout')
   redirect('/urunler')
 }
