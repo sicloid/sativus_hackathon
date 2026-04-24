@@ -28,9 +28,17 @@ export async function loginAction(prevState: any, formData: FormData) {
     return { error: 'E-posta veya şifre hatalı.' }
   }
 
-  // Mağaza login herkese açık — rol kontrolü yok
+  // Rol kontrolü: admin → /admin, diğerleri → /urunler
+  const { data: { user } } = await supabase.auth.getUser()
+  const role = user?.user_metadata?.role as string | undefined
+
   revalidatePath('/', 'layout')
-  redirect('/urunler')
+
+  if (role === 'admin') {
+    redirect('/admin')
+  } else {
+    redirect('/urunler')
+  }
 }
 
 export async function registerAction(prevState: any, formData: FormData) {

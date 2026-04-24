@@ -45,6 +45,13 @@ export async function updateSession(request: NextRequest) {
 
   // ─── GİRİŞ YAPMAMIŞ KULLANICILAR İÇİN KORUMA ───
   if (!user) {
+    // Admin paneli → login'e yönlendir
+    if (pathname.startsWith('/admin')) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
+
     // Hekim paneli → hekim login'e yönlendir
     if (pathname.startsWith('/hekim') && !pathname.startsWith('/hekim-login')) {
       const url = request.nextUrl.clone()
@@ -79,7 +86,23 @@ export async function updateSession(request: NextRequest) {
 
   // ─── GİRİŞ YAPMIŞ KULLANICILAR İÇİN ROL KONTROLÜ ───
   if (user) {
-    // Login sayfalarından uzaklaştır (zaten giriş yapmış)
+    // Admin kullanıcı login sayfasına gelirse → admin paneline yönlendir
+    if (pathname === '/login' && role === 'admin') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin'
+      return NextResponse.redirect(url)
+    }
+
+    // Admin paneli: sadece admin erişebilir
+    if (pathname.startsWith('/admin')) {
+      if (role !== 'admin') {
+        const url = request.nextUrl.clone()
+        url.pathname = '/urunler'
+        return NextResponse.redirect(url)
+      }
+    }
+
+    // Login sayfalarından uzaklaştır (zaten giriş yapmış, admin değil)
     if (pathname === '/login') {
       const url = request.nextUrl.clone()
       url.pathname = '/urunler'
