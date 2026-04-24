@@ -77,6 +77,85 @@ model Appointment {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
+// EVCİL HAYVAN & SAĞLIK Modelleri
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ─── Pet (Evcil Hayvan) ───────────────────────────────────────────────────────
+model Pet {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id") // Supabase auth user (sahip)
+  name      String
+  species   String   // Köpek, Kedi, Kuş...
+  breed     String?  // Cins
+  age       Int?
+  weight    Float?
+  imageUrl  String?  @map("image_url")
+
+  vaccinations  Vaccination[]
+  prescriptions Prescription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("pets")
+}
+
+// ─── Vaccination (Aşı Kaydı) ─────────────────────────────────────────────────
+model Vaccination {
+  id        String    @id @default(cuid())
+  petId     String    @map("pet_id")
+  name      String    // Kuduz, Karma, vb.
+  date      DateTime
+  nextDate  DateTime? @map("next_date") // Sonraki aşı tarihi
+  vetName   String?   @map("vet_name")
+  notes     String?
+
+  pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([petId])
+  @@map("vaccinations")
+}
+
+// ─── Prescription (Reçete) ───────────────────────────────────────────────────
+model Prescription {
+  id         String  @id @default(cuid())
+  petId      String  @map("pet_id")
+  vetUserId  String  @map("vet_user_id") // Hekim supabase user id
+  vetName    String  @map("vet_name")
+  diagnosis  String?
+  notes      String?
+  totalPrice Float   @default(0) @map("total_price")
+
+  items PrescriptionItem[]
+  pet   Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([petId])
+  @@index([vetUserId])
+  @@map("prescriptions")
+}
+
+// ─── PrescriptionItem (Reçete Kalemi) ────────────────────────────────────────
+model PrescriptionItem {
+  id             String  @id @default(cuid())
+  prescriptionId String  @map("prescription_id")
+  productId      String? @map("product_id") // Mağaza ürünüyle eşleşirse
+  name           String
+  dosage         String?
+  quantity       Int     @default(1)
+  price          Float   @default(0)
+
+  prescription Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  product      Product?     @relation(fields: [productId], references: [id])
+
+  @@map("prescription_items")
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
 // MAĞAZA (E-Ticaret) Modelleri
 // ═══════════════════════════════════════════════════════════════════════════════
 
@@ -90,7 +169,8 @@ model Product {
   category       String
   stockQuantity  Int      @default(0) @map("stock_quantity")
 
-  orderItems     OrderItem[]
+  orderItems        OrderItem[]
+  prescriptionItems PrescriptionItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -101,13 +181,12 @@ model Product {
 // ─── Order (Sipariş) ──────────────────────────────────────────────────────────
 model Order {
   id           String   @id @default(cuid())
-  userId       String   @map("user_id")    // Supabase auth.users id
-  status       String   @default("PENDING") // PENDING, CONFIRMED, SHIPPED, DELIVERED
+  userId       String   @map("user_id")
+  status       String   @default("PENDING")
   totalPrice   Float    @map("total_price")
   shippingCost Float    @default(0) @map("shipping_cost")
   tax          Float    @default(0)
 
-  // Teslimat bilgileri
   fullName     String   @map("full_name")
   phone        String
   address      String

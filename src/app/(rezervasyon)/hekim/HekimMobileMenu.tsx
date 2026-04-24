@@ -40,6 +40,14 @@ export function HekimMobileMenu({ userName }: { userName: string }) {
               className="block px-4 py-3 font-bold text-lg border-b-2 border-zinc-100">
               🔬 Teşhisler
             </Link>
+            <Link onClick={() => setIsOpen(false)} href="/hekim/asi-ekle"
+              className="block px-4 py-3 font-bold text-lg border-b-2 border-zinc-100">
+              💉 Aşı Ekle
+            </Link>
+            <Link onClick={() => setIsOpen(false)} href="/hekim/recete-yaz"
+              className="block px-4 py-3 font-bold text-lg border-b-2 border-zinc-100">
+              📝 Reçete Yaz
+            </Link>
             <form action={logoutHekim}>
               <button
                 type="submit"

@@ -43,6 +43,12 @@ export default async function HekimLayout({ children }: { children: React.ReactN
               <Link href="/hekim/teshisler" className="font-bold text-lg hover:underline underline-offset-4">
                 Teşhisler
               </Link>
+              <Link href="/hekim/asi-ekle" className="font-bold text-lg hover:underline underline-offset-4">
+                Aşı Ekle
+              </Link>
+              <Link href="/hekim/recete-yaz" className="font-bold text-lg hover:underline underline-offset-4">
+                Reçete Yaz
+              </Link>
 
               <div className="flex items-center gap-3 ml-4 pl-4 border-l-4 border-black">
                 <span className="font-black text-sm uppercase bg-[#e9d5ff] border-2 border-black px-3 py-1 rounded-lg">

@@ -1,5 +1,8 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import prisma from '@/lib/prisma';
+
+export const dynamic = "force-dynamic";
 
 export default async function CareProfilPage() {
   const supabase = await createClient();
@@ -13,9 +16,11 @@ export default async function CareProfilPage() {
   const email = user.email || '';
   const joinDate = new Date(user.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
 
-  // Mock data for Care stats
-  const totalPets = 2;
-  const activeAppointments = 1;
+  // Gerçek veriler
+  const totalPets = await prisma.pet.count({ where: { userId: user.id } });
+  const totalPrescriptions = await prisma.prescription.count({
+    where: { pet: { userId: user.id } },
+  });
 
   return (
     <div className="flex flex-col gap-8">
@@ -28,8 +33,8 @@ export default async function CareProfilPage() {
         </div>
         
         <div className="bg-[#fef08a] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 flex flex-col justify-between h-40 rounded-2xl">
-          <h3 className="font-bold uppercase text-sm">Yaklaşan Randevu</h3>
-          <p className="text-5xl font-black drop-shadow-[2px_2px_0_rgba(0,0,0,1)] text-white">{activeAppointments}</p>
+          <h3 className="font-bold uppercase text-sm">Reçetelerim</h3>
+          <p className="text-5xl font-black drop-shadow-[2px_2px_0_rgba(0,0,0,1)] text-white">{totalPrescriptions}</p>
         </div>
         
         <div className="bg-[#a855f7] border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 flex flex-col justify-between h-40 rounded-2xl">
@@ -49,11 +54,6 @@ export default async function CareProfilPage() {
           <div>
             <label className="block font-bold uppercase text-sm mb-2 text-gray-600">E-Posta</label>
             <p className="font-black text-xl p-3 bg-[#f8f8f8] border-4 border-black rounded-xl">{email}</p>
-          </div>
-          <div className="md:col-span-2 flex flex-wrap gap-4 mt-4">
-            <button className="bg-black text-white px-6 py-3 font-black uppercase border-4 border-black rounded-xl hover:bg-white hover:text-black transition-colors">
-              Bilgileri Güncelle
-            </button>
           </div>
         </div>
       </div>
