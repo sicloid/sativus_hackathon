@@ -4,56 +4,85 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
-model appointments {
-  id          String    @id
-  providerId  String
-  slotId      String    @unique
-  status      String    @default("PENDING")
-  petName     String
-  petSpecies  String
-  petAge      Int?
-  ownerName   String
-  ownerPhone  String?
-  notes       String?
-  aiDiagnosis String?
-  aiAciliyet  String?
-  aiHizmet    String?
-  aiOzeti     String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime
-  providers   providers @relation(fields: [providerId], references: [id])
-  slots       slots     @relation(fields: [slotId], references: [id])
+// ─── Provider (Klinik / Kuaför Uzmanı) ───────────────────────────────────────
+model Provider {
+  id          String   @id @default(cuid())
+  name        String
+  type        String
+  specialty   String?
+  imageUrl    String?
+  rating      Float    @default(0.0)
+  address     String?
+  phone       String?
 
-  @@index([providerId])
+  slots        Slot[]
+  appointments Appointment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("providers")
 }
 
-model providers {
-  id           String         @id
-  name         String
-  type         String
-  specialty    String?
-  imageUrl     String?
-  rating       Float          @default(0.0)
-  address      String?
-  phone        String?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime
-  appointments appointments[]
-  slots        slots[]
-}
+// ─── Slot (Zaman Dilimi) ──────────────────────────────────────────────────────
+model Slot {
+  id         String   @id @default(cuid())
+  providerId String
+  date       DateTime
+  startTime  String
+  endTime    String
+  isBooked   Boolean  @default(false)
 
-model slots {
-  id           String        @id
-  providerId   String
-  date         DateTime
-  startTime    String
-  endTime      String
-  isBooked     Boolean       @default(false)
-  createdAt    DateTime      @default(now())
-  appointments appointments?
-  providers    providers     @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  provider    Provider     @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  appointment Appointment?
+
+  createdAt DateTime @default(now())
 
   @@index([providerId, date])
+  @@map("slots")
+}
+
+// ─── Appointment (Randevu) ────────────────────────────────────────────────────
+model Appointment {
+  id         String   @id @default(cuid())
+  providerId String
+  slotId     String   @unique
+  status     String   @default("PENDING")
+
+  petName    String
+  petSpecies String
+  petAge     Int?
+  ownerName  String
+  ownerPhone String?
+  notes      String?
+
+  aiDiagnosis    String?
+  aiAciliyet     String?
+  aiHizmet       String?
+  aiOzeti        String?
+
+  provider Provider @relation(fields: [providerId], references: [id])
+  slot     Slot     @relation(fields: [slotId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("appointments")
+}
+
+// ─── AI Teşhis Oturumu (Chat Geçmişi) ────────────────────────────────────────
+model DiagnosisSession {
+  id           String   @id @default(cuid())
+  petName      String?
+  petSpecies   String?
+  messages     String
+  finalResult  String?
+  appointmentId String?
+
+  createdAt DateTime @default(now())
+
+  @@map("diagnosis_sessions")
 }
