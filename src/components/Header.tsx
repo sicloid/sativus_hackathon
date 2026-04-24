@@ -11,8 +11,11 @@ export default function Header({ user }: { user: any }) {
   return (
     <header className="border-b-4 border-black bg-white sticky top-0 z-50 brutal-shadow mb-8">
       <div className="container mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4">
-        <Link href="/urunler" className="font-black text-3xl md:text-4xl tracking-tighter uppercase text-center md:text-left w-full md:w-auto">
-          PET<span className="text-[var(--brutal-blue)]">VERSE</span>
+        <Link href="/urunler" className="flex items-center gap-2 group w-full md:w-auto justify-center md:justify-start">
+          <span className="text-3xl md:text-4xl">🐾</span>
+          <span className="text-2xl md:text-3xl font-black uppercase tracking-tighter group-hover:underline">
+            PetVerse <span className="text-[#a855f7]">Shop</span>
+          </span>
         </Link>
         
         <div className="flex-grow w-full md:w-auto max-w-xl flex relative">
