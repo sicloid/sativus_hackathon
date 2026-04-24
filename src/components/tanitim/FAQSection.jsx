@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const faqs = [
   {
@@ -73,16 +74,44 @@ export default function FAQSection() {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 },
+  };
+
   return (
-    <section className="bg-white px-6 py-20 border-b-2 border-black">
+    <section className="bg-white px-6 py-20 border-b-2 border-black overflow-hidden">
       <div className="max-w-4xl mx-auto space-y-8">
-        <h2 className="text-4xl md:text-5xl font-black tracking-tight text-black text-center mb-12">
+        <motion.h2 
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-4xl md:text-5xl font-black tracking-tight text-black text-center mb-12"
+        >
           Sıkça Sorulan Sorular
-        </h2>
+        </motion.h2>
         
-        <div className="space-y-4">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="space-y-4"
+        >
           {faqs.map((faq, index) => (
-            <div 
+            <motion.div 
+              variants={itemVariants}
               key={index} 
               className="bg-white border-2 border-black rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
             >
@@ -93,23 +122,34 @@ export default function FAQSection() {
                 <span className="text-xl font-black tracking-tight text-black">
                   {faq.question}
                 </span>
-                {openIndex === index ? (
-                  <ChevronUp className="w-6 h-6 text-black flex-shrink-0" />
-                ) : (
+                <motion.div
+                  animate={{ rotate: openIndex === index ? 180 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
                   <ChevronDown className="w-6 h-6 text-black flex-shrink-0" />
-                )}
+                </motion.div>
               </button>
               
-              {openIndex === index && (
-                <div className="px-6 pb-5 border-t-2 border-black bg-yellow-50">
-                  <p className="pt-4 font-bold text-gray-800 leading-relaxed">
-                    {faq.answer}
-                  </p>
-                </div>
-              )}
-            </div>
+              <AnimatePresence>
+                {openIndex === index && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-6 pb-5 border-t-2 border-black bg-yellow-50">
+                      <p className="pt-4 font-bold text-gray-800 leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
