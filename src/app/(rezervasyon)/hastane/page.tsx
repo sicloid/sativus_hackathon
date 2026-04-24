@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Calendar, FileText, Activity, ArrowRight, ShieldCheck, Clock } from "lucide-react";
 
@@ -152,11 +153,12 @@ export default function HastanePortal() {
 
             {/* Feature 2 */}
             <div className="bg-white border-4 border-black rounded-3xl overflow-hidden shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all group flex flex-col">
-              <div className="h-48 md:h-56 overflow-hidden border-b-4 border-black">
-                <img 
-                  src="https://images.unsplash.com/photo-1628009368231-7bb7cbcb8127?q=80&w=800&auto=format&fit=crop" 
-                  alt="Dijital Takip" 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              <div className="h-48 md:h-56 overflow-hidden border-b-4 border-black relative">
+                <Image
+                  src="https://images.unsplash.com/photo-1588421357574-87938a86fa28?w=800&q=80"
+                  alt="Dijital karne sistemi"
+                  fill
+                  className="object-cover group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
               <div className="p-4 sm:p-6 md:p-8 flex-1 flex flex-col min-w-0">
