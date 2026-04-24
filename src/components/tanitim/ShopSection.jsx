@@ -49,9 +49,13 @@ export default function ShopSection() {
           whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.5, type: "spring", bounce: 0.4 }}
-          className="bg-orange-100 border-2 border-black rounded-2xl min-h-[280px] flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+          className="bg-orange-100 border-2 border-black rounded-2xl min-h-[300px] flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all overflow-hidden relative cursor-pointer"
         >
-          <span className="text-2xl font-black tracking-tight text-black/50">🛍 Ürün Görseli</span>
+          <img 
+            src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?q=80&w=800" 
+            alt="PetVerse Mağaza" 
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+          />
         </motion.div>
       </motion.div>
     </section>
