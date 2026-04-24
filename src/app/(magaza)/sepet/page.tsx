@@ -31,7 +31,7 @@ export default function SepetPage() {
 
   if (items.length === 0) {
     return (
-      <div className="bg-white brutal-border brutal-shadow p-12 text-center">
+      <div className="bg-white brutal-border brutal-shadow p-6 sm:p-12 text-center">
         <h1 className="text-4xl font-black uppercase mb-6">Sepetiniz Boş</h1>
         <p className="text-xl font-bold mb-8">Hayvan dostunuz için güzel bir şeyler bulmak ister misiniz?</p>
         <Link 
@@ -49,7 +49,7 @@ export default function SepetPage() {
       {/* Sol: Ürün Listesi */}
       <div className="flex-grow">
         <div className="flex justify-between items-end mb-6">
-          <h1 className="text-4xl font-black uppercase">Sepetim</h1>
+          <h1 className="text-3xl sm:text-4xl font-black uppercase">Sepetim</h1>
           <button 
             onClick={clearCart}
             className="font-black text-sm uppercase underline hover:text-[var(--brutal-red)]"

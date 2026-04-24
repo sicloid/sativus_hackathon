@@ -53,3 +53,9 @@ export async function registerAction(prevState: any, formData: FormData) {
   // Supabase ayarlarında e-posta doğrulaması kapalıysa doğrudan başarılı kabul edilir.
   redirect('/login?success=Hesabınız oluşturuldu. Lütfen giriş yapın.')
 }
+
+export async function logoutAction() {
+  const supabase = await createClient()
+  await supabase.auth.signOut()
+  redirect('/urunler')
+}
