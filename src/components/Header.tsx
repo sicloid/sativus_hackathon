@@ -1,10 +1,11 @@
 'use client'
 
+import { User } from '@supabase/supabase-js'
 import Link from 'next/link'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 
-export default function Header({ user }: { user: any }) {
+export default function Header({ user }: { user: User | null }) {
   const { totalItems } = useCart()
   const { totalFavorites } = useFavorites()
 

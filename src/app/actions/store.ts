@@ -55,9 +55,9 @@ export async function createOrder(formData: FormData) {
     where: { id: { in: productIds } },
   })
 
-  const priceMap = new Map(dbProducts.map(p => [p.id, p.price]))
+  const priceMap = new Map(dbProducts.map((p: { id: string; price: number }) => [p.id, p.price]))
 
-  const totalPrice = cartItems.reduce((sum, item) => {
+  const totalPrice = cartItems.reduce((sum: number, item) => {
     const dbPrice = priceMap.get(item.productId) ?? item.price
     return sum + dbPrice * item.quantity
   }, 0)

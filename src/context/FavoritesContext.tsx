@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { User } from '@supabase/supabase-js'
 import { Product } from '@/components/ProductCard'
 import { createClient } from '@/utils/supabase/client'
 import { useToast } from '@/context/ToastContext'
@@ -18,7 +19,7 @@ const FavoritesContext = createContext<FavoritesContextType | undefined>(undefin
 export function FavoritesProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = useState<Product[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
-  const [currentUser, setCurrentUser] = useState<any>(null)
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
   const supabase = createClient()
   const { showToast } = useToast()
 
@@ -45,7 +46,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     }
     
     loadFavorites()
-  }, [])
+  }, [supabase.auth])
 
   // Sync favorites to local storage whenever it changes
   useEffect(() => {
