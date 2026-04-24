@@ -63,9 +63,15 @@ export default function HeroSection() {
         >
           {/* Blog Kartı */}
           <motion.div variants={itemVariants} className="h-full">
-            <Link href="/blog" className="h-full bg-blue-600 border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex flex-col justify-end min-h-[250px] text-white">
-              <h3 className="text-2xl font-black tracking-tight mb-2">Blog Oku</h3>
-              <p className="font-bold">Dostunuz için en iyi ipuçları</p>
+            <Link href="/blog" className="relative group block h-full border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all overflow-hidden min-h-[250px]">
+              <img src="https://picsum.photos/id/1025/600/400" alt="Blog" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6">
+                <span className="bg-white text-black px-3 py-1 font-black text-sm rounded border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] inline-block mb-2">
+                  🐾 BLOG REHBERİ
+                </span>
+                <p className="text-white font-bold tracking-tight text-lg leading-tight drop-shadow-md">Dostunuz için uzman tavsiyeleri</p>
+              </div>
             </Link>
           </motion.div>
 

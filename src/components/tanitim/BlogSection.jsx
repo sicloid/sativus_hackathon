@@ -58,9 +58,10 @@ export default function BlogSection() {
           whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.5, type: "spring", bounce: 0.4 }}
-          className="bg-blue-100 border-2 border-black rounded-2xl min-h-[300px] flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
+          className="bg-blue-100 border-2 border-black rounded-2xl min-h-[300px] flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all overflow-hidden relative cursor-pointer"
         >
-          <span className="text-2xl font-black tracking-tight text-black/50">📷 Blog Görseli</span>
+          <img src="https://picsum.photos/id/237/800/600" alt="Blog Görseli" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-black/10 hover:bg-transparent transition-colors z-10" />
         </motion.div>
       </motion.div>
     </section>
