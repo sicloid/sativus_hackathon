@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Button } from "./Button";
 import { Home } from "lucide-react";
+import { Button } from "./Button";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,19 +11,8 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-[#fdfdfd] border-b-4 border-black w-full shadow-[0px_4px_0px_0px_rgba(0,0,0,1)]">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20 items-center gap-4">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="outline" className="hidden sm:flex items-center gap-2 border-zinc-200 text-zinc-500 hover:text-black hover:border-black transition-all">
-                <Home className="w-4 h-4" />
-                <span className="font-black uppercase text-xs">Ana Sayfa</span>
-              </Button>
-              <Button variant="outline" className="sm:hidden p-2 border-zinc-200 text-zinc-500">
-                <Home className="w-5 h-5" />
-              </Button>
-            </Link>
-          </div>
-
+        <div className="flex justify-between h-20 items-center">
+          {/* LOGO */}
           <Link href="/hastane" className="flex items-center gap-2 group">
             <span className="text-3xl">🐾</span>
             <span className="text-2xl font-black uppercase tracking-tighter group-hover:underline">
@@ -33,6 +22,9 @@ export function Navbar() {
 
           {/* DESKTOP MENU */}
           <div className="hidden md:flex items-center gap-4 lg:gap-6 whitespace-nowrap">
+            <Link href="/" className="bg-[var(--brutal-yellow)] border-2 border-black p-2 rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <Home className="w-5 h-5" />
+            </Link>
             <Link href="/randevu" className="font-bold text-base lg:text-lg hover:underline underline-offset-4 flex-shrink-0">Randevu Al</Link>
             <Link href="/pet-karne" className="font-bold text-base lg:text-lg hover:underline underline-offset-4 flex-shrink-0">Pet Karne</Link>
             <Link href="/receteler" className="font-bold text-base lg:text-lg hover:underline underline-offset-4 flex-shrink-0">Reçeteler</Link>
@@ -68,6 +60,10 @@ export function Navbar() {
       {isOpen && (
         <div className="md:hidden border-t-4 border-black bg-white">
           <div className="px-4 pt-2 pb-6 space-y-2 flex flex-col">
+            <Link onClick={() => setIsOpen(false)} href="/" className="flex items-center gap-2 px-4 py-3 font-black text-lg border-b-2 border-zinc-100 bg-amber-50">
+              <Home className="w-5 h-5" />
+              ANA SAYFA
+            </Link>
             <Link onClick={() => setIsOpen(false)} href="/randevu" className="block px-4 py-3 font-bold text-lg border-b-2 border-zinc-100">Randevu Al</Link>
             <Link onClick={() => setIsOpen(false)} href="/pet-karne" className="block px-4 py-3 font-bold text-lg border-b-2 border-zinc-100">Pet Karne</Link>
             <Link onClick={() => setIsOpen(false)} href="/receteler" className="block px-4 py-3 font-bold text-lg border-b-2 border-zinc-100">Reçeteler</Link>

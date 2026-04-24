@@ -1,142 +1,13 @@
 import prisma from "@/lib/prisma";
-import { approveAppointment, rejectAppointment, dischargeAppointment } from "./actions";
-import { logoutAction } from "@/app/actions/auth";
+import { approveAppointment, rejectAppointment } from "./actions";
+import { logoutAction } from "@/app/actions/auth"; 
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { HekimTabs } from "./HekimTabs";
-import { CheckCircle2, XCircle, Clock, Calendar, Phone, User, Activity, LogOut, Home } from "lucide-react";
+import { CheckCircle2, XCircle, Clock, Calendar, Phone, User, Activity, LogOut } from "lucide-react";
 
 export const dynamic = "force-dynamic";
-
-function getAciliyetColor(aciliyet: string | null) {
-  switch (aciliyet) {
-    case "Yüksek": return "bg-[#fee2e2] border-rose-400";
-    case "Kritik": return "bg-[#fee2e2] border-rose-600 animate-pulse";
-    case "Normal": return "bg-[#fef9c3] border-yellow-400";
-    case "Düşük": return "bg-[#dcfce7] border-emerald-400";
-    default: return "bg-white border-zinc-200";
-  }
-}
-
-function getStatusBadge(status: string) {
-  switch (status) {
-    case "PENDING": return { label: "Beklemede", variant: "warning" as const };
-    case "ONAYLANDI": return { label: "Aktif Tedavi", variant: "success" as const };
-    case "TABURCU": return { label: "Taburcu", variant: "neutral" as const };
-    case "İPTAL EDİLDİ": return { label: "İptal Edildi", variant: "danger" as const };
-    default: return { label: status, variant: "neutral" as const };
-  }
-}
-
-function AppointmentCard({ appt, showActions }: { appt: any; showActions: "pending" | "active" | "completed" }) {
-  const aciliyetColor = getAciliyetColor(appt.aiAciliyet);
-  const statusBadge = getStatusBadge(appt.status);
-  const isUrgent = appt.aiAciliyet === "Yüksek" || appt.aiAciliyet === "Kritik";
-
-  return (
-    <Card className={`${aciliyetColor} flex flex-col h-full border-4 border-black rounded-[2rem] shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-all`}>
-      <CardHeader className="p-6 border-b-2 border-black flex flex-col sm:flex-row justify-between items-start gap-4">
-        <div className="flex-1">
-          <CardTitle className="text-2xl font-black uppercase tracking-tighter break-words">
-            🐾 {appt.petName} <span className="text-lg text-zinc-600 block sm:inline">({appt.petSpecies})</span>
-          </CardTitle>
-          <div className="flex items-center gap-2 mt-2 font-bold text-sm">
-            <User className="w-4 h-4 text-zinc-400" />
-            <span>{appt.ownerName}</span>
-          </div>
-          {appt.ownerPhone && (
-            <div className="flex items-center gap-2 font-bold text-xs text-zinc-500">
-              <Phone className="w-3 h-3" />
-              <span>{appt.ownerPhone}</span>
-            </div>
-          )}
-        </div>
-
-        <div className="text-left sm:text-right shrink-0 space-y-2">
-          <Badge variant={statusBadge.variant} className="text-xs px-3 py-1 border-2 border-black">
-            {statusBadge.label}
-          </Badge>
-          <div className="font-black text-sm flex items-center justify-end gap-1">
-            <Calendar className="w-4 h-4" />
-            {new Date(appt.slot.date).toLocaleDateString("tr-TR")}
-          </div>
-          <div className="font-black text-xs flex items-center justify-end gap-1 text-zinc-600">
-            <Clock className="w-3 h-3" />
-            {appt.slot.startTime}
-          </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="p-6 flex-grow space-y-4">
-        {/* VetAI Insights Section */}
-        <div className="border-2 border-black rounded-xl p-4 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="font-black text-[10px] uppercase tracking-widest text-blue-600 flex items-center gap-1">
-              <Activity className="w-3 h-3" />
-              VetAI Analizi
-            </span>
-            <Badge className={`${isUrgent ? 'bg-rose-500' : 'bg-emerald-500'} text-white border-2 border-black text-[10px]`}>
-              {appt.aiAciliyet}
-            </Badge>
-          </div>
-          
-          <p className="font-black text-sm">{appt.aiHizmet || "Genel Muayene"}</p>
-          
-          <div className="pt-2 border-t border-zinc-100">
-            <p className="font-bold text-xs leading-relaxed italic text-zinc-700">
-              "{appt.aiOzeti || 'AI özeti bulunmuyor.'}"
-            </p>
-          </div>
-        </div>
-
-        {appt.notes && (
-          <div className="bg-zinc-50 border-2 border-black border-dashed rounded-xl p-3">
-            <p className="text-[10px] font-black uppercase text-zinc-400 mb-1">Müşteri Notu</p>
-            <p className="font-bold text-xs italic">"{appt.notes}"</p>
-          </div>
-        )}
-      </CardContent>
-
-      <CardFooter className="p-6 pt-0 mt-auto">
-        {showActions === "pending" && (
-          <div className="grid grid-cols-2 gap-3 w-full">
-            <form action={approveAppointment.bind(null, appt.id) as any} className="w-full">
-              <Button type="submit" className="w-full h-12 bg-emerald-400 hover:bg-emerald-500 text-black border-2 border-black rounded-xl font-black uppercase text-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2">
-                <CheckCircle2 className="w-4 h-4" />
-                Onayla
-              </Button>
-            </form>
-            <form action={rejectAppointment.bind(null, appt.id) as any} className="w-full">
-              <Button type="submit" variant="danger" className="w-full h-12 border-2 border-black rounded-xl font-black uppercase text-xs shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2 text-white">
-                <XCircle className="w-4 h-4" />
-                Reddet
-              </Button>
-            </form>
-          </div>
-        )}
-
-        {showActions === "active" && (
-          <div className="w-full">
-            <form action={dischargeAppointment.bind(null, appt.id) as any}>
-              <Button type="submit" className="w-full h-12 bg-blue-400 hover:bg-blue-500 text-black border-2 border-black rounded-xl font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all flex items-center justify-center gap-2">
-                <Home className="w-5 h-5" />
-                Taburcu Et
-              </Button>
-            </form>
-          </div>
-        )}
-        
-        {showActions === "completed" && (
-          <div className="w-full py-3 border-2 border-black rounded-xl bg-zinc-100 text-center font-black uppercase text-[10px] tracking-widest opacity-50">
-            Kayıt Arşivlendi
-          </div>
-        )}
-      </CardFooter>
-    </Card>
-  );
-}
 
 export default async function HekimDashboard() {
   const appointments = await prisma.appointment.findMany({
@@ -149,24 +20,13 @@ export default async function HekimDashboard() {
     },
   });
 
-  const pending = appointments.filter(a => a.status === "PENDING");
-  const active = appointments.filter(a => a.status === "ONAYLANDI");
-  const completed = appointments.filter(a => a.status === "TABURCU" || a.status === "İPTAL EDİLDİ");
-
-  const stats = {
-    total: appointments.length,
-    pending: pending.length,
-    active: active.length,
-    completed: completed.length,
-    urgent: appointments.filter(a => (a.aiAciliyet === "Yüksek" || a.aiAciliyet === "Kritik") && a.status === "PENDING").length,
-  };
-
   return (
     <div className="min-h-screen bg-[#fdfdfd] text-black font-sans pb-20 p-4 sm:p-6 lg:p-10">
       <div className="max-w-7xl mx-auto space-y-10">
         
         {/* HEADER SECTION */}
         <div className="bg-[#bfdbfe] border-4 border-black rounded-[2.5rem] p-8 sm:p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden">
+          {/* Decorative element */}
           <div className="absolute -right-20 -top-20 w-64 h-64 bg-blue-300 rounded-full opacity-30"></div>
           
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 relative z-10">
@@ -185,13 +45,13 @@ export default async function HekimDashboard() {
             
             <div className="flex flex-wrap gap-4 w-full md:w-auto">
               <form action={logoutAction}>
-                <Button type="submit" variant="danger" className="w-full md:w-auto text-lg px-8 flex items-center gap-2 h-14 rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] border-4 border-black font-black uppercase">
+                <Button type="submit" variant="danger" className="w-full md:w-auto text-lg px-8 flex items-center gap-2 h-14 rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                   <LogOut className="w-6 h-6" />
                   Çıkış Yap
                 </Button>
               </form>
               <Link href="/hastane" className="w-full md:w-auto">
-                <Button variant="outline" className="w-full md:w-auto text-lg px-8 h-14 rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] border-4 border-black font-black uppercase bg-white">
+                <Button variant="outline" className="w-full md:w-auto text-lg px-8 h-14 rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                   Care Ana Sayfa
                 </Button>
               </Link>
@@ -199,73 +59,145 @@ export default async function HekimDashboard() {
           </div>
         </div>
 
-        {/* İSTATİSTİK KARTLARI */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <Card className="bg-[#fef9c3] border-4 border-black p-6 rounded-[2rem] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-            <p className="text-xs font-black uppercase tracking-widest text-zinc-500 mb-1">Bekleyen</p>
-            <p className="text-4xl font-black">{stats.pending}</p>
-          </Card>
-          <Card className="bg-[#dcfce7] border-4 border-black p-6 rounded-[2rem] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-            <p className="text-xs font-black uppercase tracking-widest text-zinc-500 mb-1">Aktif</p>
-            <p className="text-4xl font-black">{stats.active}</p>
-          </Card>
-          {stats.urgent > 0 && (
-            <Card className="bg-[#fee2e2] border-4 border-black p-6 rounded-[2rem] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] animate-pulse">
-              <p className="text-xs font-black uppercase tracking-widest text-rose-600 mb-1">🚨 Acil Vaka</p>
-              <p className="text-4xl font-black text-rose-700">{stats.urgent}</p>
-            </Card>
-          )}
-          <Card className="bg-[#e0e7ff] border-4 border-black p-6 rounded-[2rem] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-            <p className="text-xs font-black uppercase tracking-widest text-indigo-500 mb-1">Tamamlanan</p>
-            <p className="text-4xl font-black">{stats.completed}</p>
-          </Card>
+        {/* STATS SUMMARY */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { label: 'Toplam Talep', val: appointments.length, color: 'bg-white' },
+            { label: 'Bekleyen', val: appointments.filter(a => a.status === 'PENDING').length, color: 'bg-yellow-100' },
+            { label: 'Onaylanan', val: appointments.filter(a => a.status === 'ONAYLANDI').length, color: 'bg-green-100' },
+            { label: 'Kritik Vaka', val: appointments.filter(a => a.aiAciliyet === 'Kritik').length, color: 'bg-rose-100' },
+          ].map((stat, i) => (
+            <div key={i} className={`${stat.color} border-4 border-black p-4 rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]`}>
+              <p className="text-xs font-black uppercase tracking-widest text-zinc-500">{stat.label}</p>
+              <p className="text-3xl font-black">{stat.val}</p>
+            </div>
+          ))}
         </div>
 
-        {/* TAB'LI RANDEVU LİSTESİ */}
-        <HekimTabs
-          pendingCards={
-            pending.length === 0 ? (
-              <Card className="bg-zinc-50 border-4 border-black border-dashed rounded-[3rem] text-center p-20 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                <p className="font-black text-2xl uppercase text-zinc-400">Bekleyen randevu yok</p>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {pending.map(appt => (
-                  <AppointmentCard key={appt.id} appt={appt} showActions="pending" />
-                ))}
-              </div>
-            )
-          }
-          activeCards={
-            active.length === 0 ? (
-              <Card className="bg-zinc-50 border-4 border-black border-dashed rounded-[3rem] text-center p-20 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                <p className="font-black text-2xl uppercase text-zinc-400">Aktif hasta yok</p>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {active.map(appt => (
-                  <AppointmentCard key={appt.id} appt={appt} showActions="active" />
-                ))}
-              </div>
-            )
-          }
-          completedCards={
-            completed.length === 0 ? (
-              <Card className="bg-zinc-50 border-4 border-black border-dashed rounded-[3rem] text-center p-20 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-                <p className="font-black text-2xl uppercase text-zinc-400">Tamamlanan kayıt yok</p>
-              </Card>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {completed.map(appt => (
-                  <AppointmentCard key={appt.id} appt={appt} showActions="completed" />
-                ))}
-              </div>
-            )
-          }
-          pendingCount={stats.pending}
-          activeCount={stats.active}
-          completedCount={stats.completed}
-        />
+        {/* APPOINTMENT GRID */}
+        {appointments.length === 0 ? (
+          <Card className="bg-rose-100 border-4 border-black text-center p-12 sm:p-20 rounded-[3rem] shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+            <div className="w-24 h-24 bg-white border-4 border-black rounded-3xl mx-auto mb-8 flex items-center justify-center rotate-3 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+              <Calendar className="w-12 h-12 text-zinc-300" />
+            </div>
+            <CardTitle className="text-4xl font-black uppercase tracking-tighter">Henüz Randevu Yok</CardTitle>
+            <p className="font-bold text-xl mt-4 text-zinc-600">Sisteme henüz düşen bir hasta talebi bulunmuyor.</p>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {appointments.map((appt) => {
+              const isUrgent = appt.aiAciliyet === "Yüksek" || appt.aiAciliyet === "Kritik";
+              const isNormal = appt.aiAciliyet === "Normal" || appt.aiAciliyet === "Düşük";
+              
+              let cardBgClass = "bg-white"; 
+              let accentColor = "border-zinc-200";
+              if (isUrgent) { cardBgClass = "bg-[#fee2e2]"; accentColor = "border-rose-400"; }
+              else if (isNormal) { cardBgClass = "bg-[#dcfce7]"; accentColor = "border-emerald-400"; }
+              else { cardBgClass = "bg-[#fef9c3]"; accentColor = "border-yellow-400"; }
+
+              return (
+                <Card key={appt.id} className={`${cardBgClass} border-4 border-black rounded-[2.5rem] shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] flex flex-col h-full hover:-translate-y-2 transition-all`}>
+                  
+                  <CardHeader className="p-8 border-b-4 border-black">
+                    <div className="flex justify-between items-start mb-4">
+                      <Badge variant="neutral" className="bg-black text-white px-4 py-1 rounded-full font-black text-xs uppercase">
+                        {appt.status}
+                      </Badge>
+                      <div className="flex flex-col items-end">
+                        <span className="flex items-center gap-1 font-black text-lg">
+                          <Clock className="w-4 h-4" />
+                          {appt.slot.startTime}
+                        </span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">
+                          {new Date(appt.slot.date).toLocaleDateString("tr-TR")}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <h2 className="text-3xl font-black uppercase tracking-tighter leading-none">
+                        {appt.petName}
+                      </h2>
+                      <div className="flex items-center gap-2 font-bold text-zinc-600 uppercase text-xs">
+                        <Activity className="w-3 h-3" />
+                        {appt.petSpecies} • {appt.petAge ? `${appt.petAge} Yaş` : 'Yaş Bilinmiyor'}
+                      </div>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="p-8 space-y-6 flex-grow">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex items-center gap-2 font-bold">
+                        <User className="w-4 h-4 text-zinc-400" />
+                        <span className="text-sm uppercase tracking-tight">{appt.ownerName}</span>
+                      </div>
+                      {appt.ownerPhone && (
+                        <div className="flex items-center gap-2 font-bold">
+                          <Phone className="w-4 h-4 text-zinc-400" />
+                          <span className="text-sm">{appt.ownerPhone}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className={`border-2 border-black rounded-2xl p-5 bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] space-y-4 ${accentColor}`}>
+                      <div className="flex items-center justify-between">
+                        <span className="font-black text-[10px] uppercase tracking-[0.2em] text-blue-600 flex items-center gap-1">
+                          <Activity className="w-3 h-3" />
+                          VetAI Insights
+                        </span>
+                        <Badge className={`${isUrgent ? 'bg-rose-500' : 'bg-emerald-500'} text-white border-2 border-black`}>
+                          {appt.aiAciliyet}
+                        </Badge>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <p className="font-bold text-xs uppercase text-zinc-400">Olası Teşhis / Hizmet</p>
+                        <p className="font-black text-sm">{appt.aiHizmet || 'Belirtilmedi'}</p>
+                      </div>
+
+                      <div className="pt-2 border-t-2 border-zinc-100">
+                        <p className="font-bold text-xs leading-relaxed text-zinc-700 italic">
+                          "{appt.aiOzeti || 'Hasta hakkında AI özeti bulunmuyor.'}"
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {appt.notes && (
+                      <div className="bg-white/50 border-2 border-dashed border-black rounded-xl p-4">
+                        <p className="text-[10px] font-black uppercase text-zinc-400 mb-1">Hekim Notu</p>
+                        <p className="font-bold text-sm">{appt.notes}</p>
+                      </div>
+                    )}
+                  </CardContent>
+
+                  <CardFooter className="p-8 pt-0 mt-auto">
+                    {appt.status === "PENDING" ? (
+                      <div className="grid grid-cols-2 gap-4 w-full">
+                        <form action={approveAppointment.bind(null, appt.id) as any} className="w-full">
+                          <Button type="submit" className="w-full h-14 bg-emerald-500 hover:bg-emerald-600 text-white border-4 border-black rounded-2xl font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none flex items-center justify-center gap-2">
+                            <CheckCircle2 className="w-5 h-5" />
+                            Onayla
+                          </Button>
+                        </form>
+                        <form action={rejectAppointment.bind(null, appt.id) as any} className="w-full">
+                          <Button type="submit" variant="danger" className="w-full h-14 border-4 border-black rounded-2xl font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none flex items-center justify-center gap-2">
+                            <XCircle className="w-5 h-5" />
+                            İptal
+                          </Button>
+                        </form>
+                      </div>
+                    ) : (
+                      <div className="w-full py-4 border-4 border-black rounded-2xl bg-zinc-100 text-center font-black uppercase text-sm tracking-widest opacity-50">
+                        İşlem Tamamlandı
+                      </div>
+                    )}
+                  </CardFooter>
+
+                </Card>
+              );
+            })}
+          </div>
+        )}
 
       </div>
     </div>
