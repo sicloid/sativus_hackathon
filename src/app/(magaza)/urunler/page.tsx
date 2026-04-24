@@ -503,10 +503,25 @@ export default function UrunlerPage() {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-8 bg-[var(--brutal-blue)] brutal-border brutal-shadow p-6 text-center sm:text-left">
-        <h1 className="text-3xl sm:text-4xl font-black uppercase">Tüm Ürünler</h1>
-        <div className="text-lg sm:text-xl font-bold bg-white brutal-border px-4 py-2">
-          {filteredProducts.length} Ürün
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-6 mb-12 bg-white brutal-border brutal-shadow p-8 text-center sm:text-left relative overflow-hidden">
+        {/* Background Accent */}
+        <div className="absolute top-0 right-0 w-32 h-full bg-blue-50 -rotate-12 translate-x-12 pointer-events-none" />
+        
+        <div className="relative z-10 flex flex-col sm:flex-row items-center gap-4">
+          <div className="bg-blue-600 text-white p-3 brutal-border shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-[-3deg]">
+            <span className="text-3xl">🛍️</span>
+          </div>
+          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter flex flex-wrap items-center justify-center sm:justify-start gap-x-3">
+            <span className="text-black">PetVerse</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 filter drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+              Shop
+            </span>
+            <span className="text-3xl md:text-4xl animate-bounce">🐾</span>
+          </h1>
+        </div>
+
+        <div className="relative z-10 text-xl font-black bg-yellow-300 brutal-border px-6 py-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rotate-[2deg]">
+          {filteredProducts.length} ÜRÜN AKTİF
         </div>
       </div>
 
