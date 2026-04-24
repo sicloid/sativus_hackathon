@@ -52,7 +52,9 @@ export async function updateSession(request: NextRequest) {
     const isMemberProtectedRoute = 
       request.nextUrl.pathname.startsWith('/pet-karne') || 
       request.nextUrl.pathname.startsWith('/receteler') || 
-      request.nextUrl.pathname.startsWith('/faturalar')
+      request.nextUrl.pathname.startsWith('/faturalar') ||
+      request.nextUrl.pathname.startsWith('/profil') ||
+      request.nextUrl.pathname.startsWith('/odeme')
 
     if (isMemberProtectedRoute) {
       const url = request.nextUrl.clone()
