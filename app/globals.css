@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fdfdfd;
+  --foreground: #000000;
+  --brutal-yellow: #fde047;
+  --brutal-blue: #93c5fd;
+  --brutal-red: #fca5a5;
+  --brutal-green: #86efac;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  /* Soft brutalism defaults */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Brutalist utilities */
+@layer utilities {
+  .brutal-shadow {
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+  }
+  .brutal-shadow-hover {
+    transition: all 0.2s ease-in-out;
+  }
+  .brutal-shadow-hover:hover {
+    box-shadow: 0px 0px 0px 0px rgba(0,0,0,1);
+    transform: translate(4px, 4px);
+  }
+  .brutal-border {
+    border: 2px solid #000;
+  }
+}

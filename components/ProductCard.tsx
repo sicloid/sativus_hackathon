@@ -1,0 +1,66 @@
+import Link from 'next/link';
+
+export interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image_url: string;
+  category: string;
+  stock_quantity: number;
+}
+
+interface ProductCardProps {
+  product: Product;
+  onAddToCart?: (productId: string) => void;
+  onToggleFavorite?: (productId: string) => void;
+  isFavorite?: boolean;
+}
+
+export default function ProductCard({ product, onAddToCart, onToggleFavorite, isFavorite = false }: ProductCardProps) {
+  return (
+    <div className="brutal-border brutal-shadow brutal-shadow-hover bg-white flex flex-col h-full overflow-hidden">
+      <Link href={`/urunler/${product.id}`} className="block relative aspect-square border-b-2 border-black bg-[var(--brutal-yellow)] group cursor-pointer">
+        {/* Placeholder for image - using div for now, replace with next/image later if needed */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${product.image_url || 'https://placehold.co/400x400/fde047/000000?text=Pet+Urun'})` }}
+        />
+        <div className="absolute top-2 left-2 bg-white brutal-border px-2 py-1 text-xs font-black uppercase">
+          {product.category}
+        </div>
+      </Link>
+      
+      <div className="p-4 flex flex-col flex-grow">
+        <Link href={`/urunler/${product.id}`} className="hover:underline">
+          <h3 className="font-black text-lg leading-tight mb-2 uppercase line-clamp-2">{product.name}</h3>
+        </Link>
+        <p className="text-sm mb-4 line-clamp-2 flex-grow">{product.description}</p>
+        
+        <div className="mt-auto">
+          <div className="font-black text-2xl mb-4">
+            {product.price.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
+          </div>
+          
+          <div className="flex gap-2">
+            <button 
+              onClick={() => onAddToCart && onAddToCart(product.id)}
+              className="brutal-border brutal-shadow brutal-shadow-hover bg-[var(--brutal-green)] flex-grow py-2 font-black uppercase text-sm"
+            >
+              Sepete Ekle
+            </button>
+            <button 
+              onClick={() => onToggleFavorite && onToggleFavorite(product.id)}
+              className={`brutal-border brutal-shadow brutal-shadow-hover px-4 flex items-center justify-center ${isFavorite ? 'bg-[var(--brutal-red)]' : 'bg-white'}`}
+              aria-label="Favorilere ekle"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill={isFavorite ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

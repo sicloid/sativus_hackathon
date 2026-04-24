@@ -1,22 +1,18 @@
-// ─── PetVerse · Rezervasyon & AI Teşhis Modülleri ────────────────────────────
-// Prisma Schema — SQLite
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // ─── Provider (Klinik / Kuaför Uzmanı) ───────────────────────────────────────
-// Hizmet sağlayıcıyı temsil eder.
-// Birden fazla Slot ve Appointment'a sahip olabilir.
 model Provider {
   id          String   @id @default(cuid())
-  name        String                          // "Dr. Ayşe Kaya", "PetGroomer Studio"
-  type        ServiceType                     // CLINIC | GROOMER
-  specialty   String?                         // "Dermatoloji", "Saç Kesimi & Bakım"
+  name        String
+  type        String
+  specialty   String?
   imageUrl    String?
   rating      Float    @default(0.0)
   address     String?
@@ -32,48 +28,41 @@ model Provider {
 }
 
 // ─── Slot (Zaman Dilimi) ──────────────────────────────────────────────────────
-// Provider'ın takvimindeki her bir randevu slotunu temsil eder.
-// isBooked=false → kullanıcı alabilir; isBooked=true → kapandı.
 model Slot {
   id         String   @id @default(cuid())
   providerId String
-  date       DateTime                        // Tarih (gün bilgisi için kullanılır)
-  startTime  String                          // "09:00" — HH:MM formatı
-  endTime    String                          // "09:30"
+  date       DateTime
+  startTime  String
+  endTime    String
   isBooked   Boolean  @default(false)
 
   provider    Provider     @relation(fields: [providerId], references: [id], onDelete: Cascade)
-  appointment Appointment? // Bir slot, en fazla bir randevuya bağlı
+  appointment Appointment?
 
   createdAt DateTime @default(now())
 
-  @@index([providerId, date])               // Takvim sorguları için index
+  @@index([providerId, date])
   @@map("slots")
 }
 
 // ─── Appointment (Randevu) ────────────────────────────────────────────────────
-// Kullanıcının rezerve ettiği randevuyu tutar.
-// AI ön teşhis sonuçları buraya JSON string olarak yazılır.
 model Appointment {
-  id         String            @id @default(cuid())
+  id         String   @id @default(cuid())
   providerId String
-  slotId     String            @unique          // Her slot sadece 1 randevuya
-  status     AppointmentStatus @default(PENDING)
+  slotId     String   @unique
+  status     String   @default("PENDING")
 
-  // ─── Evcil Hayvan Bilgisi ─────────────────────────────
   petName    String
-  petSpecies String                             // "Köpek", "Kedi", "Kuş"...
-  petAge     Int?                               // Yaş (yıl)
+  petSpecies String
+  petAge     Int?
   ownerName  String
   ownerPhone String?
-  notes      String?                            // Kullanıcının ek notu
+  notes      String?
 
-  // ─── AI Teşhis Sonuçları ──────────────────────────────
-  // Gemini'den dönen { aciliyet, tavsiye_edilen_hizmet, ai_ozeti } JSON string
-  aiDiagnosis    String?                        // Ham JSON string
-  aiAciliyet     String?                        // "Yüksek" | "Orta" | "Düşük"
-  aiHizmet       String?                        // "Klinik" | "Kuaför"
-  aiOzeti        String?                        // Kısa açıklama metni
+  aiDiagnosis    String?
+  aiAciliyet     String?
+  aiHizmet       String?
+  aiOzeti        String?
 
   provider Provider @relation(fields: [providerId], references: [id])
   slot     Slot     @relation(fields: [slotId], references: [id])
@@ -81,37 +70,19 @@ model Appointment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([providerId])
   @@map("appointments")
 }
 
 // ─── AI Teşhis Oturumu (Chat Geçmişi) ────────────────────────────────────────
-// /ai-asistan sayfasındaki her sohbet oturumunu kaydeder.
-// Kullanıcının geçmiş teşhis sohbetlerine ulaşmasını sağlar.
 model DiagnosisSession {
   id           String   @id @default(cuid())
   petName      String?
   petSpecies   String?
-  messages     String                           // JSON string — Message[] dizisi
-  finalResult  String?                          // Son Gemini JSON çıktısı
-
-  // Session'dan randevuya bağlantı (opsiyonel)
+  messages     String
+  finalResult  String?
   appointmentId String?
 
   createdAt DateTime @default(now())
 
   @@map("diagnosis_sessions")
-}
-
-// ─── Enums ────────────────────────────────────────────────────────────────────
-enum ServiceType {
-  CLINIC    // Veteriner Kliniği
-  GROOMER   // Evcil Hayvan Kuaförü
-}
-
-enum AppointmentStatus {
-  PENDING    // Oluşturuldu, henüz onaylanmadı
-  CONFIRMED  // Onaylandı
-  CANCELLED  // İptal edildi
-  COMPLETED  // Tamamlandı
 }
