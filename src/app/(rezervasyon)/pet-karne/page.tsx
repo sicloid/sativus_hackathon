@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function PetKarne() {
   const appointments = await prisma.appointment.findMany({
     orderBy: { createdAt: "desc" },
