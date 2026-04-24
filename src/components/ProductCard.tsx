@@ -26,35 +26,35 @@ export default function ProductCard({ product, onAddToCart, onToggleFavorite, is
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${product.image_url || 'https://placehold.co/400x400/fde047/000000?text=Pet+Urun'})` }}
         />
-        <div className="absolute top-2 left-2 bg-white brutal-border px-2 py-1 text-xs font-black uppercase">
+        <div className="absolute top-2 left-2 bg-white brutal-border px-1 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-black uppercase">
           {product.category}
         </div>
       </Link>
       
-      <div className="p-4 flex flex-col flex-grow">
+      <div className="p-2 sm:p-4 flex flex-col flex-grow">
         <Link href={`/urunler/${product.id}`} className="hover:underline">
-          <h3 className="font-black text-lg leading-tight mb-2 uppercase line-clamp-2">{product.name}</h3>
+          <h3 className="font-black text-sm sm:text-lg leading-tight mb-1 sm:mb-2 uppercase line-clamp-2">{product.name}</h3>
         </Link>
-        <p className="text-sm mb-4 line-clamp-2 flex-grow">{product.description}</p>
+        <p className="text-xs sm:text-sm mb-2 sm:mb-4 line-clamp-2 flex-grow">{product.description}</p>
         
         <div className="mt-auto">
-          <div className="font-black text-2xl mb-4">
+          <div className="font-black text-lg sm:text-2xl mb-2 sm:mb-4">
             {product.price.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
             <button 
               onClick={() => onAddToCart && onAddToCart(product.id)}
-              className="brutal-border brutal-shadow brutal-shadow-hover bg-[var(--brutal-green)] flex-grow py-2 font-black uppercase text-sm"
+              className="brutal-border brutal-shadow brutal-shadow-hover bg-[var(--brutal-green)] flex-grow py-1.5 sm:py-2 font-black uppercase text-xs sm:text-sm"
             >
               Sepete Ekle
             </button>
             <button 
               onClick={() => onToggleFavorite && onToggleFavorite(product.id)}
-              className={`brutal-border brutal-shadow brutal-shadow-hover px-4 flex items-center justify-center ${isFavorite ? 'bg-[var(--brutal-red)]' : 'bg-white'}`}
+              className={`brutal-border brutal-shadow brutal-shadow-hover px-2 sm:px-4 py-1.5 sm:py-0 flex items-center justify-center ${isFavorite ? 'bg-[var(--brutal-red)]' : 'bg-white'}`}
               aria-label="Favorilere ekle"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" fill={isFavorite ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+              <svg xmlns="http://www.w3.org/2000/svg" fill={isFavorite ? "currentColor" : "none"} viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 sm:w-5 sm:h-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
               </svg>
             </button>
