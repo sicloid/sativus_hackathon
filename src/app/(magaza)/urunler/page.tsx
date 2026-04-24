@@ -99,7 +99,6 @@ const MOCK_PRODUCTS: Product[] = [
     category: 'Köpek',
     stock_quantity: 5
   },
-
   // KEDİ (10 ürün)
   {
     id: 'cat-1',
@@ -151,7 +150,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kedi Taşıma Kafesi',
     description: 'Dayanıklı plastik gövde, emniyet kilitli kapı, standart boy.',
     price: 480,
-    image_url: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=800&q=80',
     category: 'Kedi',
     stock_quantity: 15
   },
@@ -178,7 +177,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kedi Mama Kabı Otomatik',
     description: 'Programlanabilir öğün saatleri, paslanmaz çelik hazneli dijital besleyici.',
     price: 750,
-    image_url: 'https://images.unsplash.com/photo-1568640347023-a616a30bc3bd?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=800&q=80',
     category: 'Kedi',
     stock_quantity: 12
   },
@@ -187,11 +186,10 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kedi Yatağı Peluş',
     description: 'Ekstra yumuşak, sıcak tutan, yuvarlak pofuduk kedi yatağı.',
     price: 380,
-    image_url: 'https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1623387641168-d9803ddd3f35?w=800&q=80',
     category: 'Kedi',
     stock_quantity: 20
   },
-
   // KUŞ (10 ürün)
   {
     id: 'bird-1',
@@ -243,7 +241,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kuş Vitamini Damla',
     description: 'B vitamini ağırlıklı, tüy dökümünü azaltan multivitamin desteği.',
     price: 110,
-    image_url: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1452570053594-1b985d6ea890?w=800&q=80',
     category: 'Kuş',
     stock_quantity: 60
   },
@@ -252,7 +250,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kuş Yemi Otomatik',
     description: 'Akıllı yemleme haznesi, kabuk biriktirmeyen dökülme önleyici sistem.',
     price: 340,
-    image_url: 'https://images.unsplash.com/photo-1522858547137-f1dcec554f55?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1600618528240-fb9fe964b853?w=800&q=80',
     category: 'Kuş',
     stock_quantity: 15
   },
@@ -261,7 +259,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kuş Tüneği Salıncak',
     description: 'Renkli ahşap halkalı, kafes tavanına asılan eğlenceli salıncak.',
     price: 75,
-    image_url: 'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1480044965905-02098d419e96?w=800&q=80',
     category: 'Kuş',
     stock_quantity: 30
   },
@@ -270,7 +268,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kuş Kafesi Küçük',
     description: 'Tek kuş için uygun, kolay temizlenebilir alt çekmeceli kafes.',
     price: 280,
-    image_url: 'https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1555000395-66992976503c?w=800&q=80',
     category: 'Kuş',
     stock_quantity: 10
   },
@@ -279,11 +277,10 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kuş Banyosu Plastik',
     description: 'Kafes kapısına asılan, şeffaf kapaklı banyo havuzu.',
     price: 65,
-    image_url: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1470114756577-bb1b1f5a721c?w=800&q=80',
     category: 'Kuş',
     stock_quantity: 25
   },
-
   // BALIK (10 ürün)
   {
     id: 'fish-1',
@@ -326,7 +323,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Akvaryum Substrat Kumu',
     description: 'Doğal mineralli, bitki gelişimi için ideal koyu renkli akvaryum kumu.',
     price: 180,
-    image_url: 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1524704654690-b56c05c78a00?w=800&q=80',
     category: 'Balık',
     stock_quantity: 50
   },
@@ -335,7 +332,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Hava Motoru Sessiz',
     description: 'Çift çıkışlı, ayarlanabilir hava debili, titreşim önleyici ayaklı motor.',
     price: 220,
-    image_url: 'https://images.unsplash.com/photo-1534043464124-3be32fe000c9?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1544551763-47a159f7731d?w=800&q=80',
     category: 'Balık',
     stock_quantity: 20
   },
@@ -344,7 +341,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Akvaryum Termometre',
     description: 'Hassas ölçüm yapan, vantuzlu, kolay okunabilir derece.',
     price: 85,
-    image_url: 'https://images.unsplash.com/photo-1498100673548-9eb2cfd66462?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1520190282173-6e2751f9ed20?w=800&q=80',
     category: 'Balık',
     stock_quantity: 40
   },
@@ -353,7 +350,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Su Kondisyoneri 500ml',
     description: 'Musluk suyundaki kloru anında temizleyen, mukoza koruyucu su düzenleyici.',
     price: 95,
-    image_url: 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1516683037151-9a17603a899c?w=800&q=80',
     category: 'Balık',
     stock_quantity: 30
   },
@@ -362,7 +359,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Akvaryum Dekor Taş',
     description: 'Doğal volkanik kayalar, su değerlerini bozmayan dekoratif taş seti.',
     price: 145,
-    image_url: 'https://images.unsplash.com/photo-1534043464124-3be32fe000c9?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1517924161044-8975836437d4?w=800&q=80',
     category: 'Balık',
     stock_quantity: 15
   },
@@ -371,11 +368,10 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Balık Ağı Seti',
     description: 'Yumuşak fileli, paslanmaz saplı 2li balık yakalama ağı.',
     price: 55,
-    image_url: 'https://images.unsplash.com/photo-1498100673548-9eb2cfd66462?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=800&q=80',
     category: 'Balık',
     stock_quantity: 40
   },
-
   // KEMİRGEN (10 ürün)
   {
     id: 'small-1',
@@ -391,7 +387,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Hamster Koşu Tekeri',
     description: 'Sessiz rulmanlı, ayak yaralanmalarını önleyen geniş çaplı tekerlek.',
     price: 120,
-    image_url: 'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1548767797-d8c844163c4a?w=800&q=80',
     category: 'Kemirgen',
     stock_quantity: 25
   },
@@ -409,7 +405,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kemirgen Talaş Altlık',
     description: 'Yüksek emici güce sahip, tozdan arındırılmış çam talaşı.',
     price: 75,
-    image_url: 'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1544320299-8ad9fca94296?w=800&q=80',
     category: 'Kemirgen',
     stock_quantity: 100
   },
@@ -418,7 +414,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Tavşan Kafesi',
     description: 'Geniş tabanlı, kolay açılır tavanlı, metal gövdeli tavşan evi.',
     price: 650,
-    image_url: 'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1591384019130-109000000000?w=800&q=80',
     category: 'Kemirgen',
     stock_quantity: 5
   },
@@ -427,7 +423,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kemirgen Oyun Tüneli',
     description: 'Hışırtılı, uzayıp kısalabilen plastik esnek oyun tüneli.',
     price: 110,
-    image_url: 'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=800&q=80',
     category: 'Kemirgen',
     stock_quantity: 20
   },
@@ -436,7 +432,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Guinea Pig Yemi',
     description: 'C vitamini katkılı, meyve ve sebze kurusu karışımlı özel yem.',
     price: 85,
-    image_url: 'https://images.unsplash.com/photo-1548767797-d8c844163c4a?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1533514114760-4389f9ed3aa9?w=800&q=80',
     category: 'Kemirgen',
     stock_quantity: 35
   },
@@ -445,7 +441,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kemirgen Su Şişesi',
     description: 'Damlatmaz bilyalı uçlu, kafese asılan 500ml suluk.',
     price: 65,
-    image_url: 'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1534833215160-5f082e666a01?w=800&q=80',
     category: 'Kemirgen',
     stock_quantity: 30
   },
@@ -454,7 +450,20 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Hamster Evi Ahşap',
     description: 'Doğal ağaçtan üretilmiş, çatılı şirin hamster yuvası.',
     price: 195,
-    image_url: 'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=800&q=80',
+    image_url: 'https://images.unsplash.com/photo-1516642898673-eda1916ca456?w=800&q=80',
+    category: 'Kemirgen',
+    stock_quantity: 15
+  },
+  {
+    id: 'small-10',
+    name: 'Kemirgen Vitamini',
+    description: 'Suya katılan, bağışıklık güçlendirici multivitamin damlası.',
+    price: 110,
+    image_url: 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=800&q=80',
+    category: 'Kemirgen',
+    stock_quantity: 40
+  }
+];images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=800&q=80',
     category: 'Kemirgen',
     stock_quantity: 15
   },
