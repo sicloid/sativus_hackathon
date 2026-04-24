@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model appointments {
+  id          String    @id
+  providerId  String
+  slotId      String    @unique
+  status      String    @default("PENDING")
+  petName     String
+  petSpecies  String
+  petAge      Int?
+  ownerName   String
+  ownerPhone  String?
+  notes       String?
+  aiDiagnosis String?
+  aiAciliyet  String?
+  aiHizmet    String?
+  aiOzeti     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+  providers   providers @relation(fields: [providerId], references: [id])
+  slots       slots     @relation(fields: [slotId], references: [id])
+
+  @@index([providerId])
+}
+
+model providers {
+  id           String         @id
+  name         String
+  type         String
+  specialty    String?
+  imageUrl     String?
+  rating       Float          @default(0.0)
+  address      String?
+  phone        String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime
+  appointments appointments[]
+  slots        slots[]
+}
+
+model slots {
+  id           String        @id
+  providerId   String
+  date         DateTime
+  startTime    String
+  endTime      String
+  isBooked     Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  appointments appointments?
+  providers    providers     @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([providerId, date])
+}
