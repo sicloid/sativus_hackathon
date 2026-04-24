@@ -1,14 +1,75 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  
+  /* Remote Theme Variables */
+  --bg: #05050f;
+  --bg2: #0c0c1e;
+  --purple: #7c3aed;
+  --purple-light: #a855f7;
+  --blue: #3b82f6;
+  --cyan: #06b6d4;
+  --pink: #ec4899;
+  --orange: #f97316;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --glass: rgba(124, 58, 237, 0.08);
+  --glass-border: rgba(124, 58, 237, 0.2);
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --font-sans: var(--font-space);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: white;
+  background: white; /* Soft-Brutalism default */
+  color: black;
+  font-family: 'Inter', Arial, sans-serif;
 }
+
+/* ─── Soft-Brutalism Utilities ───────────────────── */
+.sb-shadow {
+  box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+}
+
+.sb-border {
+  border: 2px solid black;
+}
+
+/* ─── Remote UI Utilities (Kept for compatibility) ── */
+.grad-text {
+  background: linear-gradient(135deg, var(--purple-light), var(--cyan), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ... other remote animations and utilities can be kept if needed ... */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.anim-fadeup { animation: fadeInUp 0.8s ease forwards; }
