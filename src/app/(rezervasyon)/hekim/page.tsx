@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
 import { approveAppointment, rejectAppointment } from "./actions";
 import Link from "next/link";

@@ -109,7 +109,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<AiTeshisRespo
 
     // Gemini'nin beklediği history formatına dönüştür
     // Son mesaj "contents" olarak gönderilmeli, geri kalanlar "history"'ye
-    let history = messages.slice(0, -1).map((m) => ({
+    const history = messages.slice(0, -1).map((m) => ({
       role: m.role,
       parts: [{ text: m.content }],
     }));
