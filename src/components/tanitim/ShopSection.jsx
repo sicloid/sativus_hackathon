@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function ShopSection() {
   return (
@@ -21,12 +22,51 @@ export default function ShopSection() {
           </div>
         </div>
 
-        {/* Sağ - Ürün Kolajı Mockup */}
-        <div className="relative h-72 md:h-80">
-          <div className="absolute top-0 left-0 w-32 h-32 bg-orange-200 border-2 border-black rounded-2xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center text-4xl hover:-translate-y-1 transition-transform cursor-pointer">🦴</div>
-          <div className="absolute top-4 left-28 w-32 h-32 bg-blue-200 border-2 border-black rounded-2xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center text-4xl hover:-translate-y-1 transition-transform cursor-pointer z-10">🐟</div>
-          <div className="absolute top-8 left-56 w-32 h-32 bg-green-200 border-2 border-black rounded-2xl shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center text-4xl hover:-translate-y-1 transition-transform cursor-pointer">🐾</div>
-          <div className="absolute bottom-4 left-8 w-56 h-32 bg-yellow-300 border-2 border-black rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center text-5xl hover:-translate-y-1 transition-transform cursor-pointer z-20">🛍️</div>
+        {/* Sağ - Ürün Kolajı */}
+        <div className="relative w-full h-80">
+          {/* Sol üst — büyük kart */}
+          <div className="absolute top-0 left-0 w-52 h-48 border-2 border-black rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <Image
+              src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&q=80"
+              alt="köpek ürünleri"
+              fill
+              className="object-cover"
+            />
+          </div>
+
+          {/* Sağ üst — küçük kart */}
+          <div className="absolute top-0 left-56 w-36 h-36 border-2 border-black rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <Image
+              src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&q=80"
+              alt="kedi ürünleri"
+              fill
+              className="object-cover"
+            />
+          </div>
+
+          {/* Sağ alt — orta kart */}
+          <div className="absolute bottom-0 left-48 w-44 h-40 border-2 border-black rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <Image
+              src="https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=400&q=80"
+              alt="kemirgen ürünleri"
+              fill
+              className="object-cover"
+            />
+          </div>
+
+          {/* Sol alt — küçük etiket kart */}
+          <div className="absolute bottom-0 left-0 w-44 h-28 border-2 border-black rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <Image
+              src="https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=400&q=80"
+              alt="akvaryum ürünleri"
+              fill
+              className="object-cover"
+            />
+            {/* Üzerine indirim etiketi */}
+            <div className="absolute top-2 right-2 bg-yellow-400 border-2 border-black rounded-lg px-2 py-1 font-black text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              %20 İndirim
+            </div>
+          </div>
         </div>
       </div>
 
