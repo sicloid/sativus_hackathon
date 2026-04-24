@@ -98,8 +98,9 @@ export async function POST(req: NextRequest): Promise<NextResponse<AiTeshisRespo
       systemInstruction: SYSTEM_PROMPT,
       generationConfig: {
         temperature: finalRequest ? 0.1 : 0.7,   // Teşhiste düşük sıcaklık → deterministik JSON
-        maxOutputTokens: finalRequest ? 300 : 500,
+        maxOutputTokens: finalRequest ? 1024 : 500,
         candidateCount: 1,
+        responseMimeType: finalRequest ? "application/json" : undefined,
       },
       safetySettings: [
         { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
@@ -141,7 +142,26 @@ export async function POST(req: NextRequest): Promise<NextResponse<AiTeshisRespo
           .replace(/\s*```$/i, "")
           .trim();
 
-        const parsed = JSON.parse(cleaned);
+        let parsed;
+        try {
+          parsed = JSON.parse(cleaned);
+        } catch {
+          // JSON yarım kalmış olabilir — regex ile alanları çıkar
+          console.warn("[AI-TESHIS] JSON parse başarısız, regex ile kurtarılıyor. Ham:", cleaned);
+          const aciliyetMatch = cleaned.match(/"aciliyet"\s*:\s*"(Yüksek|Orta|Düşük)"/);
+          const hizmetMatch = cleaned.match(/"tavsiye_edilen_hizmet"\s*:\s*"(Klinik|Kuaför)"/);
+          const ozetMatch = cleaned.match(/"ai_ozeti"\s*:\s*"([^"]+)"/);
+
+          if (aciliyetMatch && hizmetMatch && ozetMatch) {
+            parsed = {
+              aciliyet: aciliyetMatch[1],
+              tavsiye_edilen_hizmet: hizmetMatch[1],
+              ai_ozeti: ozetMatch[1],
+            };
+          } else {
+            throw new Error("JSON alanları regex ile de bulunamadı");
+          }
+        }
 
         // Zorunlu alan kontrolü
         const validAciliyet = ["Yüksek", "Orta", "Düşük"];
@@ -165,7 +185,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<AiTeshisRespo
       } catch (parseError) {
         console.error("[AI-TESHIS] JSON parse hatası:", parseError, "\nHam yanıt:", rawText);
         return NextResponse.json(
-          { error: "AI yanıtı JSON formatında değil. Lütfen tekrar deneyin." },
+          { error: "AI yanıtı işlenemedi. Lütfen tekrar deneyin." },
           { status: 502 }
         );
       }
