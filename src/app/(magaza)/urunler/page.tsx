@@ -13,7 +13,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Premium Köpek Maması 15kg',
     description: 'Yetişkin köpekler için somonlu, tahılsız yüksek proteinli premium kuru mama.',
     price: 1250,
-    image_url: 'https://placehold.co/400x400/fca5a5/000000?text=Kopek+Mamasi',
+    image_url: 'https://images.unsplash.com/photo-1589924691995-ad0029e88a3e?q=80&w=800',
     category: 'Köpek',
     stock_quantity: 45
   },
@@ -22,7 +22,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kedi Kumu İnce Taneli 10L',
     description: 'Ekstra topaklaşan, parfümlü, tozsuz bentonit kedi kumu.',
     price: 180,
-    image_url: 'https://placehold.co/400x400/93c5fd/000000?text=Kedi+Kumu',
+    image_url: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?q=80&w=800',
     category: 'Kedi',
     stock_quantity: 120
   },
@@ -31,7 +31,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kuş Kafesi Tam Takım',
     description: 'Muhabbet kuşları ve kanaryalar için uygun, yemlik ve suluk dahil kafes.',
     price: 450,
-    image_url: 'https://placehold.co/400x400/fde047/000000?text=Kus+Kafesi',
+    image_url: 'https://images.unsplash.com/photo-1520110120835-c96a9ef95692?q=80&w=800',
     category: 'Kuş',
     stock_quantity: 12
   },
@@ -40,7 +40,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Akvaryum Dış Filtre 1000L/H',
     description: 'Sessiz çalışan, 3 sepetli, enerji tasarruflu akvaryum dış motoru.',
     price: 1850,
-    image_url: 'https://placehold.co/400x400/86efac/000000?text=Akvaryum+Filtre',
+    image_url: 'https://images.unsplash.com/photo-1524704659690-3f8031240121?q=80&w=800',
     category: 'Balık',
     stock_quantity: 8
   },
@@ -49,7 +49,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Kedi Tırmalama Tahtası',
     description: 'Kedi nanesi hediyeli, dayanıklı sisal ipli tırmalama platformu.',
     price: 290,
-    image_url: 'https://placehold.co/400x400/93c5fd/000000?text=Tirmalama',
+    image_url: 'https://images.unsplash.com/photo-1548802223-30b5d4037bc3?q=80&w=800',
     category: 'Kedi',
     stock_quantity: 34
   },
@@ -58,7 +58,7 @@ const MOCK_PRODUCTS: Product[] = [
     name: 'Köpek Gezdirme Tasması 5m',
     description: 'Otomatik sarmallı, stop tuşlu, fosforlu şeritli gezdirme kayışı.',
     price: 220,
-    image_url: 'https://placehold.co/400x400/fca5a5/000000?text=Tasma',
+    image_url: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=800',
     category: 'Köpek',
     stock_quantity: 56
   }
