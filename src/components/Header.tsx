@@ -2,8 +2,9 @@
 
 import { User } from '@supabase/supabase-js'
 import Link from 'next/link'
-import { useCart } from '@/context/CartContext'
-import { useFavorites } from '@/context/FavoritesContext'
+import { Home } from 'lucide-react'
+import { useCart } from '../context/CartContext'
+import { useFavorites } from '../context/FavoritesContext'
 
 export default function Header({ user }: { user: User | null }) {
   const { totalItems } = useCart()
@@ -18,19 +19,23 @@ export default function Header({ user }: { user: User | null }) {
             PetVerse <span className="text-[#a855f7]">Shop</span>
           </span>
         </Link>
-        
+
         <div className="flex-grow w-full md:w-auto max-w-xl flex relative">
-          <input 
-            type="text" 
-            placeholder="Ürün veya kategori ara..." 
+          <input
+            type="text"
+            placeholder="Ürün veya kategori ara..."
             className="w-full brutal-border px-4 py-2 font-bold focus:outline-none focus:ring-2 focus:ring-black"
           />
           <button className="absolute right-0 top-0 bottom-0 px-4 bg-[var(--brutal-yellow)] brutal-border border-l-2 font-black uppercase hover:bg-black hover:text-white transition-colors">
             Ara
           </button>
         </div>
-        
+
         <nav className="flex flex-wrap justify-center gap-3 md:gap-4 w-full md:w-auto">
+          <Link href="/" className="brutal-border brutal-shadow brutal-shadow-hover bg-[var(--brutal-yellow)] px-3 py-2 md:px-4 md:py-2 font-black uppercase flex items-center gap-2 text-sm md:text-base flex-1 md:flex-none justify-center">
+            <Home className="w-4 h-4" />
+            <span className="hidden lg:inline">Ana Sayfa</span>
+          </Link>
           <Link href="/sepet" className="brutal-border brutal-shadow brutal-shadow-hover bg-[var(--brutal-green)] px-3 py-2 md:px-4 md:py-2 font-black uppercase flex items-center gap-2 text-sm md:text-base flex-1 md:flex-none justify-center">
             <span>Sepet</span>
             <span className="bg-white text-black rounded-full w-5 h-5 md:w-6 md:h-6 flex items-center justify-center text-xs border-2 border-black">
