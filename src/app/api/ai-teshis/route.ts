@@ -94,7 +94,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<AiTeshisRespo
     const genAI = getGeminiClient();
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-3.1-flash-lite-preview",
+      model: "gemini-3.1-flash-preview",
       systemInstruction: SYSTEM_PROMPT,
       generationConfig: {
         temperature: finalRequest ? 0.1 : 0.7,   // Teşhiste düşük sıcaklık → deterministik JSON
@@ -109,10 +109,16 @@ export async function POST(req: NextRequest): Promise<NextResponse<AiTeshisRespo
 
     // Gemini'nin beklediği history formatına dönüştür
     // Son mesaj "contents" olarak gönderilmeli, geri kalanlar "history"'ye
-    const history = messages.slice(0, -1).map((m) => ({
+    let history = messages.slice(0, -1).map((m) => ({
       role: m.role,
       parts: [{ text: m.content }],
     }));
+
+    // Gemini API'si history'nin her zaman 'user' ile başlamasını bekler.
+    // İlk mesaj genelde UI'daki "Merhaba!" model mesajıdır, bunu çıkarıyoruz.
+    if (history.length > 0 && history[0].role === "model") {
+      history.shift();
+    }
 
     const lastMessage = messages[messages.length - 1];
 
@@ -187,7 +193,7 @@ export async function GET(): Promise<NextResponse> {
   return NextResponse.json({
     status: "ok",
     service: "PetVerse AI Teşhis",
-    model: "gemini-3.1-flash-lite-preview",
+    model: "gemini-3.1-flash-preview",
     apiKeyConfigured: hasKey,
     timestamp: new Date().toISOString(),
   });

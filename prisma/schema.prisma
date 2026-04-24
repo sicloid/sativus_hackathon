@@ -1,17 +1,17 @@
 generator client {
   provider = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
 }
 
 // ─── Provider (Klinik / Kuaför Uzmanı) ───────────────────────────────────────
 model Provider {
   id          String   @id @default(cuid())
   name        String
-  type        String
+  type        String   // "CLINIC" veya "GROOMER"
   specialty   String?
   imageUrl    String?
   rating      Float    @default(0.0)
@@ -52,6 +52,7 @@ model Appointment {
   slotId     String   @unique
   status     String   @default("PENDING")
 
+  // Evcil Hayvan Bilgisi
   petName    String
   petSpecies String
   petAge     Int?
@@ -59,6 +60,7 @@ model Appointment {
   ownerPhone String?
   notes      String?
 
+  // AI Teşhis Sonuçları
   aiDiagnosis    String?
   aiAciliyet     String?
   aiHizmet       String?
@@ -70,19 +72,6 @@ model Appointment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([providerId])
   @@map("appointments")
-}
-
-// ─── AI Teşhis Oturumu (Chat Geçmişi) ────────────────────────────────────────
-model DiagnosisSession {
-  id           String   @id @default(cuid())
-  petName      String?
-  petSpecies   String?
-  messages     String
-  finalResult  String?
-  appointmentId String?
-
-  createdAt DateTime @default(now())
-
-  @@map("diagnosis_sessions")
 }
