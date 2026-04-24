@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "./Button";
+import { Home } from "lucide-react";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,8 +11,19 @@ export function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-[#fdfdfd] border-b-4 border-black w-full shadow-[0px_4px_0px_0px_rgba(0,0,0,1)]">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-20 items-center">
-          {/* LOGO */}
+        <div className="flex justify-between h-20 items-center gap-4">
+          <div className="flex items-center gap-4">
+            <Link href="/">
+              <Button variant="outline" className="hidden sm:flex items-center gap-2 border-zinc-200 text-zinc-500 hover:text-black hover:border-black transition-all">
+                <Home className="w-4 h-4" />
+                <span className="font-black uppercase text-xs">Ana Sayfa</span>
+              </Button>
+              <Button variant="outline" className="sm:hidden p-2 border-zinc-200 text-zinc-500">
+                <Home className="w-5 h-5" />
+              </Button>
+            </Link>
+          </div>
+
           <Link href="/hastane" className="flex items-center gap-2 group">
             <span className="text-3xl">🐾</span>
             <span className="text-2xl font-black uppercase tracking-tighter group-hover:underline">
