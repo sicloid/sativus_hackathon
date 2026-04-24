@@ -24,6 +24,7 @@ export async function loginAction(prevState: any, formData: FormData) {
     return { error: 'E-posta veya şifre hatalı.' }
   }
 
+  // Mağaza login herkese açık — rol kontrolü yok
   redirect('/urunler')
 }
 
@@ -44,6 +45,7 @@ export async function registerAction(prevState: any, formData: FormData) {
     options: {
       data: {
         username: username,
+        role: 'store_customer',  // Mağazadan kayıt olan = store_customer
       }
     }
   })
@@ -52,7 +54,6 @@ export async function registerAction(prevState: any, formData: FormData) {
     return { error: error.message || 'Kayıt olurken bir hata oluştu.' }
   }
 
-  // Supabase ayarlarında e-posta doğrulaması kapalıysa doğrudan başarılı kabul edilir.
   redirect('/login?success=Hesabınız oluşturuldu. Lütfen giriş yapın.')
 }
 

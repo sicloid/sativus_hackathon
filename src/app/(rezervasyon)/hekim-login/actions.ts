@@ -14,13 +14,20 @@ export async function loginHekim(formData: FormData) {
     return { error: 'E-posta ve şifre gereklidir.' }
   }
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   })
 
   if (error) {
     return { error: 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.' }
+  }
+
+  // Rol kontrolü — sadece vet ve admin giriş yapabilir
+  const role = data.user?.user_metadata?.role
+  if (role !== 'vet' && role !== 'admin') {
+    await supabase.auth.signOut()
+    return { error: 'Bu portal yalnızca veteriner hekimler içindir. Hasta girişi için PetVerse Care\'i kullanın.' }
   }
 
   revalidatePath('/', 'layout')

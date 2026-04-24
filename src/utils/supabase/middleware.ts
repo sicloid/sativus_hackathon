@@ -40,30 +40,35 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protect specific routes
+  const pathname = request.nextUrl.pathname
+  const role = user?.user_metadata?.role as string | undefined
+
+  // ─── GİRİŞ YAPMAMIŞ KULLANICILAR İÇİN KORUMA ───
   if (!user) {
-    // Only redirect if it's the protected /hekim route, NOT /hekim-login itself
-    if (request.nextUrl.pathname.startsWith('/hekim') && !request.nextUrl.pathname.startsWith('/hekim-login')) {
+    // Hekim paneli → hekim login'e yönlendir
+    if (pathname.startsWith('/hekim') && !pathname.startsWith('/hekim-login')) {
       const url = request.nextUrl.clone()
       url.pathname = '/hekim-login'
       return NextResponse.redirect(url)
     }
 
+    // Care korumalı rotalar → hasta login'e yönlendir
     const isCareProtectedRoute = 
-      request.nextUrl.pathname.startsWith('/pet-karne') || 
-      request.nextUrl.pathname.startsWith('/receteler') || 
-      request.nextUrl.pathname.startsWith('/faturalar') ||
-      request.nextUrl.pathname.startsWith('/hastane/profil')
+      pathname.startsWith('/pet-karne') || 
+      pathname.startsWith('/receteler') || 
+      pathname.startsWith('/faturalar') ||
+      pathname.startsWith('/hastane/profil')
       
-    const isStoreProtectedRoute = 
-      request.nextUrl.pathname.startsWith('/profil') && !request.nextUrl.pathname.startsWith('/hastane/profil') ||
-      request.nextUrl.pathname.startsWith('/odeme')
-
     if (isCareProtectedRoute) {
       const url = request.nextUrl.clone()
       url.pathname = '/hasta-login'
       return NextResponse.redirect(url)
     }
+
+    // Mağaza korumalı rotalar → mağaza login'e yönlendir
+    const isStoreProtectedRoute = 
+      (pathname.startsWith('/profil') && !pathname.startsWith('/hastane/profil')) ||
+      pathname.startsWith('/odeme')
 
     if (isStoreProtectedRoute) {
       const url = request.nextUrl.clone()
@@ -72,22 +77,43 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
-  // Redirect logged-in users away from the login pages
+  // ─── GİRİŞ YAPMIŞ KULLANICILAR İÇİN ROL KONTROLÜ ───
   if (user) {
-    if (request.nextUrl.pathname === '/login') {
+    // Login sayfalarından uzaklaştır (zaten giriş yapmış)
+    if (pathname === '/login') {
       const url = request.nextUrl.clone()
       url.pathname = '/urunler'
       return NextResponse.redirect(url)
     }
-    if (request.nextUrl.pathname === '/hasta-login') {
+    if (pathname === '/hasta-login') {
       const url = request.nextUrl.clone()
-      url.pathname = '/hastane/profil'
+      // Hekim giriş yapmışsa hekim paneline, değilse hasta profiline
+      url.pathname = role === 'vet' ? '/hekim' : '/hastane/profil'
       return NextResponse.redirect(url)
     }
-    if (request.nextUrl.pathname === '/hekim-login') {
+    if (pathname === '/hekim-login') {
       const url = request.nextUrl.clone()
-      url.pathname = '/hekim'
+      // Hekim veya admin → hekim paneli, değilse hasta profiline
+      url.pathname = (role === 'vet' || role === 'admin') ? '/hekim' : '/hastane/profil'
       return NextResponse.redirect(url)
+    }
+
+    // Hekim paneline sadece vet/admin erişebilir
+    if (pathname.startsWith('/hekim') && !pathname.startsWith('/hekim-login')) {
+      if (role !== 'vet' && role !== 'admin') {
+        const url = request.nextUrl.clone()
+        url.pathname = '/hasta-login'
+        return NextResponse.redirect(url)
+      }
+    }
+
+    // Hasta paneline hekim erişemez (kendi paneli var)
+    if (pathname.startsWith('/hastane/profil') || pathname.startsWith('/pet-karne')) {
+      if (role === 'vet') {
+        const url = request.nextUrl.clone()
+        url.pathname = '/hekim'
+        return NextResponse.redirect(url)
+      }
     }
   }
 
