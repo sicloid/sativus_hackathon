@@ -1,32 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
 import { createAppointment } from "./actions";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Calendar, Clock, PawPrint, User, Phone } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, Clock, PawPrint, User, Phone, Bot } from "lucide-react";
 import { motion } from "framer-motion";
-import { Suspense } from "react";
 
-function BookingForm() {
-  const searchParams = useSearchParams();
-  const aiAciliyet = searchParams?.get("aciliyet") || "";
-  const aiHizmet = searchParams?.get("hizmet") || "";
-  const aiOzeti = searchParams?.get("ozet") || "";
+interface Message {
+  role: "user" | "model";
+  content: string;
+}
+
+function BookingForm({ diagnosis }: { diagnosis: any }) {
+  const aiAciliyet = diagnosis?.aciliyet || "";
+  const aiHizmet = diagnosis?.tavsiye_edilen_hizmet || "";
+  const aiOzeti = diagnosis?.ai_ozeti || "";
 
   return (
     <form action={createAppointment as any} className="space-y-6 flex flex-col">
-      {/* Hidden inputs to pass AI params */}
       <input type="hidden" name="aiAciliyet" value={aiAciliyet} />
       <input type="hidden" name="aiHizmet" value={aiHizmet} />
       <input type="hidden" name="aiOzeti" value={aiOzeti} />
 
       {(aiAciliyet || aiHizmet) && (
-        <div className="bg-[#bbf7d0] border-4 border-black rounded-2xl p-4 shadow-inner mb-4">
-          <p className="font-black uppercase text-sm mb-1 text-emerald-800">VetAI Önerileri Aktarıldı</p>
-          <div className="flex gap-2">
-            {aiAciliyet && <span className="bg-white border-2 border-black rounded-lg px-2 py-1 text-xs font-bold">{aiAciliyet} Aciliyet</span>}
-            {aiHizmet && <span className="bg-white border-2 border-black rounded-lg px-2 py-1 text-xs font-bold">{aiHizmet} Hizmeti</span>}
+        <div className="bg-[#bbf7d0] border-4 border-black rounded-2xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-4">
+          <p className="font-black uppercase text-sm mb-2 text-emerald-900">VetAI Önerileri Forma Eklendi</p>
+          <div className="flex gap-2 flex-wrap">
+            {aiAciliyet && <span className="bg-white border-2 border-black rounded-lg px-3 py-1 text-sm font-bold">{aiAciliyet} Aciliyet</span>}
+            {aiHizmet && <span className="bg-white border-2 border-black rounded-lg px-3 py-1 text-sm font-bold">{aiHizmet} Hizmeti</span>}
           </div>
         </div>
       )}
@@ -146,7 +148,67 @@ function BookingForm() {
   );
 }
 
-export default function BookingPage() {
+export default function UnifiedBookingPage() {
+  const [messages, setMessages] = useState<Message[]>([
+    { role: "model", content: "Merhaba! Randevu almadan önce VetAI ile ön teşhis yapmak isterseniz şikayetinizi yazabilirsiniz." }
+  ]);
+  const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [diagnosis, setDiagnosis] = useState<{ aciliyet: string; tavsiye_edilen_hizmet: string; ai_ozeti: string } | null>(null);
+  
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, diagnosis]);
+
+  const sendMessage = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!input.trim() || isLoading) return;
+
+    const newMessages = [...messages, { role: "user" as const, content: input }];
+    setMessages(newMessages);
+    setInput("");
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/ai-teshis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: newMessages, finalRequest: false })
+      });
+      const data = await res.json();
+      
+      if (data.message) {
+        setMessages([...newMessages, { role: "model", content: data.message }]);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const finishDiagnosis = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/ai-teshis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages, finalRequest: true })
+      });
+      const data = await res.json();
+      
+      if (data.diagnosis) {
+        setDiagnosis(data.diagnosis);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#fdfdfd] text-black font-sans flex flex-col relative overflow-hidden pb-10">
       {/* BACKGROUND DOT GRID */}
@@ -168,27 +230,100 @@ export default function BookingPage() {
         </Link>
       </div>
 
-      <div className="flex-1 flex items-center justify-center p-6 relative z-10 pt-24">
+      <div className="flex-1 max-w-3xl mx-auto w-full px-4 pt-24 relative z-10 flex flex-col gap-8">
+        
+        {/* VetAI Chat Section */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
-          className="w-full max-w-2xl"
         >
-          {/* MAIN CARD */}
-          <div className="bg-[#fef08a] border-4 border-black rounded-[2rem] p-8 sm:p-10 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex flex-col">
-            
-            <div className="text-center mb-10">
-              <h1 className="text-4xl sm:text-5xl font-black uppercase tracking-tighter mb-2">Hızlı Randevu</h1>
+          <div className="bg-white border-4 border-black rounded-[2rem] p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] flex flex-col">
+            <div className="flex items-center gap-3 mb-4 border-b-4 border-black pb-4">
+              <Bot className="w-8 h-8 text-[#a855f7]" />
+              <div>
+                <h2 className="text-2xl font-black uppercase tracking-tight">VetAI Ön Teşhis</h2>
+                <p className="font-bold text-sm text-zinc-600">İsteğe bağlı: Randevu öncesi yapay zeka değerlendirmesi alın.</p>
+              </div>
+            </div>
+
+            <div className="bg-zinc-50 border-4 border-black rounded-xl p-4 flex flex-col h-[35vh] overflow-hidden">
+              <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+                {messages.map((msg, idx) => (
+                  <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                    <div className={`
+                      px-4 py-3 rounded-2xl border-2 border-black max-w-[85%] font-bold text-sm sm:text-base
+                      ${msg.role === "user" ? "bg-indigo-300 rounded-br-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" : "bg-emerald-300 rounded-bl-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"}
+                    `}>
+                      {msg.content}
+                    </div>
+                  </div>
+                ))}
+                {isLoading && !diagnosis && (
+                  <div className="flex justify-start">
+                    <div className="px-4 py-3 rounded-2xl border-2 border-black bg-emerald-300 rounded-bl-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-bold text-sm animate-pulse">
+                      VetAI Düşünüyor...
+                    </div>
+                  </div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+
+              {!diagnosis ? (
+                <form onSubmit={sendMessage} className="mt-4 flex gap-2">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Şikayetinizi yazın..."
+                    className="flex-1 border-4 border-black rounded-xl px-4 py-2 font-bold text-sm bg-white focus:outline-none focus:bg-yellow-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                    disabled={isLoading}
+                  />
+                  <button 
+                    type="submit" 
+                    disabled={isLoading}
+                    className="bg-indigo-600 text-white border-4 border-black rounded-xl px-4 py-2 font-black uppercase text-sm tracking-wide shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all disabled:opacity-50"
+                  >
+                    Gönder
+                  </button>
+                </form>
+              ) : (
+                <div className="mt-4 p-3 border-4 border-black bg-yellow-300 rounded-xl shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-black text-center text-sm uppercase">
+                  Teşhis tamamlandı. Form güncellendi.
+                </div>
+              )}
+            </div>
+
+            {!diagnosis && messages.length > 2 && (
+              <div className="flex justify-center mt-4">
+                 <button 
+                    onClick={finishDiagnosis}
+                    disabled={isLoading}
+                    className="bg-rose-500 text-white border-4 border-black rounded-xl px-6 py-3 font-black uppercase text-sm tracking-wide shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all disabled:opacity-50"
+                  >
+                    Teşhisi Tamamla ve Randevu Formuna Aktar
+                  </button>
+              </div>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Booking Form Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
+        >
+          <div className="bg-[#fef08a] border-4 border-black rounded-[2rem] p-8 sm:p-10 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] flex flex-col mb-16">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tighter mb-2">Randevu Formu</h1>
               <p className="font-bold text-zinc-700">Dostunuz için en uygun zamanı belirleyin.</p>
             </div>
 
-            <Suspense fallback={<div className="font-bold text-center">Yükleniyor...</div>}>
-              <BookingForm />
-            </Suspense>
-
+            <BookingForm diagnosis={diagnosis} />
           </div>
         </motion.div>
+
       </div>
     </div>
   );

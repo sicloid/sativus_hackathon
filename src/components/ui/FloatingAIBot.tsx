@@ -15,7 +15,7 @@ export function FloatingAIBot() {
   
   // Chat State
   const [messages, setMessages] = useState<Message[]>([
-    { role: "model", content: "Merhaba! Ben VetAI, PetVerse'in uzman yapay zeka asistanıyım. Dostumuzun ne gibi şikayetleri var?" }
+    { role: "model", content: "Merhaba! Ben PetVerse Asistanı VetAI. Mağaza, hizmetlerimiz veya genel sorularınız hakkında size nasıl yardımcı olabilirim?" }
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -200,7 +200,7 @@ export function FloatingAIBot() {
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Şikayeti yazın..."
+                  placeholder="Sorunuzu yazın..."
                   className="flex-1 border-4 border-black rounded-xl px-4 py-3 font-bold text-base bg-zinc-50 focus:outline-none focus:bg-white shadow-inner placeholder:text-zinc-400"
                   disabled={isLoading}
                 />
@@ -235,7 +235,7 @@ export function FloatingAIBot() {
               </div>
               <div className="flex-1 text-left hidden sm:block pr-4">
                 <p className="text-white font-black uppercase text-xl md:text-2xl leading-tight">VetAI Asistan</p>
-                <p className="text-white font-bold text-sm md:text-base opacity-90 mt-1">Anında Teşhis ve Randevu</p>
+                <p className="text-white font-bold text-sm md:text-base opacity-90 mt-1">Hızlı Rehber ve Sorularınız</p>
               </div>
             </div>
           </button>

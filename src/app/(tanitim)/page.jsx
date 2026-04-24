@@ -6,6 +6,7 @@ import ShopSection from '@/components/tanitim/ShopSection';
 import CTABanner from '@/components/tanitim/CTABanner';
 import FAQSection from '@/components/tanitim/FAQSection';
 import Footer from '@/components/tanitim/Footer';
+import { FloatingAIBot } from '@/components/ui/FloatingAIBot';
 
 export default function HomePage() {
   return (
@@ -18,6 +19,7 @@ export default function HomePage() {
       <CTABanner />
       <FAQSection />
       <Footer />
+      <FloatingAIBot />
     </main>
   );
 }

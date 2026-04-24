@@ -1,4 +1,3 @@
-import { FloatingAIBot } from "@/components/ui/FloatingAIBot";
 import { Navbar } from "@/components/ui/Navbar";
 
 export const metadata = {
@@ -12,7 +11,6 @@ export default function RezervasyonLayout({ children }: { children: React.ReactN
       <main className="pt-20">
         {children}
       </main>
-      <FloatingAIBot />
     </>
   );
 }
