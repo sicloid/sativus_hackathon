@@ -18,7 +18,7 @@ const blogPosts = [
   { id: 15, featured: false, kategori: "Eğitim", baslik: "Evcil Hayvanınızla Uzun Yolculuk", ozet: "Yol tutması ve taşıma çantası eğitimi", yazar: "Burak Şahin", sure: "4 dk", tarih: "1 Mar 2026", image: "https://picsum.photos/id/1015/600/400", icerik: "Araba veya uçak yolculuğu evcil hayvanlar için stresli olabilir. Yolculuk öncesi beslenme düzeni, taşıma çantasına alıştırma ve mola noktalarında yapılması gerekenleri derledik." }
 ];
 
-export default async function BlogPostDetail({ params }) {
+export default async function BlogPostDetail({ params }: { params: Promise<{ id: string }> }) {
   // Next.js 15+ dinamik rota parametreleri Promise olarak gelir. (Next 16 kullanılıyor)
   const resolvedParams = await params;
   const postId = Number(resolvedParams.id);

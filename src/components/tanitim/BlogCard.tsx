@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-export default function BlogCard({ post }) {
+export default function BlogCard({ post }: { post: any }) {
   // Soft-Brutalism için arka plan renkleri (sırayla)
   const bgColors = ["bg-brutal-yellow", "bg-brutal-blue", "bg-brutal-red", "bg-brutal-green", "bg-orange-300", "bg-pink-300"];
   // ID'ye göre sıradan bir renk seç (örnekte brutal- sınıfları globals.css'den beslenir veya Tailwind standart renkleri)

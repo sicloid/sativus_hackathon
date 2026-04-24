@@ -1,16 +1,18 @@
-'use client';
+'use client'
 
-import { useState, useEffect } from 'react';
-import { useCart } from '@/context/CartContext';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useState, useEffect } from 'react'
+import { useCart } from '@/context/CartContext'
+import { useRouter } from 'next/navigation'
+import { createOrder } from '@/app/actions/store'
+import Link from 'next/link'
 
 export default function OdemePage() {
-  const { items, totalPrice } = useCart();
-  const router = useRouter();
+  const { items, totalPrice, clearCart } = useCart()
+  const router = useRouter()
   
-  const [paymentMethod, setPaymentMethod] = useState<'kredi_karti' | 'kapida'>('kredi_karti');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<'kredi_karti' | 'kapida'>('kredi_karti')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   // Form states
   const [address, setAddress] = useState({
@@ -18,42 +20,72 @@ export default function OdemePage() {
     phone: '',
     fullAddress: '',
     city: ''
-  });
+  })
 
   const [card, setCard] = useState({
     number: '',
     name: '',
     expiry: '',
     cvv: ''
-  });
+  })
 
   // Sepet boşsa sepete yönlendir
   useEffect(() => {
     if (items.length === 0) {
-      router.push('/sepet');
+      router.push('/sepet')
     }
-  }, [items, router]);
+  }, [items, router])
 
-  const tax = totalPrice * 0.20;
-  const shipping = totalPrice > 500 ? 0 : 50;
-  const finalTotal = totalPrice + tax + shipping;
+  const tax = totalPrice * 0.20
+  const shipping = totalPrice > 500 ? 0 : 50
+  const finalTotal = totalPrice + tax + shipping
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    // Fake API call
-    setTimeout(() => {
-      router.push('/odeme/basarili');
-    }, 1500);
-  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setError(null)
 
-  if (items.length === 0) return null; // Yönlendirme bekleniyor
+    const formData = new FormData()
+    formData.set('fullName', address.fullName)
+    formData.set('phone', address.phone)
+    formData.set('address', address.fullAddress)
+    formData.set('city', address.city)
+    formData.set('cartItems', JSON.stringify(
+      items.map(item => ({
+        productId: item.productId,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+      }))
+    ))
+
+    try {
+      const result = await createOrder(formData)
+      if (result?.error) {
+        setError(result.error)
+        setIsSubmitting(false)
+        return
+      }
+      // createOrder redirects on success, clear local cart
+      clearCart()
+    } catch {
+      // redirect throws in Next.js, which is expected behavior
+      clearCart()
+    }
+  }
+
+  if (items.length === 0) return null // Yönlendirme bekleniyor
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
       <div className="flex-grow">
         <h1 className="text-4xl font-black uppercase mb-8">Ödeme & Teslimat</h1>
+
+        {error && (
+          <div className="mb-6 p-4 bg-[var(--brutal-red)] brutal-border font-bold text-white">
+            {error}
+          </div>
+        )}
         
         <form id="checkout-form" onSubmit={handleSubmit} className="flex flex-col gap-8">
           
@@ -161,7 +193,7 @@ export default function OdemePage() {
             disabled={isSubmitting}
             className="w-full bg-black text-white py-4 brutal-border brutal-shadow brutal-shadow-hover font-black uppercase text-xl transition-colors disabled:opacity-70"
           >
-            {isSubmitting ? 'İşleniyor...' : 'Siparişi Tamamla'}
+            {isSubmitting ? 'Sipariş Oluşturuluyor...' : 'Siparişi Tamamla'}
           </button>
           
           <Link href="/sepet" className="block text-center mt-4 font-bold underline hover:text-[var(--brutal-red)]">
@@ -170,5 +202,5 @@ export default function OdemePage() {
         </div>
       </div>
     </div>
-  );
+  )
 }
