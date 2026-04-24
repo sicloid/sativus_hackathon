@@ -463,19 +463,6 @@ const MOCK_PRODUCTS: Product[] = [
     category: 'Kemirgen',
     stock_quantity: 40
   }
-];images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=800&q=80',
-    category: 'Kemirgen',
-    stock_quantity: 15
-  },
-  {
-    id: 'small-10',
-    name: 'Kemirgen Vitamini',
-    description: 'Suya katılan, bağışıklık güçlendirici multivitamin damlası.',
-    price: 110,
-    image_url: 'https://images.unsplash.com/photo-1548767797-d8c844163c4a?w=800&q=80',
-    category: 'Kemirgen',
-    stock_quantity: 40
-  }
 ];
 
 const CATEGORIES = ['Tümü', 'Kedi', 'Köpek', 'Kuş', 'Balık', 'Kemirgen'];
