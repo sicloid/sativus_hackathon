@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/ui/Navbar";
+import { CareNavbarWrapper } from "@/components/CareNavbarWrapper";
 
 export const metadata = {
   title: "PetVerse Hospital",
@@ -6,11 +6,8 @@ export const metadata = {
 
 export default function RezervasyonLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <Navbar />
-      <main className="pt-20">
-        {children}
-      </main>
-    </>
+    <CareNavbarWrapper>
+      {children}
+    </CareNavbarWrapper>
   );
 }
