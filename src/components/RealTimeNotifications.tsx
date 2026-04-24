@@ -5,42 +5,45 @@ import { createClient } from '@/utils/supabase/client';
 
 export default function RealTimeNotifications({ userId }: { userId: string }) {
   const [notifications, setNotifications] = useState<{ id: string, message: string }[]>([]);
-  const supabase = createClient();
-
   useEffect(() => {
     if (!userId) return;
 
-    const channel = supabase
-      .channel('messages_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `user_id=eq.${userId}`,
-        },
-        (payload) => {
-          if (payload.new.is_from_seller) {
-            const newNotif = {
-              id: payload.new.id,
-              message: 'Satıcıdan yeni mesaj: ' + payload.new.content.substring(0, 50) + '...'
-            };
-            setNotifications(prev => [...prev, newNotif]);
-            
-            // Otomatik kapanma
-            setTimeout(() => {
-              setNotifications(prev => prev.filter(n => n.id !== newNotif.id));
-            }, 5000);
+    try {
+      const supabase = createClient();
+      const channel = supabase
+        .channel('messages_changes')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `user_id=eq.${userId}`,
+          },
+          (payload) => {
+            if (payload.new.is_from_seller) {
+              const newNotif = {
+                id: payload.new.id,
+                message: 'Satıcıdan yeni mesaj: ' + payload.new.content.substring(0, 50) + '...'
+              };
+              setNotifications(prev => [...prev, newNotif]);
+              
+              // Otomatik kapanma
+              setTimeout(() => {
+                setNotifications(prev => prev.filter(n => n.id !== newNotif.id));
+              }, 5000);
+            }
           }
-        }
-      )
-      .subscribe();
+        )
+        .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [userId, supabase]);
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    } catch (e) {
+      console.error("Supabase client creation failed for realtime notifications", e);
+    }
+  }, [userId]);
 
   if (notifications.length === 0) return null;
 

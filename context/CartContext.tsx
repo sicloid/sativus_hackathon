@@ -28,16 +28,20 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([])
   const [isLoaded, setIsLoaded] = useState(false)
-  const supabase = createClient()
 
   // Load cart on mount
   useEffect(() => {
     const loadCart = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (user) {
-        // Here we could load from Supabase database via Prisma/Server Action
-        // For now, we fallback to local storage
+      try {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        
+        if (user) {
+          // Here we could load from Supabase database via Prisma/Server Action
+          // For now, we fallback to local storage
+        }
+      } catch (e) {
+        console.error("Supabase auth error during cart load", e)
       }
       
       const storedCart = localStorage.getItem('petverse_cart')
