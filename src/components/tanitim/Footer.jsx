@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Twitter, Instagram, Linkedin } from 'lucide-react';
 
 export default function Footer() {
   return (
@@ -41,15 +40,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} PetVerse. Tüm hakları saklıdır.
           </p>
           <div className="flex items-center gap-4">
-            <a href="#" className="bg-white text-black p-2 border-2 border-transparent rounded-xl hover:bg-gray-200 transition-colors">
-              <Twitter className="w-5 h-5" />
-            </a>
-            <a href="#" className="bg-white text-black p-2 border-2 border-transparent rounded-xl hover:bg-gray-200 transition-colors">
-              <Instagram className="w-5 h-5" />
-            </a>
-            <a href="#" className="bg-white text-black p-2 border-2 border-transparent rounded-xl hover:bg-gray-200 transition-colors">
-              <Linkedin className="w-5 h-5" />
-            </a>
+            {/* Social icons removed due to lucide-react deprecation */}
           </div>
         </div>
       </div>

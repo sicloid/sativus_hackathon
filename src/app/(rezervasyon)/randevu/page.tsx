@@ -14,7 +14,7 @@ function BookingForm() {
   const aiOzeti = searchParams?.get("ozet") || "";
 
   return (
-    <form action={createAppointment} className="space-y-6 flex flex-col">
+    <form action={createAppointment as any} className="space-y-6 flex flex-col">
       {/* Hidden inputs to pass AI params */}
       <input type="hidden" name="aiAciliyet" value={aiAciliyet} />
       <input type="hidden" name="aiHizmet" value={aiHizmet} />

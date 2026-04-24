@@ -119,12 +119,12 @@ export default async function HekimDashboard() {
 
                     {appt.status === "PENDING" && (
                       <div className="flex flex-col sm:flex-row gap-3 w-full pt-4 border-t-4 border-black">
-                        <form action={approveAppointment.bind(null, appt.id)} className="flex-1">
+                        <form action={approveAppointment.bind(null, appt.id) as any} className="flex-1">
                           <Button type="submit" variant="default" className="w-full bg-[#34d399] hover:bg-[#10b981]">
                             Onayla
                           </Button>
                         </form>
-                        <form action={rejectAppointment.bind(null, appt.id)} className="flex-1">
+                        <form action={rejectAppointment.bind(null, appt.id) as any} className="flex-1">
                           <Button type="submit" variant="danger" className="w-full">
                             İptal
                           </Button>

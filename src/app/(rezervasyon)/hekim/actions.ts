@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-export async function approveAppointment(appointmentId: string) {
+export async function approveAppointment(appointmentId: string, formData?: FormData) {
   try {
     await prisma.appointment.update({
       where: { id: appointmentId },
@@ -19,7 +19,7 @@ export async function approveAppointment(appointmentId: string) {
   }
 }
 
-export async function rejectAppointment(appointmentId: string) {
+export async function rejectAppointment(appointmentId: string, formData?: FormData) {
   try {
     const appointment = await prisma.appointment.update({
       where: { id: appointmentId },

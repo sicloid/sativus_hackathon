@@ -22,8 +22,19 @@ export async function createAppointment(formData: FormData) {
   }
 
   try {
+    // Default provider (Mock ID, since we don't have login context for provider selection here)
+    let provider = await prisma.provider.findFirst()
+    if (!provider) {
+      provider = await prisma.provider.create({
+        data: {
+          name: "Dr. AI Nöbetçi",
+          type: "CLINIC"
+        }
+      })
+    }
+
     // Check if slot exists or create it
-    let slot = await prisma.appointmentSlot.findFirst({
+    let slot = await prisma.slot.findFirst({
       where: {
         date: new Date(date),
         startTime: time
@@ -31,23 +42,13 @@ export async function createAppointment(formData: FormData) {
     })
 
     if (!slot) {
-      slot = await prisma.appointmentSlot.create({
+      slot = await prisma.slot.create({
         data: {
+          providerId: provider.id,
           date: new Date(date),
           startTime: time,
-          endTime: "23:59", // Dummy end time
-          isAvailable: true
-        }
-      })
-    }
-
-    // Default provider (Mock ID, since we don't have login context for provider selection here)
-    let provider = await prisma.provider.findFirst()
-    if (!provider) {
-      provider = await prisma.provider.create({
-        data: {
-          name: "Dr. AI Nöbetçi",
-          title: "Veteriner Hekim"
+          endTime: `${parseInt(time.split(":")[0]) + 1}:00`,
+          isBooked: true
         }
       })
     }
