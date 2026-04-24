@@ -1,21 +1,37 @@
 "use client";
 
-import { loginHekim } from "./actions";
+import { createClient } from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import Link from "next/link";
 import { ArrowLeft, User, Lock, ArrowRight, ShieldCheck } from "lucide-react";
 import { motion } from "framer-motion";
-import { useState } from "react";
 
 export default function HekimLoginPage() {
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const supabase = createClient()
+  const router = useRouter()
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
-  async function handleLogin(formData: FormData) {
-    setError(null);
-    setLoading(true);
-    const res = await loginHekim(formData);
-    if (res?.error) setError(res.error);
-    setLoading(false);
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setError('')
+
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    })
+
+    if (authError) {
+      setError('Giriş başarısız. Lütfen bilgilerinizi kontrol edin.')
+      setLoading(false)
+      return
+    }
+
+    router.push('/hekim-panel')
   }
 
   return (
@@ -79,7 +95,7 @@ export default function HekimLoginPage() {
               </motion.div>
             )}
 
-            <form action={handleLogin} className="space-y-8 flex flex-col">
+            <form onSubmit={handleLogin} className="space-y-8 flex flex-col">
               
               <div className="space-y-3">
                 <div className="flex justify-between items-center px-2">
@@ -93,6 +109,8 @@ export default function HekimLoginPage() {
                   <input 
                     name="email"
                     type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="hekim@petverse.com"
                     required
                     className="w-full bg-white border-4 border-black rounded-2xl py-5 pl-14 pr-4 font-bold text-xl placeholder:text-zinc-300 focus:outline-none focus:bg-[#fef08a] transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] focus:-translate-y-1 focus:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]"
@@ -112,6 +130,8 @@ export default function HekimLoginPage() {
                   <input 
                     name="password"
                     type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     required
                     minLength={6}
@@ -133,7 +153,7 @@ export default function HekimLoginPage() {
                     </span>
                   ) : (
                     <>
-                      Sisteme Eriş
+                      SİSTEME ERİŞ
                       <ArrowRight className="w-7 h-7 group-hover:translate-x-2 transition-transform" />
                     </>
                   )}
