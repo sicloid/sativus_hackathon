@@ -49,14 +49,23 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
-    const isMemberProtectedRoute = 
+    const isCareProtectedRoute = 
       request.nextUrl.pathname.startsWith('/pet-karne') || 
       request.nextUrl.pathname.startsWith('/receteler') || 
       request.nextUrl.pathname.startsWith('/faturalar') ||
-      request.nextUrl.pathname.startsWith('/profil') ||
+      request.nextUrl.pathname.startsWith('/hastane/profil')
+      
+    const isStoreProtectedRoute = 
+      request.nextUrl.pathname.startsWith('/profil') && !request.nextUrl.pathname.startsWith('/hastane/profil') ||
       request.nextUrl.pathname.startsWith('/odeme')
 
-    if (isMemberProtectedRoute) {
+    if (isCareProtectedRoute) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/hasta-login'
+      return NextResponse.redirect(url)
+    }
+
+    if (isStoreProtectedRoute) {
       const url = request.nextUrl.clone()
       url.pathname = '/login'
       return NextResponse.redirect(url)
@@ -67,7 +76,12 @@ export async function updateSession(request: NextRequest) {
   if (user) {
     if (request.nextUrl.pathname === '/login') {
       const url = request.nextUrl.clone()
-      url.pathname = '/hastane'
+      url.pathname = '/urunler'
+      return NextResponse.redirect(url)
+    }
+    if (request.nextUrl.pathname === '/hasta-login') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/hastane/profil'
       return NextResponse.redirect(url)
     }
     if (request.nextUrl.pathname === '/hekim-login') {

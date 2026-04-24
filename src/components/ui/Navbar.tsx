@@ -26,7 +26,10 @@ export function Navbar() {
             <Link href="/receteler" className="font-bold text-base lg:text-lg hover:underline underline-offset-4 flex-shrink-0">Reçeteler</Link>
             <Link href="/faturalar" className="font-bold text-base lg:text-lg hover:underline underline-offset-4 flex-shrink-0">Faturalar</Link>
             
-            <Link href="/hekim-login" className="ml-2 lg:ml-4 flex-shrink-0">
+            <Link href="/hasta-login" className="ml-2 lg:ml-4 flex-shrink-0">
+              <Button variant="outline" className="py-2 px-4 lg:px-6 whitespace-nowrap border-blue-500 text-blue-600 hover:bg-blue-50">Hasta Girişi</Button>
+            </Link>
+            <Link href="/hekim-login" className="ml-2 flex-shrink-0">
               <Button variant="outline" className="py-2 px-4 lg:px-6 whitespace-nowrap">Personel Girişi</Button>
             </Link>
           </div>
@@ -57,6 +60,7 @@ export function Navbar() {
             <Link onClick={() => setIsOpen(false)} href="/pet-karne" className="block px-4 py-3 font-bold text-lg border-b-2 border-zinc-100">Pet Karne</Link>
             <Link onClick={() => setIsOpen(false)} href="/receteler" className="block px-4 py-3 font-bold text-lg border-b-2 border-zinc-100">Reçeteler</Link>
             <Link onClick={() => setIsOpen(false)} href="/faturalar" className="block px-4 py-3 font-bold text-lg border-b-2 border-zinc-100">Faturalar</Link>
+            <Link onClick={() => setIsOpen(false)} href="/hasta-login" className="block px-4 py-3 font-bold text-lg text-blue-600 border-b-2 border-zinc-100">Hasta Girişi</Link>
             <Link onClick={() => setIsOpen(false)} href="/hekim" className="block px-4 py-3 font-bold text-lg text-red-600">Personel Girişi</Link>
           </div>
         </div>

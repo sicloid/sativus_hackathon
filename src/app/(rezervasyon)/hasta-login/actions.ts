@@ -24,7 +24,7 @@ export async function login(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/hastane')
+  redirect('/hastane/profil')
 }
 
 export async function signup(formData: FormData) {
@@ -47,7 +47,7 @@ export async function signup(formData: FormData) {
   }
 
   revalidatePath('/', 'layout')
-  redirect('/hastane')
+  redirect('/hastane/profil')
 }
 
 export async function logout() {
@@ -55,5 +55,5 @@ export async function logout() {
   await supabase.auth.signOut()
   
   revalidatePath('/', 'layout')
-  redirect('/login')
+  redirect('/hasta-login')
 }

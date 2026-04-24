@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
+import { logout } from '../../hasta-login/actions';
 
 const MENU_ITEMS = [
   { name: 'Profil Özeti', path: '/hastane/profil' },
@@ -40,12 +41,14 @@ export default function CareProfilLayout({ children }: { children: React.ReactNo
                 );
               })}
               
-              <Link 
-                href="/hasta-login"
-                className="mt-8 p-3 font-black uppercase text-center border-4 border-black rounded-xl bg-rose-500 text-white hover:bg-black hover:text-white transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-              >
-                Çıkış Yap
-              </Link>
+              <form action={logout}>
+                <button 
+                  type="submit"
+                  className="w-full mt-8 p-3 font-black uppercase text-center border-4 border-black rounded-xl bg-rose-500 text-white hover:bg-black hover:text-white transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                >
+                  Çıkış Yap
+                </button>
+              </form>
             </nav>
           </div>
         </aside>
