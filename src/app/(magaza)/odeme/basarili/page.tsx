@@ -11,6 +11,7 @@ export default function OdemeBasariliPage() {
   useEffect(() => {
     // Generate random order number
     const randomOrderNumber = 'PV-' + Math.floor(100000 + Math.random() * 900000);
+    // eslint-disable-next-line
     setOrderNumber(randomOrderNumber);
     
     // Clear the cart upon successful order
