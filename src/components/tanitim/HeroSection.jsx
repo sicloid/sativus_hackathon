@@ -70,15 +70,15 @@ export default function HeroSection() {
           </motion.div>
 
           <div className="md:col-span-2 grid grid-cols-1 gap-6">
-            {/* Randevu Kartı */}
+            {/* PetVerse Care Kartı */}
             <motion.div variants={itemVariants} className="h-full">
-              <Link href="/randevu" className="h-full bg-green-400 border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center gap-4 text-black">
+              <Link href="/hastane" className="h-full bg-green-400 border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center gap-4 text-black">
                 <div className="bg-white p-4 border-2 border-black rounded-xl">
-                  <Calendar className="w-8 h-8" />
+                  <span className="text-3xl leading-none">🐾</span>
                 </div>
                 <div className="text-left">
-                  <h3 className="text-2xl font-black tracking-tight">Randevu Al</h3>
-                  <p className="font-bold">Veteriner veya kuaför</p>
+                  <h3 className="text-2xl font-black tracking-tight">PetVerse Care</h3>
+                  <p className="font-bold">Randevu, Karne, Teşhis</p>
                 </div>
               </Link>
             </motion.div>

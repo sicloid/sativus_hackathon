@@ -88,8 +88,8 @@ export default function AppointmentSection() {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Link href="/randevu" className="inline-block bg-black text-white font-black tracking-tight text-xl px-8 py-4 border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
-              Randevu Al
+            <Link href="/hastane" className="inline-block bg-black text-white font-black tracking-tight text-xl px-8 py-4 border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all">
+              PetVerse Care'e Git
             </Link>
           </motion.div>
         </motion.div>
