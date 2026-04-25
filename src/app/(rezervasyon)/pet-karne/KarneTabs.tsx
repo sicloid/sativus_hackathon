@@ -44,8 +44,8 @@ export default function KarneTabs({
   ];
 
   const mockXRays = [
-    { id: '1', date: new Date('2024-02-05'), region: 'Sol Arka Bacak', vetName: 'Dr. Zeynep Yılmaz', notes: 'Kemik yapısı normal, çatlak belirtisi yok.', imageUrl: 'https://images.unsplash.com/photo-1574786762391-9e7ecbd1afb8?auto=format&fit=crop&q=80&w=800' },
-    { id: '2', date: new Date('2023-10-12'), region: 'Göğüs Kafesi', vetName: 'Dr. Ahmet Kaya', notes: 'Akciğer kapasitesi iyi durumda, herhangi bir anomali görülmedi.', imageUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=800' }
+    { id: '1', date: new Date('2024-02-05'), region: 'Sol Arka Bacak', vetName: 'Dr. Zeynep Yılmaz', notes: 'Kemik yapısı normal, çatlak belirtisi yok.', imageUrl: '/images/xrays/leg.png' },
+    { id: '2', date: new Date('2023-10-12'), region: 'Göğüs Kafesi', vetName: 'Dr. Ahmet Kaya', notes: 'Akciğer kapasitesi iyi durumda, herhangi bir anomali görülmedi.', imageUrl: '/images/xrays/chest.png' }
   ];
 
   return (
@@ -191,9 +191,9 @@ export default function KarneTabs({
             {mockXRays.map((xray, idx) => (
               <div key={idx} className="border-4 border-black bg-white rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden flex flex-col">
                 <div className="h-48 bg-zinc-200 border-b-4 border-black relative">
-                  {/* Fake x-ray image using generic image with grayscale to simulate it */}
+                  {/* X-ray image */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={xray.imageUrl} alt="Röntgen" className="w-full h-full object-cover grayscale contrast-125" />
+                  <img src={xray.imageUrl} alt="Röntgen" className="w-full h-full object-cover" />
                   <div className="absolute top-2 right-2 bg-white border-2 border-black px-2 py-1 rounded-lg font-bold text-sm">
                     {new Date(xray.date).toLocaleDateString('tr-TR')}
                   </div>
