@@ -44,17 +44,22 @@ export default async function HekimDashboard() {
             </div>
             
             <div className="flex flex-wrap gap-4 w-full md:w-auto">
+              <Link href="/hekim/ayarlar" className="w-full md:w-auto">
+                <Button variant="outline" className="w-full md:w-auto text-lg px-8 h-14 rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] bg-white text-black hover:bg-gray-100 border-4 border-black font-black uppercase">
+                  Ayarlar / 2FA
+                </Button>
+              </Link>
+              <Link href="/hastane" className="w-full md:w-auto">
+                <Button variant="outline" className="w-full md:w-auto text-lg px-8 h-14 rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] bg-white text-black hover:bg-gray-100 border-4 border-black font-black uppercase">
+                  Care Ana Sayfa
+                </Button>
+              </Link>
               <form action={logoutAction}>
                 <Button type="submit" variant="danger" className="w-full md:w-auto text-lg px-8 flex items-center gap-2 h-14 rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
                   <LogOut className="w-6 h-6" />
                   Çıkış Yap
                 </Button>
               </form>
-              <Link href="/hastane" className="w-full md:w-auto">
-                <Button variant="outline" className="w-full md:w-auto text-lg px-8 h-14 rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-                  Care Ana Sayfa
-                </Button>
-              </Link>
             </div>
           </div>
         </div>

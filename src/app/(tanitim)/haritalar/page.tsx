@@ -6,7 +6,7 @@ import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import { MapPin, Clock, Phone, Navigation } from 'lucide-react'
 import Footer from '@/components/tanitim/Footer'
-import { mapLocations } from '@/components/tanitim/PetVerseMap'
+import { mapLocations } from '@/data/mapLocations'
 
 const PetVerseMap = dynamic(
   () => import('@/components/tanitim/PetVerseMap'),

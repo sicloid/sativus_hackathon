@@ -117,6 +117,17 @@ export async function updateSession(request: NextRequest) {
         url.pathname = '/care-login'
         return NextResponse.redirect(url)
       }
+
+      // 2FA (MFA) kontrolü
+      if (!pathname.startsWith('/care-login/2fa') && !pathname.startsWith('/hekim/ayarlar/2fa')) {
+        const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+        // nextLevel 'aal2' ise, kullanıcının en az bir 2FA faktörü (TOTP) kuruludur.
+        if (aal && aal.nextLevel === 'aal2' && aal.currentLevel === 'aal1') {
+          const url = request.nextUrl.clone()
+          url.pathname = '/care-login/2fa'
+          return NextResponse.redirect(url)
+        }
+      }
     }
 
     // Hasta paneline hekim erişemez (kendi paneli var)

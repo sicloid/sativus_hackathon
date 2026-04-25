@@ -1,6 +1,8 @@
 import { createClient } from '@/utils/supabase/server';
 import { logoutAction } from '@/app/actions/auth';
 import { redirect } from 'next/navigation';
+import ProfileUpdateForm from '@/components/profile/ProfileUpdateForm';
+import PasswordChangeForm from '@/components/profile/PasswordChangeForm';
 
 export default async function ProfilPage() {
   const supabase = await createClient();
@@ -20,7 +22,14 @@ export default async function ProfilPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-4xl font-black uppercase">Hoş Geldin, {name}</h1>
+      <div className="flex justify-between items-center flex-wrap gap-4">
+        <h1 className="text-4xl font-black uppercase">Hoş Geldin, {name}</h1>
+        <form action={logoutAction}>
+          <button type="submit" className="bg-[var(--brutal-red)] text-white px-6 py-3 font-black uppercase brutal-border brutal-shadow brutal-shadow-hover hover:bg-black transition-colors">
+            Çıkış Yap
+          </button>
+        </form>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-[var(--brutal-blue)] brutal-border brutal-shadow p-6 flex flex-col justify-between h-40">
@@ -39,30 +48,13 @@ export default async function ProfilPage() {
         </div>
       </div>
 
-      <div className="bg-white brutal-border brutal-shadow p-8 mt-4">
-        <h2 className="text-2xl font-black uppercase mb-6 border-b-4 border-black pb-2">Kişisel Bilgiler</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block font-bold uppercase text-sm mb-2 text-gray-600">Ad Soyad</label>
-            <p className="font-black text-xl p-3 bg-[#f8f8f8] brutal-border">{name}</p>
-          </div>
-          <div>
-            <label className="block font-bold uppercase text-sm mb-2 text-gray-600">E-Posta</label>
-            <p className="font-black text-xl p-3 bg-[#f8f8f8] brutal-border">{email}</p>
-          </div>
-          <div className="md:col-span-2 flex flex-wrap gap-4 mt-4">
-            <button className="bg-black text-white px-6 py-3 font-black uppercase brutal-border hover:bg-white hover:text-black transition-colors">
-              Bilgileri Güncelle
-            </button>
-            <form action={logoutAction}>
-              <button type="submit" className="bg-[var(--brutal-red)] text-white px-6 py-3 font-black uppercase brutal-border brutal-shadow brutal-shadow-hover hover:bg-black transition-colors">
-                Çıkış Yap
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+      <ProfileUpdateForm 
+        initialName={name} 
+        initialPhone={user.user_metadata?.phone || ''} 
+        email={email} 
+      />
+      
+      <PasswordChangeForm />
     </div>
   );
 }

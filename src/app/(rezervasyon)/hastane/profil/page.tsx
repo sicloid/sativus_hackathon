@@ -1,6 +1,8 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
+import ProfileUpdateForm from '@/components/profile/ProfileUpdateForm';
+import PasswordChangeForm from '@/components/profile/PasswordChangeForm';
 
 export const dynamic = "force-dynamic";
 
@@ -43,20 +45,13 @@ export default async function CareProfilPage() {
         </div>
       </div>
 
-      <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 mt-4 rounded-2xl">
-        <h2 className="text-2xl font-black uppercase mb-6 border-b-4 border-black pb-2">Kişisel Bilgiler</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block font-bold uppercase text-sm mb-2 text-gray-600">Ad Soyad</label>
-            <p className="font-black text-xl p-3 bg-[#f8f8f8] border-4 border-black rounded-xl">{name}</p>
-          </div>
-          <div>
-            <label className="block font-bold uppercase text-sm mb-2 text-gray-600">E-Posta</label>
-            <p className="font-black text-xl p-3 bg-[#f8f8f8] border-4 border-black rounded-xl">{email}</p>
-          </div>
-        </div>
-      </div>
+      <ProfileUpdateForm 
+        initialName={name} 
+        initialPhone={user.user_metadata?.phone || ''} 
+        email={email} 
+      />
+      
+      <PasswordChangeForm />
     </div>
   );
 }
