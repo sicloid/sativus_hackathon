@@ -41,7 +41,7 @@ export default async function RandevularimPage({
 
       {appointments.length === 0 ? (
         <div className="text-zinc-600 font-bold bg-zinc-50 p-6 rounded-xl border-2 border-dashed border-zinc-300 text-center">
-          Henüz alınmış bir randevunuz bulunmuyor.
+          Henüz bir randevunuz bulunmuyor.
         </div>
       ) : (
         <div className="space-y-6">
