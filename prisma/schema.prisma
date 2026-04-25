@@ -1,76 +1,66 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "library"
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
-// ─── Provider (Klinik / Kuaför Uzmanı) ───────────────────────────────────────
+// ─── Provider (Hizmet Sağlayıcı/Hekim) ─────────────────────────────────────────
 model Provider {
-  id          String   @id @default(cuid())
-  name        String
-  type        String   // "CLINIC" veya "GROOMER"
-  specialty   String?
-  imageUrl    String?
-  rating      Float    @default(0.0)
-  address     String?
-  phone       String?
-
-  slots        Slot[]
+  id           String        @id @default(cuid())
+  name         String
+  type         String        // KLINIK, KUAFÖR, vb.
+  specialty    String?
+  imageUrl     String?
+  rating       Float         @default(0.0)
+  address      String?
+  phone        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   appointments Appointment[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  slots        Slot[]
 
   @@map("providers")
 }
 
-// ─── Slot (Zaman Dilimi) ──────────────────────────────────────────────────────
+// ─── Slot (Randevu Saati) ────────────────────────────────────────────────────
 model Slot {
-  id         String   @id @default(cuid())
-  providerId String
-  date       DateTime
-  startTime  String
-  endTime    String
-  isBooked   Boolean  @default(false)
-
-  provider    Provider     @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  id          String       @id @default(cuid())
+  providerId  String
+  date        DateTime
+  startTime   String
+  endTime     String
+  isBooked    Boolean      @default(false)
+  createdAt   DateTime     @default(now())
   appointment Appointment?
-
-  createdAt DateTime @default(now())
+  provider    Provider     @relation(fields: [providerId], references: [id], onDelete: Cascade)
 
   @@index([providerId, date])
   @@map("slots")
 }
 
-// ─── Appointment (Randevu) ────────────────────────────────────────────────────
+// ─── Appointment (Randevu) ───────────────────────────────────────────────────
 model Appointment {
-  id         String   @id @default(cuid())
-  providerId String
-  slotId     String   @unique
-  status     String   @default("PENDING")
-
-  // Evcil Hayvan Bilgisi
-  petName    String
-  petSpecies String
-  petAge     Int?
-  ownerName  String
-  ownerPhone String?
-  notes      String?
-
-  // AI Teşhis Sonuçları
-  aiDiagnosis    String?
-  aiAciliyet     String?
-  aiHizmet       String?
-  aiOzeti        String?
-
-  provider Provider @relation(fields: [providerId], references: [id])
-  slot     Slot     @relation(fields: [slotId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  providerId  String
+  slotId      String   @unique
+  status      String   @default("PENDING")
+  petName     String
+  petSpecies  String
+  petAge      Int?
+  ownerName   String
+  ownerPhone  String?
+  notes       String?
+  aiDiagnosis String?
+  aiAciliyet  String?
+  aiHizmet    String?
+  aiOzeti     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  provider    Provider @relation(fields: [providerId], references: [id])
+  slot        Slot     @relation(fields: [slotId], references: [id])
 
   @@index([providerId])
   @@map("appointments")
@@ -191,11 +181,9 @@ model Order {
   phone        String
   address      String
   city         String
-
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
   items        OrderItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@map("orders")
@@ -203,14 +191,29 @@ model Order {
 
 // ─── OrderItem (Sipariş Kalemi) ───────────────────────────────────────────────
 model OrderItem {
-  id         String  @id @default(cuid())
-  orderId    String  @map("order_id")
-  productId  String  @map("product_id")
-  quantity   Int
-  unitPrice  Float   @map("unit_price")
-
-  order      Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product    Product @relation(fields: [productId], references: [id])
+  id        String  @id @default(cuid())
+  orderId   String  @map("order_id")
+  productId String  @map("product_id")
+  quantity  Int
+  unitPrice Float   @map("unit_price")
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
 
   @@map("order_items")
+}
+
+// ─── Address (Adres Defteri) ──────────────────────────────────────────────────
+model Address {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  title       String
+  fullName    String   @map("full_name")
+  phone       String
+  fullAddress String   @map("full_address")
+  city        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@map("addresses")
 }
