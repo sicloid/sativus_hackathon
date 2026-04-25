@@ -123,3 +123,28 @@ export async function adminDeleteProduct(id: string) {
   revalidatePath('/admin')
   return { success: 'Ürün başarıyla silindi.' }
 }
+
+// ─── Toplu Ürün Sil ──────────────────────────────────────────────────────────
+export async function adminBulkDeleteProducts(ids: string[]) {
+  try {
+    await requireAdmin()
+  } catch {
+    return { error: 'Yetkisiz erişim.' }
+  }
+
+  if (!ids || ids.length === 0) {
+    return { error: 'Silinecek ürün seçilmedi.' }
+  }
+
+  try {
+    await prisma.product.deleteMany({
+      where: { id: { in: ids } }
+    })
+  } catch {
+    return { error: 'Ürünler silinirken bir hata oluştu.' }
+  }
+
+  revalidatePath('/urunler')
+  revalidatePath('/admin')
+  return { success: `${ids.length} ürün başarıyla silindi.` }
+}

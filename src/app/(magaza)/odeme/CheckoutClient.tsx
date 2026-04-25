@@ -3,10 +3,11 @@
 import { useState, useEffect } from 'react'
 import { useCart } from '@/context/CartContext'
 import { useRouter } from 'next/navigation'
-import { createOrder } from '@/app/actions/store'
+import { createOrder, validateCoupon } from '@/app/actions/store'
 import { useToast } from '@/context/ToastContext'
 import SuccessModal from '@/components/SuccessModal'
 import Link from 'next/link'
+import { Ticket, X, Check } from 'lucide-react'
 
 interface SavedAddress {
   id: string
@@ -31,6 +32,11 @@ export default function CheckoutClient({ savedAddresses, isLoggedIn }: CheckoutC
   const [showSuccess, setShowSuccess] = useState(false)
   const [orderId, setOrderId] = useState<string>('')
 
+  // Coupon State
+  const [couponCode, setCouponCode] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null)
+  const [isValidating, setIsValidating] = useState(false)
+
   // ─── Giriş yapmamış → /login'e yönlendir ────────────────────────────────────
   useEffect(() => {
     if (!isLoggedIn) {
@@ -45,9 +51,12 @@ export default function CheckoutClient({ savedAddresses, isLoggedIn }: CheckoutC
     }
   }, [items, router, showSuccess])
 
-  const tax = totalPrice * 0.20
-  const shipping = totalPrice > 500 ? 0 : 50
-  const finalTotal = totalPrice + tax + shipping
+  // Hesaplamalar
+  const discountAmount = appliedCoupon ? (totalPrice * appliedCoupon.discountPercent) / 100 : 0
+  const discountedSubtotal = totalPrice - discountAmount
+  const tax = discountedSubtotal * 0.20
+  const shipping = discountedSubtotal > 500 ? 0 : 50
+  const finalTotal = discountedSubtotal + tax + shipping
 
   // ─── Adres seçim modu ─────────────────────────────────────────────────────────
   const [addressMode, setAddressMode] = useState<'saved' | 'new'>(
@@ -57,7 +66,6 @@ export default function CheckoutClient({ savedAddresses, isLoggedIn }: CheckoutC
     savedAddresses[0]?.id ?? ''
   )
 
-  // Yeni adres form alanları
   const [newAddress, setNewAddress] = useState({
     fullName: '', phone: '', fullAddress: '', city: ''
   })
@@ -69,10 +77,29 @@ export default function CheckoutClient({ savedAddresses, isLoggedIn }: CheckoutC
 
   if (!isLoggedIn || (items.length === 0 && !showSuccess)) return null
 
-  // Seçili adresi bul (saved modda)
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return
+    setIsValidating(true)
+    const result = await validateCoupon(couponCode)
+    setIsValidating(false)
+
+    if (result.error) {
+      showToast(result.error, 'error')
+      setAppliedCoupon(null)
+    } else {
+      showToast(`Kupon Uygulandı: %${result.coupon.discountPercent} İndirim!`)
+      setAppliedCoupon(result.coupon)
+    }
+  }
+
+  const removeCoupon = () => {
+    setAppliedCoupon(null)
+    setCouponCode('')
+    showToast('Kupon kaldırıldı.')
+  }
+
   const selectedSavedAddr = savedAddresses.find(a => a.id === selectedAddressId)
 
-  // Forma gönderilecek adres verisini hazırla
   const getDeliveryAddress = () => {
     if (addressMode === 'saved' && selectedSavedAddr) {
       return {
@@ -108,6 +135,7 @@ export default function CheckoutClient({ savedAddresses, isLoggedIn }: CheckoutC
     formData.set('phone', delivery.phone)
     formData.set('address', delivery.address)
     formData.set('city', delivery.city)
+    formData.set('couponId', appliedCoupon?.id || '')
     formData.set('cartItems', JSON.stringify(
       items.map(item => ({
         productId: item.productId,
@@ -158,170 +186,57 @@ export default function CheckoutClient({ savedAddresses, isLoggedIn }: CheckoutC
           )}
 
           <form id="checkout-form" onSubmit={handleSubmit} className="flex flex-col gap-8">
-
-            {/* ── Teslimat Adresi ── */}
             <section className="bg-white brutal-border brutal-shadow p-6">
-              <h2 className="text-2xl font-black uppercase mb-5 border-b-4 border-black pb-2">
-                Teslimat Adresi
-              </h2>
-
-              {/* Kayıtlı adres varsa sekme seçici */}
+              <h2 className="text-2xl font-black uppercase mb-5 border-b-4 border-black pb-2">Teslimat Adresi</h2>
               {savedAddresses.length > 0 && (
                 <div className="flex gap-3 mb-5">
-                  <button
-                    type="button"
-                    onClick={() => setAddressMode('saved')}
-                    className={`flex-1 py-2.5 font-black text-sm uppercase brutal-border transition-colors
-                      ${addressMode === 'saved' ? 'bg-black text-white' : 'bg-[#f8f8f8] hover:bg-gray-200'}`}
-                  >
-                    📌 Kayıtlı Adreslerim
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAddressMode('new')}
-                    className={`flex-1 py-2.5 font-black text-sm uppercase brutal-border transition-colors
-                      ${addressMode === 'new' ? 'bg-black text-white' : 'bg-[#f8f8f8] hover:bg-gray-200'}`}
-                  >
-                    ➕ Yeni Adres
-                  </button>
+                  <button type="button" onClick={() => setAddressMode('saved')} className={`flex-1 py-2.5 font-black text-sm uppercase brutal-border transition-colors ${addressMode === 'saved' ? 'bg-black text-white' : 'bg-[#f8f8f8] hover:bg-gray-200'}`}>📌 Kayıtlı Adreslerim</button>
+                  <button type="button" onClick={() => setAddressMode('new')} className={`flex-1 py-2.5 font-black text-sm uppercase brutal-border transition-colors ${addressMode === 'new' ? 'bg-black text-white' : 'bg-[#f8f8f8] hover:bg-gray-200'}`}>➕ Yeni Adres</button>
                 </div>
               )}
-
-              {/* Kayıtlı Adres Listesi */}
               {addressMode === 'saved' && savedAddresses.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {savedAddresses.map((addr) => (
-                    <label
-                      key={addr.id}
-                      className={`p-4 brutal-border cursor-pointer transition-all select-none
-                        ${selectedAddressId === addr.id
-                          ? 'bg-[var(--brutal-yellow)] brutal-shadow border-4'
-                          : 'bg-[#f8f8f8] hover:bg-yellow-50'
-                        }`}
-                    >
-                      <input
-                        type="radio"
-                        name="savedAddress"
-                        value={addr.id}
-                        className="hidden"
-                        checked={selectedAddressId === addr.id}
-                        onChange={() => setSelectedAddressId(addr.id)}
-                      />
+                    <label key={addr.id} className={`p-4 brutal-border cursor-pointer transition-all select-none ${selectedAddressId === addr.id ? 'bg-[var(--brutal-yellow)] brutal-shadow border-4' : 'bg-[#f8f8f8] hover:bg-yellow-50'}`}>
+                      <input type="radio" name="savedAddress" value={addr.id} className="hidden" checked={selectedAddressId === addr.id} onChange={() => setSelectedAddressId(addr.id)} />
                       <div className="flex items-start gap-2">
                         <span className="text-lg">{selectedAddressId === addr.id ? '🔵' : '⚪'}</span>
                         <div>
                           <p className="font-black text-sm uppercase tracking-wider">{addr.title}</p>
                           <p className="font-bold text-sm mt-1">{addr.fullName}</p>
                           <p className="text-xs font-bold text-gray-500 mt-0.5">{addr.phone}</p>
-                          <p className="text-xs font-bold text-gray-500">{addr.fullAddress}</p>
-                          <p className="text-xs font-bold text-gray-500">{addr.city}</p>
                         </div>
                       </div>
                     </label>
                   ))}
-                  <Link
-                    href="/profil/adreslerim"
-                    className="p-4 brutal-border bg-white hover:bg-gray-50 transition-colors flex items-center justify-center gap-2 font-black text-sm uppercase text-gray-500 hover:text-black"
-                    target="_blank"
-                  >
-                    ⚙️ Adres Yönet
-                  </Link>
                 </div>
               )}
-
-              {/* Yeni Adres Formu */}
               {addressMode === 'new' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block font-black uppercase mb-2 text-xs tracking-widest">Ad Soyad *</label>
-                    <input
-                      required={addressMode === 'new'}
-                      type="text"
-                      className="w-full p-3 brutal-border bg-[#f8f8f8] focus:bg-white focus:outline-none focus:ring-4 focus:ring-black font-bold transition-colors"
-                      value={newAddress.fullName}
-                      onChange={e => setNewAddress({ ...newAddress, fullName: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <label className="block font-black uppercase mb-2 text-xs tracking-widest">Telefon *</label>
-                    <input
-                      required={addressMode === 'new'}
-                      type="tel"
-                      placeholder="0555 123 45 67"
-                      className="w-full p-3 brutal-border bg-[#f8f8f8] focus:bg-white focus:outline-none focus:ring-4 focus:ring-black font-bold transition-colors"
-                      value={newAddress.phone}
-                      onChange={e => setNewAddress({ ...newAddress, phone: e.target.value })}
-                    />
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className="block font-black uppercase mb-2 text-xs tracking-widest">Açık Adres *</label>
-                    <textarea
-                      required={addressMode === 'new'}
-                      rows={3}
-                      placeholder="Mahalle, cadde, sokak, kapı no, daire..."
-                      className="w-full p-3 brutal-border bg-[#f8f8f8] focus:bg-white focus:outline-none focus:ring-4 focus:ring-black font-bold transition-colors resize-none"
-                      value={newAddress.fullAddress}
-                      onChange={e => setNewAddress({ ...newAddress, fullAddress: e.target.value })}
-                    />
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className="block font-black uppercase mb-2 text-xs tracking-widest">İlçe / İl *</label>
-                    <input
-                      required={addressMode === 'new'}
-                      type="text"
-                      placeholder="Kadıköy / İstanbul"
-                      className="w-full p-3 brutal-border bg-[#f8f8f8] focus:bg-white focus:outline-none focus:ring-4 focus:ring-black font-bold transition-colors"
-                      value={newAddress.city}
-                      onChange={e => setNewAddress({ ...newAddress, city: e.target.value })}
-                    />
-                  </div>
+                  <input required placeholder="Ad Soyad *" className="w-full p-3 brutal-border bg-[#f8f8f8] font-bold" value={newAddress.fullName} onChange={e => setNewAddress({ ...newAddress, fullName: e.target.value })} />
+                  <input required placeholder="Telefon *" className="w-full p-3 brutal-border bg-[#f8f8f8] font-bold" value={newAddress.phone} onChange={e => setNewAddress({ ...newAddress, phone: e.target.value })} />
+                  <textarea required placeholder="Açık Adres *" className="md:col-span-2 w-full p-3 brutal-border bg-[#f8f8f8] font-bold resize-none" rows={3} value={newAddress.fullAddress} onChange={e => setNewAddress({ ...newAddress, fullAddress: e.target.value })} />
+                  <input required placeholder="İlçe / İl *" className="md:col-span-2 w-full p-3 brutal-border bg-[#f8f8f8] font-bold" value={newAddress.city} onChange={e => setNewAddress({ ...newAddress, city: e.target.value })} />
                 </div>
               )}
             </section>
 
-            {/* ── Ödeme Yöntemi ── */}
             <section className="bg-white brutal-border brutal-shadow p-6">
-              <h2 className="text-2xl font-black uppercase mb-5 border-b-4 border-black pb-2">
-                Ödeme Yöntemi
-              </h2>
-
+              <h2 className="text-2xl font-black uppercase mb-5 border-b-4 border-black pb-2">Ödeme Yöntemi</h2>
               <div className="flex gap-4 mb-5">
-                <label className={`flex-1 p-4 brutal-border cursor-pointer transition-colors text-center font-black uppercase
-                  ${paymentMethod === 'kredi_karti' ? 'bg-[var(--brutal-yellow)] brutal-shadow' : 'bg-white hover:bg-gray-100'}`}>
-                  <input type="radio" name="payment" className="hidden" checked={paymentMethod === 'kredi_karti'} onChange={() => setPaymentMethod('kredi_karti')} />
-                  💳 Kredi / Banka Kartı
+                <label className={`flex-1 p-4 brutal-border cursor-pointer transition-colors text-center font-black uppercase ${paymentMethod === 'kredi_karti' ? 'bg-[var(--brutal-yellow)] brutal-shadow' : 'bg-white hover:bg-gray-100'}`}>
+                  <input type="radio" className="hidden" checked={paymentMethod === 'kredi_karti'} onChange={() => setPaymentMethod('kredi_karti')} /> 💳 Kart
                 </label>
-                <label className={`flex-1 p-4 brutal-border cursor-pointer transition-colors text-center font-black uppercase
-                  ${paymentMethod === 'kapida' ? 'bg-[var(--brutal-blue)] brutal-shadow' : 'bg-white hover:bg-gray-100'}`}>
-                  <input type="radio" name="payment" className="hidden" checked={paymentMethod === 'kapida'} onChange={() => setPaymentMethod('kapida')} />
-                  🚚 Kapıda Ödeme
+                <label className={`flex-1 p-4 brutal-border cursor-pointer transition-colors text-center font-black uppercase ${paymentMethod === 'kapida' ? 'bg-[var(--brutal-blue)] brutal-shadow' : 'bg-white hover:bg-gray-100'}`}>
+                  <input type="radio" className="hidden" checked={paymentMethod === 'kapida'} onChange={() => setPaymentMethod('kapida')} /> 🚚 Kapıda
                 </label>
               </div>
-
               {paymentMethod === 'kredi_karti' && (
                 <div className="bg-[#f8f8f8] brutal-border p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="md:col-span-2">
-                    <label className="block font-black uppercase mb-2 text-xs tracking-widest">Kart Üzerindeki İsim</label>
-                    <input required type="text" className="w-full p-3 brutal-border focus:ring-4 focus:ring-black outline-none font-bold" value={card.name} onChange={e => setCard({ ...card, name: e.target.value })} />
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className="block font-black uppercase mb-2 text-xs tracking-widest">Kart Numarası</label>
-                    <input required type="text" maxLength={16} placeholder="0000 0000 0000 0000" className="w-full p-3 brutal-border focus:ring-4 focus:ring-black outline-none font-bold text-lg tracking-widest" value={card.number} onChange={e => setCard({ ...card, number: e.target.value })} />
-                  </div>
-                  <div>
-                    <label className="block font-black uppercase mb-2 text-xs tracking-widest">Son Kullanma (AA/YY)</label>
-                    <input required type="text" placeholder="MM/YY" className="w-full p-3 brutal-border focus:ring-4 focus:ring-black outline-none font-bold" value={card.expiry} onChange={e => setCard({ ...card, expiry: e.target.value })} />
-                  </div>
-                  <div>
-                    <label className="block font-black uppercase mb-2 text-xs tracking-widest">CVV</label>
-                    <input required type="text" maxLength={3} placeholder="123" className="w-full p-3 brutal-border focus:ring-4 focus:ring-black outline-none font-bold" value={card.cvv} onChange={e => setCard({ ...card, cvv: e.target.value })} />
-                  </div>
-                </div>
-              )}
-
-              {paymentMethod === 'kapida' && (
-                <div className="bg-[var(--brutal-blue)] brutal-border p-4 font-bold">
-                  🚚 Teslimat sırasında kuryeye nakit veya kart ile ödeme yapabilirsiniz.
+                  <input required placeholder="Kart İsim" className="md:col-span-2 w-full p-3 brutal-border font-bold" value={card.name} onChange={e => setCard({ ...card, name: e.target.value })} />
+                  <input required placeholder="Kart No" className="md:col-span-2 w-full p-3 brutal-border font-bold" value={card.number} onChange={e => setCard({ ...card, number: e.target.value })} />
+                  <input required placeholder="AA/YY" className="w-full p-3 brutal-border font-bold" value={card.expiry} onChange={e => setCard({ ...card, expiry: e.target.value })} />
+                  <input required placeholder="CVV" className="w-full p-3 brutal-border font-bold" value={card.cvv} onChange={e => setCard({ ...card, cvv: e.target.value })} />
                 </div>
               )}
             </section>
@@ -337,9 +252,40 @@ export default function CheckoutClient({ savedAddresses, isLoggedIn }: CheckoutC
               {items.map(item => (
                 <div key={item.productId} className="flex justify-between text-sm font-bold">
                   <span className="truncate flex-1 pr-2">{item.quantity}× {item.name}</span>
-                  <span className="flex-shrink-0">₺{(item.price * item.quantity).toFixed(2)}</span>
+                  <span>₺{(item.price * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
+            </div>
+
+            {/* Kupon Alanı */}
+            <div className="border-b-2 border-black pb-4">
+              <label className="block font-black uppercase text-[10px] mb-1">İndirim Kuponu</label>
+              {appliedCoupon ? (
+                <div className="bg-white brutal-border p-3 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Check className="text-[var(--brutal-green)]" size={16} />
+                    <span className="font-black text-sm uppercase tracking-tighter">{appliedCoupon.code} (%{appliedCoupon.discountPercent})</span>
+                  </div>
+                  <button onClick={removeCoupon} className="text-red-500 hover:text-black transition-colors"><X size={16} /></button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="KOD GIRIN"
+                    className="flex-1 brutal-border px-3 py-2 text-xs font-black uppercase focus:outline-none"
+                  />
+                  <button
+                    onClick={handleApplyCoupon}
+                    disabled={isValidating || !couponCode}
+                    className="bg-black text-white px-3 py-2 brutal-border font-black text-xs uppercase hover:bg-white hover:text-black transition-all disabled:opacity-50"
+                  >
+                    {isValidating ? '...' : 'UYGULA'}
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="flex flex-col gap-2 font-bold border-b-4 border-black pb-4">
@@ -347,37 +293,35 @@ export default function CheckoutClient({ savedAddresses, isLoggedIn }: CheckoutC
                 <span>Ara Toplam</span>
                 <span>₺{totalPrice.toFixed(2)}</span>
               </div>
+              {appliedCoupon && (
+                <div className="flex justify-between text-[var(--brutal-red)]">
+                  <span>Kupon İndirimi</span>
+                  <span>-₺{discountAmount.toFixed(2)}</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span>KDV (%20)</span>
                 <span>₺{tax.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Kargo</span>
-                {shipping === 0 ? (
-                  <span className="font-black text-green-700">🎉 Bedava</span>
-                ) : (
-                  <span>₺{shipping.toFixed(2)}</span>
-                )}
+                {shipping === 0 ? <span className="font-black text-green-700">🎉 Bedava</span> : <span>₺{shipping.toFixed(2)}</span>}
               </div>
             </div>
 
             <div className="flex justify-between font-black text-2xl">
               <span>Toplam</span>
-              <span>₺{finalTotal.toFixed(2)}</span>
+              <div className="flex flex-col items-end">
+                <span>₺{finalTotal.toFixed(2)}</span>
+                {appliedCoupon && <span className="text-[10px] uppercase bg-black text-white px-2 py-0.5 mt-1">İndirim Uygulandı</span>}
+              </div>
             </div>
 
-            <button
-              type="submit"
-              form="checkout-form"
-              disabled={isSubmitting}
-              className="w-full bg-black text-[var(--brutal-yellow)] py-4 brutal-border brutal-shadow brutal-shadow-hover font-black uppercase text-lg transition-colors hover:bg-white hover:text-black disabled:opacity-70"
-            >
-              {isSubmitting ? '⏳ Sipariş Oluşturuluyor...' : '✅ Siparişi Tamamla'}
+            <button type="submit" form="checkout-form" disabled={isSubmitting} className="w-full bg-black text-[var(--brutal-yellow)] py-4 brutal-border brutal-shadow brutal-shadow-hover font-black uppercase text-lg hover:bg-white hover:text-black disabled:opacity-70 transition-all">
+              {isSubmitting ? '⏳ Oluşturuluyor...' : '✅ Siparişi Tamamla'}
             </button>
 
-            <Link href="/sepet" className="block text-center font-bold underline hover:text-[var(--brutal-red)] text-sm">
-              ← Sepete Dön
-            </Link>
+            <Link href="/sepet" className="block text-center font-bold underline hover:text-[var(--brutal-red)] text-sm">← Sepete Dön</Link>
           </div>
         </div>
       </div>

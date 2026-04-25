@@ -5,13 +5,13 @@ import Link from 'next/link'
 import { useCart } from '@/context/CartContext'
 import { useFavorites } from '@/context/FavoritesContext'
 import { useToast } from '@/context/ToastContext'
+import ReviewForm from '@/components/ReviewForm'
+import ReviewList from '@/components/ReviewList'
+import QuestionForm from '@/components/QuestionForm'
+import QuestionList from '@/components/QuestionList'
+import { MessageSquare, Star, Info } from 'lucide-react'
 
-const MOCK_REVIEWS = [
-  { id: '1', user: 'Ahmet Y.', rating: 5, comment: 'Köpeğim bayılarak yiyor, teşekkürler!' },
-  { id: '2', user: 'Zeynep K.', rating: 4, comment: 'Hızlı kargo ama paket biraz ezilmişti.' }
-]
-
-export default function ProductDetailClient({ product }: { product: any }) {
+export default function ProductDetailClient({ product, user }: { product: any, user: any }) {
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState<'details' | 'reviews' | 'qa'>('details')
   const { addToCart } = useCart()
@@ -46,7 +46,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
   }
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 pb-12">
       {/* Breadcrumb */}
       <div className="font-bold uppercase text-sm">
         <Link href="/urunler" className="hover:underline">Ürünler</Link> &gt; 
@@ -56,10 +56,11 @@ export default function ProductDetailClient({ product }: { product: any }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Product Image */}
-        <div className="brutal-border brutal-shadow bg-[var(--brutal-yellow)] aspect-square relative">
-          <div 
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${imageUrl})` }}
+        <div className="brutal-border brutal-shadow bg-[var(--brutal-yellow)] aspect-square relative overflow-hidden">
+          <img 
+            src={imageUrl} 
+            alt={product.name}
+            className="w-full h-full object-cover transition-transform hover:scale-110 duration-500"
           />
         </div>
 
@@ -69,7 +70,24 @@ export default function ProductDetailClient({ product }: { product: any }) {
             {product.category}
           </div>
           <h1 className="text-4xl md:text-5xl font-black uppercase mb-4 leading-tight">{product.name}</h1>
-          <p className="text-xl font-bold mb-2">Stok: <span className="underline">{product.stockQuantity} adet</span></p>
+          
+          <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-1 bg-[var(--brutal-yellow)] brutal-border px-2 py-1 font-black">
+              <Star size={16} className="fill-black" />
+              <span>{product.reviews?.length > 0 
+                ? (product.reviews.reduce((a: any, b: any) => a + b.rating, 0) / product.reviews.length).toFixed(1) 
+                : 'Yorum Yok'}</span>
+            </div>
+            <span className="font-bold text-gray-500 uppercase text-sm">
+              {product.reviews?.length || 0} Değerlendirme
+            </span>
+          </div>
+
+          <p className="text-xl font-bold mb-2">Stok Durumu: 
+            <span className={`ml-2 ${product.stockQuantity > 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {product.stockQuantity > 0 ? `${product.stockQuantity} Adet` : 'Tükendi'}
+            </span>
+          </p>
           
           <div className="text-4xl sm:text-5xl font-black mb-8">
             {product.price.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}
@@ -82,7 +100,11 @@ export default function ProductDetailClient({ product }: { product: any }) {
               <button onClick={increaseQuantity} className="w-10 flex items-center justify-center font-black text-xl hover:bg-[var(--brutal-green)] transition-colors">+</button>
             </div>
             
-            <button onClick={handleAddToCart} className="flex-grow bg-[var(--brutal-green)] brutal-border brutal-shadow brutal-shadow-hover font-black uppercase text-lg sm:text-xl py-3 sm:py-0">
+            <button 
+              onClick={handleAddToCart} 
+              disabled={product.stockQuantity <= 0}
+              className="flex-grow bg-[var(--brutal-green)] brutal-border brutal-shadow brutal-shadow-hover font-black uppercase text-lg sm:text-xl py-3 sm:py-0 disabled:opacity-50"
+            >
               Sepete Ekle
             </button>
             <button onClick={handleToggleFavorite} className={`brutal-border brutal-shadow brutal-shadow-hover px-4 py-3 sm:py-0 flex items-center justify-center transition-colors ${isFavorite(product.id) ? 'bg-[var(--brutal-red)] text-white' : 'bg-white hover:bg-[var(--brutal-red)] hover:text-white'}`}>
@@ -96,70 +118,81 @@ export default function ProductDetailClient({ product }: { product: any }) {
 
       {/* Tabs */}
       <div className="mt-8 sm:mt-12">
-        <div className="flex flex-col sm:flex-row sm:border-b-4 sm:border-black mb-6">
+        <div className="flex flex-wrap gap-2 mb-6">
           <button 
             onClick={() => setActiveTab('details')}
-            className={`px-4 py-3 sm:px-8 sm:py-4 font-black uppercase text-base sm:text-xl border-4 sm:border-0 sm:border-b-0 border-black mb-2 sm:mb-0 transition-colors ${activeTab === 'details' ? 'bg-black text-white' : 'bg-white hover:bg-gray-100'}`}
+            className={`flex items-center gap-2 px-6 py-3 font-black uppercase text-sm brutal-border transition-all ${activeTab === 'details' ? 'bg-black text-white brutal-shadow translate-x-1 translate-y-1' : 'bg-white hover:bg-gray-100'}`}
           >
-            Açıklama
+            <Info size={18} /> Açıklama
           </button>
           <button 
             onClick={() => setActiveTab('reviews')}
-            className={`px-4 py-3 sm:px-8 sm:py-4 font-black uppercase text-base sm:text-xl border-4 sm:border-0 sm:border-b-0 sm:border-l-4 border-black mb-2 sm:mb-0 transition-colors ${activeTab === 'reviews' ? 'bg-black text-white' : 'bg-white hover:bg-gray-100'}`}
+            className={`flex items-center gap-2 px-6 py-3 font-black uppercase text-sm brutal-border transition-all ${activeTab === 'reviews' ? 'bg-black text-white brutal-shadow translate-x-1 translate-y-1' : 'bg-white hover:bg-gray-100'}`}
           >
-            Değerlendirmeler
+            <Star size={18} /> Değerlendirmeler ({product.reviews?.length || 0})
           </button>
           <button 
             onClick={() => setActiveTab('qa')}
-            className={`px-4 py-3 sm:px-8 sm:py-4 font-black uppercase text-base sm:text-xl border-4 sm:border-0 sm:border-b-0 sm:border-l-4 border-black mb-2 sm:mb-0 transition-colors ${activeTab === 'qa' ? 'bg-black text-white' : 'bg-white hover:bg-gray-100'}`}
+            className={`flex items-center gap-2 px-6 py-3 font-black uppercase text-sm brutal-border transition-all ${activeTab === 'qa' ? 'bg-black text-white brutal-shadow translate-x-1 translate-y-1' : 'bg-white hover:bg-gray-100'}`}
           >
-            Satıcıya Sor
+            <MessageSquare size={18} /> Satıcıya Sor ({product.questions?.length || 0})
           </button>
         </div>
 
-        <div className="bg-white brutal-border brutal-shadow p-8 min-h-[300px]">
+        <div className="transition-all duration-300">
           {activeTab === 'details' && (
-            <div className="prose prose-lg max-w-none font-bold">
-              <p className="whitespace-pre-line">{product.description}</p>
+            <div className="bg-white brutal-border brutal-shadow p-8 min-h-[300px]">
+              <div className="prose prose-lg max-w-none font-bold">
+                <p className="whitespace-pre-line">{product.description}</p>
+              </div>
             </div>
           )}
 
           {activeTab === 'reviews' && (
-            <div className="flex flex-col gap-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-black text-2xl uppercase">Yorumlar</h3>
-                <button className="bg-[var(--brutal-yellow)] brutal-border px-4 py-2 font-black uppercase hover:bg-black hover:text-white transition-colors">
-                  Yorum Yaz
-                </button>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+              <div className="lg:col-span-2">
+                <ReviewList reviews={product.reviews || []} />
               </div>
-              {MOCK_REVIEWS.map(review => (
-                <div key={review.id} className="border-b-2 border-black pb-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="font-black text-lg">{review.user}</span>
-                    <span className="text-[var(--brutal-yellow)] flex">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill={i < review.rating ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" className="w-5 h-5">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                        </svg>
-                      ))}
-                    </span>
+              <div className="sticky top-32">
+                {user ? (
+                  <ReviewForm productId={product.id} />
+                ) : (
+                  <div className="bg-[var(--brutal-blue)] brutal-border brutal-shadow p-6 text-center">
+                    <h3 className="text-xl font-black uppercase mb-4 text-white">Yorum Yapmak İster misiniz?</h3>
+                    <p className="font-bold text-white/90 mb-6">Değerlendirme bırakmak için giriş yapmanız gerekmektedir.</p>
+                    <Link
+                      href={`/login?redirect=/urunler/${product.id}`}
+                      className="inline-block w-full bg-white text-black py-3 brutal-border brutal-shadow brutal-shadow-hover font-black uppercase transition-all"
+                    >
+                      Giriş Yap
+                    </Link>
                   </div>
-                  <p className="font-bold">{review.comment}</p>
-                </div>
-              ))}
+                )}
+              </div>
             </div>
           )}
 
           {activeTab === 'qa' && (
-            <div className="flex flex-col gap-6">
-              <h3 className="font-black text-2xl uppercase mb-4">Satıcıya Soru Sor</h3>
-              <textarea 
-                className="w-full brutal-border p-4 font-bold min-h-[150px] focus:outline-none focus:ring-4 focus:ring-black"
-                placeholder="Ürünle ilgili sorunuzu buraya yazın..."
-              />
-              <button className="bg-[var(--brutal-blue)] brutal-border brutal-shadow brutal-shadow-hover px-8 py-3 font-black uppercase text-xl self-end">
-                Gönder
-              </button>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+              <div className="lg:col-span-2">
+                <QuestionList questions={product.questions || []} />
+              </div>
+              <div className="sticky top-32">
+                {user ? (
+                  <QuestionForm productId={product.id} />
+                ) : (
+                  <div className="bg-[var(--brutal-yellow)] brutal-border brutal-shadow p-6 text-center">
+                    <h3 className="text-xl font-black uppercase mb-4">Soru Sormak İster misiniz?</h3>
+                    <p className="font-bold text-black/70 mb-6">Satıcıya soru sormak için giriş yapmanız gerekmektedir.</p>
+                    <Link
+                      href={`/login?redirect=/urunler/${product.id}`}
+                      className="inline-block w-full bg-black text-white py-3 brutal-border brutal-shadow brutal-shadow-hover font-black uppercase transition-all"
+                    >
+                      Giriş Yap
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>

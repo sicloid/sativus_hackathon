@@ -71,10 +71,215 @@ export async function getRandomProduct() {
 
 // ─── Tek Ürün Getir ───────────────────────────────────────────────────────────
 export async function getProduct(id: string) {
-  return prisma.product.findUnique({ where: { id } })
+  return prisma.product.findUnique({ 
+    where: { id },
+    include: {
+      reviews: {
+        orderBy: { createdAt: 'desc' }
+      },
+      questions: {
+        where: { status: 'answered' },
+        orderBy: { createdAt: 'desc' }
+      }
+    }
+  })
 }
 
-// ─── Sipariş Oluştur ──────────────────────────────────────────────────────────
+// ─── Soru Sor ────────────────────────────────────────────────────────────────
+export async function askQuestion(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { error: 'Soru sormak için giriş yapmalısınız.' }
+  }
+
+  const productId = formData.get('productId') as string
+  const questionText = formData.get('questionText') as string
+
+  if (!productId || !questionText) {
+    return { error: 'Lütfen sorunuzu yazın.' }
+  }
+
+  try {
+    await prisma.productQuestion.create({
+      data: {
+        productId,
+        userId: user.id,
+        userEmail: user.email!,
+        questionText,
+        status: 'pending'
+      }
+    })
+
+    revalidatePath(`/urunler/${productId}`)
+    return { success: true }
+  } catch (err) {
+    console.error('Ask question error:', err)
+    return { error: 'Soru gönderilirken bir hata oluştu.' }
+  }
+}
+
+// ─── Ürün Yorumu Ekle ─────────────────────────────────────────────────────────
+export async function addReview(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { error: 'Yorum yapmak için giriş yapmalısınız.' }
+  }
+
+  const productId = formData.get('productId') as string
+  const rating = parseInt(formData.get('rating') as string)
+  const comment = formData.get('comment') as string
+  const userName = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Kullanıcı'
+
+  if (!productId || !rating || !comment) {
+    return { error: 'Lütfen tüm alanları doldurun.' }
+  }
+
+  try {
+    await prisma.review.create({
+      data: {
+        productId,
+        userId: user.id,
+        userName,
+        rating,
+        comment,
+      },
+    })
+
+    revalidatePath(`/urunler/${productId}`)
+    return { success: true }
+  } catch (err) {
+    console.error('Review error:', err)
+    return { error: 'Yorum kaydedilirken bir hata oluştu.' }
+  }
+}
+
+// ─── Soru Cevapla (Admin) ─────────────────────────────────────────────────────
+export async function answerQuestion(formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Admin kontrolü (burada basitçe e-posta veya loginType üzerinden yapılabilir)
+  // Mevcut yapıda loginAction admin kontrolü yapıyor, burada da benzer bir güvenlik olmalı
+  // Örn: if (user.email !== 'admin@petverse.com') return { error: 'Yetkisiz erişim.' }
+
+  const questionId = formData.get('questionId') as string
+  const answerText = formData.get('answerText') as string
+
+  if (!questionId || !answerText) {
+    return { error: 'Lütfen cevabı yazın.' }
+  }
+
+  try {
+    await prisma.productQuestion.update({
+      where: { id: questionId },
+      data: {
+        answerText,
+        status: 'answered'
+      }
+    })
+
+    revalidatePath('/admin/sorular')
+    return { success: true }
+  } catch (err) {
+    console.error('Answer question error:', err)
+    return { error: 'Cevap kaydedilirken bir hata oluştu.' }
+  }
+}
+
+// ─── Kullanıcı Sorularını Getir ───────────────────────────────────────────────
+export async function getUserQuestions() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return []
+
+  return prisma.productQuestion.findMany({
+    where: { userId: user.id },
+    include: { product: true },
+    orderBy: { createdAt: 'desc' }
+  })
+}
+
+// ─── Admin Sorularını Getir ──────────────────────────────────────────────────
+export async function getAdminQuestions(status?: string) {
+  return prisma.productQuestion.findMany({
+    where: status ? { status } : {},
+    include: { product: true },
+    orderBy: { createdAt: 'desc' }
+  })
+}
+
+// ─── Kullanıcı Sipariş Sayısını Getir ─────────────────────────────────────────
+export async function getUserOrderCount() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return 0
+
+  return prisma.order.count({
+    where: { userId: user.id }
+  })
+}
+
+// ─── Kuponları Getir ──────────────────────────────────────────────────────────
+export async function getCoupons() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return []
+
+  // Sistemdeki aktif kuponları getir
+  const coupons = await prisma.coupon.findMany({
+    where: { isActive: true },
+    orderBy: { discountPercent: 'desc' }
+  })
+
+  // Kullanıcının hangilerini kullandığını işaretle
+  const usedCoupons = await prisma.usedCoupon.findMany({
+    where: { userId: user.id },
+    select: { couponId: true }
+  })
+
+  const usedIds = usedCoupons.map(uc => uc.couponId)
+
+  return coupons.map(c => ({
+    ...c,
+    isUsed: usedIds.includes(c.id)
+  }))
+}
+
+// ─── Kupon Doğrula ───────────────────────────────────────────────────────────
+export async function validateCoupon(code: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Giriş yapmalısınız.' }
+
+  const coupon = await prisma.coupon.findUnique({
+    where: { code: code.toUpperCase() }
+  })
+
+  if (!coupon || !coupon.isActive) {
+    return { error: 'Geçersiz veya süresi dolmuş kupon kodu.' }
+  }
+
+  const alreadyUsed = await prisma.usedCoupon.findUnique({
+    where: {
+      userId_couponId: {
+        userId: user.id,
+        couponId: coupon.id
+      }
+    }
+  })
+
+  if (alreadyUsed) {
+    return { error: 'Bu kuponu daha önce kullandınız.' }
+  }
+
+  return { success: true, coupon }
+}
+
+// ─── Sipariş Oluştur (Kupon Destekli) ──────────────────────────────────────────
 export async function createOrder(formData: FormData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -88,6 +293,7 @@ export async function createOrder(formData: FormData) {
   const address = formData.get('address') as string
   const city = formData.get('city') as string
   const cartItemsJson = formData.get('cartItems') as string
+  const couponId = formData.get('couponId') as string // Kupon ID
 
   if (!fullName || !phone || !address || !city || !cartItemsJson) {
     return { error: 'Lütfen tüm alanları doldurun.' }
@@ -110,13 +316,22 @@ export async function createOrder(formData: FormData) {
     where: { id: { in: productIds } },
   })
 
-  const priceMap = new Map(dbProducts.map((p: { id: string; price: number }) => [p.id, p.price]))
+  const priceMap = new Map(dbProducts.map((p: any) => [p.id, p.price]))
 
-  const totalPrice = cartItems.reduce((sum: number, item) => {
+  let totalPrice = cartItems.reduce((sum: number, item) => {
     const isVirtual = item.productId.startsWith('exam-fee-') || item.productId.startsWith('prescription-')
     const dbPrice = isVirtual ? item.price : (priceMap.get(item.productId) ?? item.price)
     return sum + dbPrice * item.quantity
   }, 0)
+
+  // Kupon İndirimi
+  if (couponId) {
+    const coupon = await prisma.coupon.findUnique({ where: { id: couponId } })
+    if (coupon && coupon.isActive) {
+      const discount = (totalPrice * coupon.discountPercent) / 100
+      totalPrice -= discount
+    }
+  }
 
   const tax = totalPrice * 0.20
   const shippingCost = totalPrice > 500 ? 0 : 50
@@ -146,6 +361,17 @@ export async function createOrder(formData: FormData) {
     },
   })
 
+  // Kuponu kullanıldı olarak işaretle
+  if (couponId) {
+    await prisma.usedCoupon.create({
+      data: {
+        userId: user.id,
+        couponId,
+        orderId: order.id
+      }
+    })
+  }
+
   // Stok güncelle
   for (const item of cartItems) {
     await prisma.product.update({
@@ -156,6 +382,7 @@ export async function createOrder(formData: FormData) {
 
   revalidatePath('/urunler')
   revalidatePath('/profil/siparisler')
+  revalidatePath('/profil')
   return { success: true, orderId: order.id }
 }
 

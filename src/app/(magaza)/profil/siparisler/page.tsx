@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getUserOrders } from '@/app/actions/store'
+import ReorderButton from '@/components/ReorderButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -136,12 +137,7 @@ export default async function SiparislerPage() {
                     </div>
 
                     <div className="mt-5">
-                      <Link
-                        href="/urunler"
-                        className="w-full block text-center bg-black text-white py-2.5 font-black uppercase text-xs tracking-wider brutal-border brutal-shadow brutal-shadow-hover hover:bg-[var(--brutal-yellow)] hover:text-black transition-colors"
-                      >
-                        Tekrar Sipariş Ver
-                      </Link>
+                      <ReorderButton orderItems={order.items} />
                     </div>
                   </div>
                 </div>

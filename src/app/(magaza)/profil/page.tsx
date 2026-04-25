@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
+import { getUserOrderCount } from '@/app/actions/store';
 import { logoutAction } from '@/app/actions/auth';
 import { redirect } from 'next/navigation';
 import ProfileUpdateForm from '@/components/profile/ProfileUpdateForm';
@@ -16,8 +17,8 @@ export default async function ProfilPage() {
   const email = user.email || '';
   const joinDate = new Date(user.created_at).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
 
-  // Mock data for stats
-  const totalOrders = 3;
+  // Dinamik verileri çek
+  const totalOrders = await getUserOrderCount();
   const activeCoupons = 1;
 
   return (

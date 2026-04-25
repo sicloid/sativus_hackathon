@@ -7,6 +7,8 @@ import React from 'react';
 const MENU_ITEMS = [
   { name: 'Profil Özeti', path: '/profil' },
   { name: 'Siparişlerim', path: '/profil/siparisler' },
+  { name: 'Kuponlarım', path: '/profil/kuponlar' },
+  { name: 'Sorularım & Cevaplar', path: '/profil/sorular' },
   { name: 'Adreslerim', path: '/profil/adreslerim' },
 ];
 
