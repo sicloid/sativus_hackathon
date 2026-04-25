@@ -86,13 +86,6 @@ export async function updateSession(request: NextRequest) {
 
   // ─── GİRİŞ YAPMIŞ KULLANICILAR İÇİN ROL KONTROLÜ ───
   if (user) {
-    // Admin kullanıcı login sayfasına gelirse → admin paneline yönlendir
-    if (pathname === '/login' && role === 'admin') {
-      const url = request.nextUrl.clone()
-      url.pathname = '/admin'
-      return NextResponse.redirect(url)
-    }
-
     // Admin paneli: sadece admin erişebilir
     if (pathname.startsWith('/admin')) {
       if (role !== 'admin') {
@@ -102,7 +95,9 @@ export async function updateSession(request: NextRequest) {
       }
     }
 
-    // Login sayfalarından uzaklaştır (zaten giriş yapmış, admin değil)
+    // Giriş sayfalarından uzaklaştır (zaten giriş yapmış)
+    // NOT: admin kullanıcı da /login'e geldiğinde /urunler'e gider,
+    // /admin'e ulaşmak için "Yönetici Girişi" sekmesini kullanmalıdır.
     if (pathname === '/login') {
       const url = request.nextUrl.clone()
       url.pathname = '/urunler'

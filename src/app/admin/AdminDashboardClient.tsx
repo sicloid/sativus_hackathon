@@ -18,7 +18,19 @@ interface Product {
   stockQuantity: number
 }
 
-const CATEGORIES = ['Mama', 'Aksesuar', 'Sağlık', 'Oyuncak', 'Bakım', 'Diğer']
+const CATEGORIES = [
+  'Kedi', 
+  'Köpek', 
+  'Kuş', 
+  'Balık', 
+  'Kemirgen', 
+  'Mama', 
+  'Aksesuar', 
+  'Sağlık', 
+  'Oyuncak', 
+  'Bakım', 
+  'Diğer'
+]
 
 // ─── Silme Butonu ─────────────────────────────────────────────────────────────
 function DeleteButton({ productId, productName }: { productId: string; productName: string }) {

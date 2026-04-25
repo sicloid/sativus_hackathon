@@ -29,22 +29,26 @@ export async function loginAction(prevState: any, formData: FormData) {
     return { error: 'E-posta veya şifre hatalı.' }
   }
 
-  // Rol kontrolü: admin → /admin, diğerleri → /urunler
+  // Rol kontrolü
   const { data: { user } } = await supabase.auth.getUser()
   const role = user?.user_metadata?.role as string | undefined
 
-  if (loginType === 'admin' && role !== 'admin') {
-    await supabase.auth.signOut()
-    return { error: 'Bu alana sadece yöneticiler giriş yapabilir.' }
-  }
-
-  revalidatePath('/', 'layout')
-
-  if (role === 'admin') {
+  // ── Yönetici sekmesiyle giriş ──────────────────────────────────────────────
+  if (loginType === 'admin') {
+    // Admin değilse oturumu kapat ve hata döndür
+    if (role !== 'admin') {
+      await supabase.auth.signOut()
+      return { error: 'Bu alana sadece yetkili yöneticiler giriş yapabilir.' }
+    }
+    // Admin ise panele yönlendir
+    revalidatePath('/', 'layout')
     redirect('/admin')
-  } else {
-    redirect('/urunler')
   }
+
+  // ── Kullanıcı sekmesiyle giriş ────────────────────────────────────────────
+  // Admin hesabı kullanıcı sekmesiyle giriş yaparsa /urunler'e gider, /admin'e giremez
+  revalidatePath('/', 'layout')
+  redirect('/urunler')
 }
 
 export async function registerAction(prevState: any, formData: FormData) {
