@@ -102,8 +102,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<AiTeshisRespo
     });
 
     // Gemini'nin beklediği history formatına dönüştür
-    // Son mesaj "contents" olarak gönderilmeli, geri kalanlar "history"'ye
-    const history = messages.slice(0, -1).map((m) => ({
+    // Eğer normal sohbetse son mesaj "user"ındır, onu çıkarıp history'e ekleriz.
+    // Eğer finalRequest ise son mesaj "model"dir, hepsini history'e koyarız.
+    const isLastMessageUser = messages[messages.length - 1].role === "user";
+    const historySource = isLastMessageUser ? messages.slice(0, -1) : messages;
+
+    const history = historySource.map((m) => ({
       role: m.role,
       parts: [{ text: m.content }],
     }));
