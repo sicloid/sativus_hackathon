@@ -23,7 +23,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={{ showToast }}>
       {children}
       {toast && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[100] bg-[var(--brutal-yellow)] text-black border-4 border-black brutal-shadow px-8 py-4 font-black uppercase text-lg transition-transform animate-[bounce_0.5s_infinite]">
+        <div className="fixed top-8 right-8 z-[250] bg-[var(--brutal-yellow)] text-black border-4 border-black brutal-shadow px-6 py-4 font-black uppercase text-sm md:text-base animate-[bounce_0.5s_infinite] flex items-center gap-3">
+          <span className="text-2xl">✨</span>
           {toast.message}
         </div>
       )}

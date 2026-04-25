@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import CartItem from '@/components/CartItem';
+import UpsellOffer from '@/components/UpsellOffer';
 import Link from 'next/link';
 
 export default function SepetPage() {
@@ -63,6 +64,9 @@ export default function SepetPage() {
             <CartItem key={item.id} item={item} />
           ))}
         </div>
+
+        {/* Sepette Sürpriz Fırsat (Upselling) */}
+        <UpsellOffer />
       </div>
 
       {/* Sağ: Sipariş Özeti */}

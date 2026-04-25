@@ -5,11 +5,18 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
-export async function approveAppointment(appointmentId: string) {
+export async function approveAppointment(formData: FormData) {
   try {
+    const appointmentId = formData.get("appointmentId") as string;
+    const examFeeStr = formData.get("examFee") as string;
+    const examFee = examFeeStr ? parseFloat(examFeeStr) : 0;
+
     await prisma.appointment.update({
       where: { id: appointmentId },
-      data: { status: "ONAYLANDI" },
+      data: { 
+        status: "ONAYLANDI",
+        examFee: examFee
+      },
     });
     
     revalidatePath("/hekim");
@@ -151,3 +158,23 @@ export async function createPrescription(formData: FormData) {
   return { success: true };
 }
 
+export async function addVetDiagnosis(formData: FormData) {
+  const appointmentId = formData.get("appointmentId") as string;
+  const vetDiagnosis = formData.get("vetDiagnosis") as string;
+
+  if (!appointmentId || !vetDiagnosis) return { error: "Randevu ID ve teşhis zorunludur." };
+
+  try {
+    await prisma.appointment.update({
+      where: { id: appointmentId },
+      data: { vetDiagnosis },
+    });
+
+    revalidatePath("/hekim/hastalarim");
+    revalidatePath("/hekim/teshisler");
+    return { success: true };
+  } catch (error) {
+    console.error("Teşhis eklenirken hata:", error);
+    return { error: "Teşhis eklenemedi." };
+  }
+}

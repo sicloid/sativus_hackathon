@@ -178,7 +178,19 @@ export default async function HekimDashboard() {
                   <CardFooter className="p-8 pt-0 mt-auto">
                     {appt.status === "PENDING" ? (
                       <div className="grid grid-cols-2 gap-4 w-full">
-                        <form action={approveAppointment.bind(null, appt.id) as any} className="w-full">
+                        <form action={approveAppointment} className="w-full flex flex-col gap-2">
+                          <input type="hidden" name="appointmentId" value={appt.id} />
+                          <div className="relative">
+                            <input 
+                              type="number" 
+                              name="examFee" 
+                              placeholder="Muayene Ücreti (₺)" 
+                              className="w-full h-10 border-2 border-black rounded-xl font-bold px-3 text-sm" 
+                              required 
+                              min="0"
+                              defaultValue="500"
+                            />
+                          </div>
                           <Button type="submit" className="w-full h-14 bg-emerald-500 hover:bg-emerald-600 text-white border-4 border-black rounded-2xl font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none flex items-center justify-center gap-2">
                             <CheckCircle2 className="w-5 h-5" />
                             Onayla

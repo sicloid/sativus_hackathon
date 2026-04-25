@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
-import { dischargeAppointment } from "../actions";
+import { dischargeAppointment, addVetDiagnosis } from "../actions";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -108,11 +108,32 @@ export default async function HastalarimPage() {
                           🕐 {appt.slot.startTime}
                         </p>
                       </div>
-                      <form action={dischargeAppointment.bind(null, appt.id) as any}>
-                        <Button type="submit" variant="outline" className="bg-[#93c5fd] hover:bg-[#60a5fa] border-blue-500 font-black">
-                          🏠 Taburcu Et
-                        </Button>
-                      </form>
+                      <div className="w-full sm:w-auto mt-4 pt-4 border-t-2 border-zinc-200">
+                        {appt.vetDiagnosis ? (
+                          <div className="bg-emerald-50 border-2 border-emerald-200 p-3 rounded-xl mb-4">
+                            <p className="font-bold text-xs uppercase text-emerald-600 mb-1">👩‍⚕️ Hekim Teşhisi</p>
+                            <p className="font-black text-sm">{appt.vetDiagnosis}</p>
+                          </div>
+                        ) : (
+                          <form action={addVetDiagnosis} className="mb-4 flex flex-col gap-2">
+                            <input type="hidden" name="appointmentId" value={appt.id} />
+                            <textarea 
+                              name="vetDiagnosis" 
+                              placeholder="Kendi tıbbi teşhisinizi yazın..." 
+                              className="w-full p-2 border-2 border-black rounded-lg text-sm font-bold resize-none h-16"
+                              required
+                            />
+                            <Button type="submit" size="sm" className="bg-purple-500 hover:bg-purple-600 text-white font-black uppercase text-xs">
+                              Teşhis Ekle
+                            </Button>
+                          </form>
+                        )}
+                        <form action={dischargeAppointment.bind(null, appt.id) as any}>
+                          <Button type="submit" variant="outline" className="w-full bg-[#93c5fd] hover:bg-[#60a5fa] border-blue-500 font-black">
+                            🏠 Taburcu Et
+                          </Button>
+                        </form>
+                      </div>
                     </div>
                   </div>
                 </Card>
