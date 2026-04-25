@@ -105,7 +105,7 @@ export async function createOrder(formData: FormData) {
   }
 
   // Fiyatları DB'den doğrula (güvenlik)
-  const productIds = cartItems.map(i => i.productId)
+  const productIds = cartItems.map(i => i.productId).filter(id => !id.startsWith('exam-fee-') && !id.startsWith('prescription-'))
   const dbProducts = await prisma.product.findMany({
     where: { id: { in: productIds } },
   })
@@ -113,7 +113,8 @@ export async function createOrder(formData: FormData) {
   const priceMap = new Map(dbProducts.map((p: { id: string; price: number }) => [p.id, p.price]))
 
   const totalPrice = cartItems.reduce((sum: number, item) => {
-    const dbPrice = priceMap.get(item.productId) ?? item.price
+    const isVirtual = item.productId.startsWith('exam-fee-') || item.productId.startsWith('prescription-')
+    const dbPrice = isVirtual ? item.price : (priceMap.get(item.productId) ?? item.price)
     return sum + dbPrice * item.quantity
   }, 0)
 
@@ -132,11 +133,15 @@ export async function createOrder(formData: FormData) {
       city,
       status: 'CONFIRMED',
       items: {
-        create: cartItems.map(item => ({
-          productId: item.productId,
-          quantity: item.quantity,
-          unitPrice: priceMap.get(item.productId) ?? item.price,
-        })),
+        create: cartItems.map(item => {
+          const isVirtual = item.productId.startsWith('exam-fee-') || item.productId.startsWith('prescription-')
+          return {
+            productId: isVirtual ? null : item.productId,
+            productName: isVirtual ? item.name : undefined,
+            quantity: item.quantity,
+            unitPrice: isVirtual ? item.price : (priceMap.get(item.productId) ?? item.price),
+          }
+        }),
       },
     },
   })
