@@ -25,7 +25,10 @@ export default async function RandevularimPage({
   // Kullanıcının randevularını getir
   const appointments = await prisma.appointment.findMany({
     where: {
-      ownerName: user.user_metadata?.full_name || '', // Veya userId üzerinden daha sağlam bir eşleştirme yapılabilir, ancak şu an ownerName/ownerPhone kullanılıyor
+      ownerName: {
+        equals: user.user_metadata?.full_name || '',
+        mode: 'insensitive'
+      }
     },
     include: {
       provider: true,

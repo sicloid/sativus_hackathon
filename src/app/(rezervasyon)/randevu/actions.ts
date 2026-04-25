@@ -42,6 +42,24 @@ export async function createAppointment(prevState: any, formData: FormData) {
       return { error: "Seçilen klinik/hekim bulunamadı." }
     }
 
+    // Override ownerName with authenticated user's full_name if available (fixes profile matching)
+    let finalOwnerName = ownerName;
+    const { createClient } = await import("@/utils/supabase/server");
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (user && user.user_metadata?.full_name) {
+      finalOwnerName = user.user_metadata.full_name;
+    }
+
+    // Auto Approve High Urgency AI cases
+    let status = "PENDING";
+    let examFee = null;
+    if (aiAciliyet === "Yüksek") {
+      status = "ONAYLANDI";
+      examFee = 800;
+    }
+
     // Check if slot exists or create it
     let slot = await prisma.slot.findFirst({
       where: {
@@ -62,7 +80,7 @@ export async function createAppointment(prevState: any, formData: FormData) {
         }
       })
     } else if (slot.isBooked) {
-       // Slot already booked, we could return error but let's just create appointment for hackathon
+       // Slot already booked
     } else {
        await prisma.slot.update({
          where: { id: slot.id },
@@ -70,20 +88,50 @@ export async function createAppointment(prevState: any, formData: FormData) {
        })
     }
 
-    await prisma.appointment.create({
+    const appt = await prisma.appointment.create({
       data: {
         petName,
         petSpecies,
-        ownerName,
+        ownerName: finalOwnerName,
         ownerPhone,
         aiAciliyet: aiAciliyet || null,
         aiHizmet: aiHizmet || null,
         aiOzeti: aiOzeti || null,
-        status: "PENDING",
+        status,
+        examFee,
         slotId: slot.id,
         providerId: provider.id,
       }
     })
+
+    // Auto create prescription for high urgency exam fee
+    if (status === "ONAYLANDI" && examFee) {
+      const pet = await prisma.pet.findFirst({
+        where: { name: petName }
+      });
+      
+      if (pet) {
+        await prisma.prescription.create({
+          data: {
+            petId: pet.id,
+            vetUserId: provider.id,
+            vetName: provider.name,
+            diagnosis: aiOzeti || "Yüksek Aciliyetli AI Ön Teşhisi",
+            notes: "Muayene Ücreti Otomatik Olarak Eklendi",
+            totalPrice: examFee,
+            items: {
+              create: [
+                {
+                  name: "Muayene Ücreti (Acil)",
+                  quantity: 1,
+                  price: examFee,
+                }
+              ]
+            }
+          }
+        });
+      }
+    }
 
   } catch (error) {
     console.error("Randevu oluşturma hatası:", error)

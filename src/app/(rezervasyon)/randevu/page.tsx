@@ -15,17 +15,67 @@ interface Message {
 
 const initialState = { error: "" };
 
+import { mapLocations } from "@/data/mapLocations";
+
+function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371; 
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180; 
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2); 
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  return R * c;
+}
+
 function BookingForm({ diagnosis }: { diagnosis: any }) {
   const [providers, setProviders] = useState<any[]>([]);
   const [state, formAction] = useFormState(createAppointment, initialState);
+  const [selectedProviderId, setSelectedProviderId] = useState<string>("");
+  const [nearestMsg, setNearestMsg] = useState("");
   
+  const aiAciliyet = diagnosis?.aciliyet || "";
+  const aiHizmet = diagnosis?.tavsiye_edilen_hizmet || "";
+  const aiOzeti = diagnosis?.ai_ozeti || "";
+
   useEffect(() => {
     getProviders().then(data => setProviders(data));
   }, []);
 
-  const aiAciliyet = diagnosis?.aciliyet || "";
-  const aiHizmet = diagnosis?.tavsiye_edilen_hizmet || "";
-  const aiOzeti = diagnosis?.ai_ozeti || "";
+  useEffect(() => {
+    if (aiAciliyet === "Yüksek" && providers.length > 0 && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          let nearest = mapLocations[0];
+          let minDist = Infinity;
+          
+          for (const loc of mapLocations) {
+            const dist = getDistanceFromLatLonInKm(latitude, longitude, loc.lat, loc.lng);
+            if (dist < minDist) {
+              minDist = dist;
+              nearest = loc;
+            }
+          }
+          
+          setNearestMsg(`📍 Konumunuza en yakın klinik (${nearest.isim}) otomatik seçildi.`);
+          
+          // Match DB provider or fallback
+          const matchedDbProvider = providers.find(p => p.name.includes(nearest.isim) || nearest.isim.includes(p.name));
+          if (matchedDbProvider) {
+            setSelectedProviderId(matchedDbProvider.id);
+          } else {
+            setSelectedProviderId(providers[0].id);
+          }
+        },
+        (error) => {
+          console.warn("Konum alınamadı:", error);
+          setSelectedProviderId(providers[0]?.id || "");
+        }
+      );
+    }
+  }, [aiAciliyet, providers]);
 
   return (
     <form action={formAction} className="space-y-6 flex flex-col">
@@ -47,9 +97,11 @@ function BookingForm({ diagnosis }: { diagnosis: any }) {
           <select 
             name="providerId"
             required
+            value={selectedProviderId}
+            onChange={(e) => setSelectedProviderId(e.target.value)}
             className="w-full bg-white border-4 border-black rounded-2xl py-3 pl-12 pr-4 font-bold text-base focus:outline-none focus:bg-[#fef08a] transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] appearance-none"
           >
-            <option value="">Lütfen klinik veya hekim seçin</option>
+            <option value="" disabled>Lütfen klinik veya hekim seçin</option>
             {providers.map(p => (
               <option key={p.id} value={p.id}>{p.name} - {p.specialty || "Klinik"}</option>
             ))}
@@ -60,10 +112,13 @@ function BookingForm({ diagnosis }: { diagnosis: any }) {
       {(aiAciliyet || aiHizmet) && (
         <div className="bg-[#bbf7d0] border-4 border-black rounded-2xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-4">
           <p className="font-black uppercase text-sm mb-2 text-emerald-900">VetAI Önerileri Forma Eklendi</p>
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 flex-wrap mb-2">
             {aiAciliyet && <span className="bg-white border-2 border-black rounded-lg px-3 py-1 text-sm font-bold">{aiAciliyet} Aciliyet</span>}
             {aiHizmet && <span className="bg-white border-2 border-black rounded-lg px-3 py-1 text-sm font-bold">{aiHizmet} Hizmeti</span>}
           </div>
+          {nearestMsg && (
+            <p className="text-sm font-bold text-emerald-800 animate-pulse">{nearestMsg}</p>
+          )}
         </div>
       )}
 
