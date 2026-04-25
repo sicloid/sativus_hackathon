@@ -19,7 +19,8 @@ export default async function ProfilPage() {
 
   // Dinamik verileri çek
   const totalOrders = await getUserOrderCount();
-  const activeCoupons = 1;
+  const allCoupons = await getCoupons();
+  const activeCoupons = allCoupons.filter(c => !c.isUsed).length;
 
   return (
     <div className="flex flex-col gap-8">

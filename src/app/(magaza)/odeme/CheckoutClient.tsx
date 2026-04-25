@@ -21,9 +21,10 @@ interface SavedAddress {
 interface CheckoutClientProps {
   savedAddresses: SavedAddress[]
   isLoggedIn: boolean
+  availableCoupons?: any[]
 }
 
-export default function CheckoutClient({ savedAddresses, isLoggedIn }: CheckoutClientProps) {
+export default function CheckoutClient({ savedAddresses, isLoggedIn, availableCoupons = [] }: CheckoutClientProps) {
   const { items, totalPrice, clearCart } = useCart()
   const router = useRouter()
   const { showToast } = useToast()
@@ -267,24 +268,53 @@ export default function CheckoutClient({ savedAddresses, isLoggedIn }: CheckoutC
                     <Check className="text-[var(--brutal-green)]" size={16} />
                     <span className="font-black text-sm uppercase tracking-tighter">{appliedCoupon.code} (%{appliedCoupon.discountPercent})</span>
                   </div>
-                  <button onClick={removeCoupon} className="text-red-500 hover:text-black transition-colors"><X size={16} /></button>
+                  <button onClick={removeCoupon} type="button" className="text-red-500 hover:text-black transition-colors"><X size={16} /></button>
                 </div>
               ) : (
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                    placeholder="KOD GIRIN"
-                    className="flex-1 brutal-border px-3 py-2 text-xs font-black uppercase focus:outline-none"
-                  />
-                  <button
-                    onClick={handleApplyCoupon}
-                    disabled={isValidating || !couponCode}
-                    className="bg-black text-white px-3 py-2 brutal-border font-black text-xs uppercase hover:bg-white hover:text-black transition-all disabled:opacity-50"
-                  >
-                    {isValidating ? '...' : 'UYGULA'}
-                  </button>
+                <div className="flex flex-col gap-3">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      placeholder="KOD GİRİN"
+                      className="flex-1 brutal-border px-3 py-2 text-xs font-black uppercase focus:outline-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      disabled={isValidating || !couponCode}
+                      className="bg-black text-white px-3 py-2 brutal-border font-black text-xs uppercase hover:bg-white hover:text-black transition-all disabled:opacity-50"
+                    >
+                      {isValidating ? '...' : 'UYGULA'}
+                    </button>
+                  </div>
+                  {availableCoupons.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {availableCoupons.map((c) => (
+                        <button
+                          key={c.id}
+                          type="button"
+                          onClick={async () => {
+                            setCouponCode(c.code)
+                            setIsValidating(true)
+                            const result = await validateCoupon(c.code)
+                            setIsValidating(false)
+                            if (result.error) {
+                              showToast(result.error, 'error')
+                              setAppliedCoupon(null)
+                            } else {
+                              showToast(`Kupon Uygulandı: %${result.coupon.discountPercent} İndirim!`)
+                              setAppliedCoupon(result.coupon)
+                            }
+                          }}
+                          className="px-2 py-1 bg-gray-100 hover:bg-[var(--brutal-yellow)] text-[10px] font-black uppercase brutal-border transition-colors border-2"
+                        >
+                          {c.code} (%{c.discountPercent})
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
