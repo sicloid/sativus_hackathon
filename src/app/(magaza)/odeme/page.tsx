@@ -12,7 +12,7 @@ export default async function OdemePage() {
   // Kayıtlı adresleri ve kuponları sunucu tarafında çek
   const savedAddresses = user ? await getAddresses() : []
   const allCoupons = user ? await getCoupons() : []
-  const availableCoupons = allCoupons.filter(c => !c.isUsed)
+  const availableCoupons = allCoupons.filter((c: any) => !c.isUsed)
 
   return (
     <CheckoutClient

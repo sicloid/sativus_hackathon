@@ -86,11 +86,11 @@ export default function CheckoutClient({ savedAddresses, isLoggedIn, availableCo
     setIsValidating(false)
 
     if (result.error) {
-      showToast(result.error, 'error')
+      showToast(result.error)
       setAppliedCoupon(null)
     } else {
-      showToast(`Kupon Uygulandı: %${result.coupon.discountPercent} İndirim!`)
-      setAppliedCoupon(result.coupon)
+      showToast(`Kupon Uygulandı: %${result.coupon?.discountPercent} İndirim!`)
+      setAppliedCoupon(result.coupon!)
     }
   }
 
@@ -301,11 +301,11 @@ export default function CheckoutClient({ savedAddresses, isLoggedIn, availableCo
                             const result = await validateCoupon(c.code)
                             setIsValidating(false)
                             if (result.error) {
-                              showToast(result.error, 'error')
+                              showToast(result.error)
                               setAppliedCoupon(null)
                             } else {
-                              showToast(`Kupon Uygulandı: %${result.coupon.discountPercent} İndirim!`)
-                              setAppliedCoupon(result.coupon)
+                              showToast(`Kupon Uygulandı: %${result.coupon?.discountPercent} İndirim!`)
+                              setAppliedCoupon(result.coupon!)
                             }
                           }}
                           className="px-2 py-1 bg-gray-100 hover:bg-[var(--brutal-yellow)] text-[10px] font-black uppercase brutal-border transition-colors border-2"

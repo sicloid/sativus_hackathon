@@ -14,7 +14,7 @@ export async function getProducts(options: {
   const { category, search, sort } = options
 
   const where: any = {
-    NOT: { category: 'Reçeteli İlaç' }
+    NOT: { category: { in: ['Reçeteli İlaç', 'Reçeteli ilaç', 'reçeteli ilaç', 'Reçeteli İlaçlar', 'Reçeteli Ilac'] } }
   }
 
   if (category && category !== 'Tümü') {
@@ -46,7 +46,7 @@ export async function getSearchSuggestions(query: string) {
   return prisma.product.findMany({
     where: {
       name: { contains: query, mode: 'insensitive' },
-      NOT: { category: 'Reçeteli İlaç' }
+      NOT: { category: { in: ['Reçeteli İlaç', 'Reçeteli ilaç', 'reçeteli ilaç', 'Reçeteli İlaçlar', 'Reçeteli Ilac'] } }
     },
     select: {
       id: true,
@@ -60,11 +60,11 @@ export async function getSearchSuggestions(query: string) {
 // ─── Rastgele Ürün Getir (Upselling) ─────────────────────────────────────────
 export async function getRandomProduct() {
   const count = await prisma.product.count({
-    where: { NOT: { category: 'Reçeteli İlaç' } }
+    where: { NOT: { category: { in: ['Reçeteli İlaç', 'Reçeteli ilaç', 'reçeteli ilaç', 'Reçeteli İlaçlar', 'Reçeteli Ilac'] } } }
   })
   const skip = Math.floor(Math.random() * count)
   return prisma.product.findFirst({
-    where: { NOT: { category: 'Reçeteli İlaç' } },
+    where: { NOT: { category: { in: ['Reçeteli İlaç', 'Reçeteli ilaç', 'reçeteli ilaç', 'Reçeteli İlaçlar', 'Reçeteli Ilac'] } } },
     skip: skip,
   })
 }
