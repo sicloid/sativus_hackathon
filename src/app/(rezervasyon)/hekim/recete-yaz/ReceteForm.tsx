@@ -77,10 +77,17 @@ export function ReceteForm({ pets, products }: { pets: Pet[]; products: Product[
 
   const handleSubmit = async (formData: FormData) => {
     formData.set("items", JSON.stringify(items));
-    const result = await createPrescription(formData);
-    if (result.success) {
+    try {
+      const result = await createPrescription(formData);
+      if (result && 'error' in result) {
+        alert("Hata: " + result.error);
+        return;
+      }
       setSubmitted(true);
       setItems([]);
+    } catch (err) {
+      console.error("Reçete kaydetme hatası:", err);
+      alert("Reçete kaydedilemedi. Konsola bakın.");
     }
   };
 
