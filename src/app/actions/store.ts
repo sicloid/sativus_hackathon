@@ -223,15 +223,43 @@ export async function getUserOrderCount() {
   })
 }
 
+// ─── Kuponları Tohumla (Seed) ────────────────────────────────────────────────
+export async function seedCoupons() {
+  const coupons = [
+    { code: 'HOSGELDIN5', discountPercent: 5, description: 'İlk Siparişe Özel Hoş Geldin İndirimi' },
+    { code: 'MERHABA10', discountPercent: 10, description: 'PetVerse Dünyasına Merhaba İndirimi' },
+    { code: 'PATI20', discountPercent: 20, description: 'Sevimli Dostlarımız İçin Büyük İndirim' },
+  ]
+
+  for (const c of coupons) {
+    await prisma.coupon.upsert({
+      where: { code: c.code },
+      update: { isActive: true }, 
+      create: {
+        code: c.code,
+        discountPercent: c.discountPercent,
+        description: c.description,
+        isActive: true,
+      },
+    })
+  }
+  return { success: true }
+}
+
 // ─── Kuponları Getir ──────────────────────────────────────────────────────────
 export async function getCoupons() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
 
-  // Sistemdeki aktif kuponları getir
+  // Sistemdeki aktif kuponları veya kullanıcının kullandığı kuponları getir
   const coupons = await prisma.coupon.findMany({
-    where: { isActive: true },
+    where: {
+      OR: [
+        { isActive: true },
+        { usedBy: { some: { userId: user.id } } }
+      ]
+    },
     orderBy: { discountPercent: 'desc' }
   })
 
@@ -255,11 +283,19 @@ export async function validateCoupon(code: string) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Giriş yapmalısınız.' }
 
-  const coupon = await prisma.coupon.findUnique({
-    where: { code: code.toUpperCase() }
+  const cleanCode = code.trim().toUpperCase()
+
+  // Eğer veritabanı boşsa tohumla
+  const count = await prisma.coupon.count()
+  if (count === 0) {
+    await seedCoupons()
+  }
+
+  const coupon = await prisma.coupon.findFirst({
+    where: { code: cleanCode, isActive: true }
   })
 
-  if (!coupon || !coupon.isActive) {
+  if (!coupon) {
     return { error: 'Geçersiz veya süresi dolmuş kupon kodu.' }
   }
 
@@ -308,6 +344,21 @@ export async function createOrder(formData: FormData) {
 
   if (cartItems.length === 0) {
     return { error: 'Sepetiniz boş.' }
+  }
+
+  // Kupon kullanım kontrolü (Ek güvenlik)
+  if (couponId) {
+    const alreadyUsed = await prisma.usedCoupon.findUnique({
+      where: {
+        userId_couponId: {
+          userId: user.id,
+          couponId: couponId
+        }
+      }
+    })
+    if (alreadyUsed) {
+      return { error: 'Bu kupon daha önce kullanılmış.' }
+    }
   }
 
   // Fiyatları DB'den doğrula (güvenlik)
@@ -361,7 +412,7 @@ export async function createOrder(formData: FormData) {
     },
   })
 
-  // Kuponu kullanıldı olarak işaretle
+  // Kuponu kullanıldı olarak işaretle ve pasif yap
   if (couponId) {
     await prisma.usedCoupon.create({
       data: {
@@ -369,6 +420,12 @@ export async function createOrder(formData: FormData) {
         couponId,
         orderId: order.id
       }
+    })
+    
+    // Kuponu sistem genelinde inaktif yap
+    await prisma.coupon.update({
+      where: { id: couponId },
+      data: { isActive: false }
     })
   }
 
@@ -383,6 +440,7 @@ export async function createOrder(formData: FormData) {
   revalidatePath('/urunler')
   revalidatePath('/profil/siparisler')
   revalidatePath('/profil')
+  revalidatePath('/profil/kuponlar')
   return { success: true, orderId: order.id }
 }
 

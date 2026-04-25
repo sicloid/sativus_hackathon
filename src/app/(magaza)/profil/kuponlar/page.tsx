@@ -1,10 +1,17 @@
-import { getCoupons } from '@/app/actions/store'
+import { getCoupons, seedCoupons } from '@/app/actions/store'
 import { Ticket, Scissors, CheckCircle2, AlertCircle } from 'lucide-react'
+import CopyCouponButton from '@/components/CopyCouponButton'
 
 export const dynamic = 'force-dynamic'
 
 export default async function KuponlarPage() {
-  const coupons = await getCoupons()
+  let coupons = await getCoupons()
+
+  // Eğer hiç kupon yoksa, tohumla ve tekrar çek
+  if (coupons.length === 0) {
+    await seedCoupons()
+    coupons = await getCoupons()
+  }
 
   return (
     <div className="space-y-8">
@@ -52,12 +59,19 @@ export default async function KuponlarPage() {
               </div>
 
               <div className="mt-6 flex items-center justify-between gap-4">
-                <div className="bg-gray-50 brutal-border px-4 py-2 flex-grow text-center font-black text-xl tracking-widest uppercase">
-                  {coupon.code}
+                <div className={`flex flex-grow items-center gap-2 bg-gray-50 brutal-border p-1 ${coupon.isUsed ? 'opacity-50' : ''}`}>
+                  <div className={`flex-grow text-center font-black text-xl tracking-widest uppercase py-1 ${coupon.isUsed ? 'blur-[2px] select-none' : ''}`}>
+                    {coupon.code}
+                  </div>
+                  {!coupon.isUsed && <CopyCouponButton code={coupon.code} />}
                 </div>
-                {!coupon.isUsed && (
+                {!coupon.isUsed ? (
                   <div className="text-[10px] font-bold text-gray-400 uppercase leading-tight max-w-[100px]">
                     Ödeme sayfasında kodu uygulayabilirsiniz.
+                  </div>
+                ) : (
+                  <div className="text-[10px] font-bold text-red-500 uppercase leading-tight max-w-[100px]">
+                    Bu kupon artık kullanılamaz.
                   </div>
                 )}
               </div>

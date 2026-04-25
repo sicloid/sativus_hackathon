@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 
 export interface Product {
   id: string;
@@ -35,12 +34,11 @@ export default function ProductCard({ product, onAddToCart, onToggleFavorite, is
     <div className="brutal-border brutal-shadow brutal-shadow-hover bg-white flex flex-col h-full overflow-hidden">
       <Link href={`/urunler/${product.id}`} className="block relative aspect-square border-b-2 border-black bg-[var(--brutal-yellow)] group cursor-pointer">
         {product.image_url && (
-          <Image 
+          // eslint-disable-next-line @next/next/no-img-element
+          <img 
             src={product.image_url}
             alt={product.name}
-            fill
-            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />
         )}
         <div className="absolute top-2 left-2 bg-white brutal-border px-1 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-black uppercase">
