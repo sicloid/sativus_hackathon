@@ -1,6 +1,12 @@
 import { getLatestOrder } from '@/app/actions/store'
 import ClearCartOnLoad from './ClearCartOnLoad'
+import ConfettiTrigger from './ConfettiTrigger'
 import Link from 'next/link'
+import { Heart } from 'lucide-react'
+import { Bebas_Neue, Space_Mono } from 'next/font/google'
+
+const bebas = Bebas_Neue({ weight: '400', subsets: ['latin'] })
+const spaceMono = Space_Mono({ weight: ['400', '700'], subsets: ['latin'] })
 
 export const dynamic = 'force-dynamic'
 
@@ -8,125 +14,87 @@ export default async function OdemeBasariliPage() {
   const order = await getLatestOrder()
 
   return (
-    <div className="flex flex-col items-center justify-center py-12 px-4">
-      {/* Sepeti temizle (client micro-component) */}
+    <div className="relative min-h-[90vh] -mt-8 -mx-4 flex items-center justify-center p-4">
+      {/* Sepeti temizle & Konfeti patlat */}
       <ClearCartOnLoad />
+      <ConfettiTrigger />
 
-      {/* Başlık Kutusu */}
-      <div className="bg-[var(--brutal-green)] brutal-border brutal-shadow p-10 max-w-2xl w-full text-center mb-8">
-        <div className="w-20 h-20 bg-white brutal-border brutal-shadow mx-auto flex items-center justify-center mb-6 rounded-full">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor" className="w-10 h-10">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-          </svg>
+      {/* Full Screen Background Image */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <img 
+          src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=1200&q=80" 
+          alt="Success background" 
+          className="w-full h-full object-cover scale-105"
+        />
+        {/* Dark Overlay (bg-gray-900/60) */}
+        <div className="absolute inset-0 bg-gray-900/60" />
+      </div>
+
+      {/* Content Card (Solid colors, no glassmorphism) */}
+      <div className="relative z-10 w-full max-w-xl bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-8 md:p-12 text-center">
+        {/* Animated Heart in Yellow Circle */}
+        <div className="mb-8 flex justify-center">
+          <div className="w-24 h-24 bg-[#FFD600] border-4 border-black rounded-full flex items-center justify-center shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] heartbeat-anim">
+             <Heart className="w-12 h-12 text-[#FF2E2E] fill-[#FF2E2E]" />
+          </div>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-black uppercase mb-3">Siparişiniz Alındı!</h1>
-        <p className="text-lg font-bold mb-6">
-          Teşekkür ederiz. Hayvan dostunuz için siparişiniz başarıyla oluşturuldu.
+        {/* Typography */}
+        <h1 className={`${bebas.className} text-4xl md:text-6xl uppercase mb-4 leading-none text-black tracking-wider`}>
+          Bir canı kurtardığınız ve hayat olduğunuz için teşekkürler!
+        </h1>
+        
+        <p className="text-lg text-gray-500 italic mb-8 font-medium">
+          Desteğinizle bir dostumuzun daha hayatı güzelleşiyor.
         </p>
 
+        {/* Order Number (Space Mono) */}
         {order && (
-          <div className="bg-white brutal-border p-4 mb-6 inline-block">
-            <p className="text-xs uppercase font-black mb-1 tracking-widest">Sipariş Numarası</p>
-            <p className="text-2xl font-black text-[var(--brutal-blue)]">
-              #{order.id.slice(-8).toUpperCase()}
-            </p>
-          </div>
+          <Link 
+            href="/profil/siparisler" 
+            className={`${spaceMono.className} inline-block mb-10 px-8 py-4 bg-[#FFD600] border-4 border-black font-bold text-xl md:text-3xl hover:bg-black hover:text-[#FFD600] transition-colors cursor-pointer shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-[4px] hover:translate-x-[4px]`}
+          >
+            #{order.id.slice(-8).toUpperCase()}
+          </Link>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        {/* Buttons (Soft-brutalism) */}
+        <div className="flex flex-col sm:flex-row gap-6 justify-center mb-10">
           <Link
             href="/profil/siparisler"
-            className="bg-black text-white px-8 py-4 brutal-border brutal-shadow brutal-shadow-hover font-black uppercase text-lg transition-colors hover:bg-white hover:text-black"
+            className="flex-1 bg-black text-white px-6 py-4 border-4 border-black font-black uppercase tracking-widest text-sm shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-[4px] hover:translate-x-[4px] transition-all text-center"
           >
-            Siparişlerime Git
+            Siparişlerim
           </Link>
           <Link
             href="/urunler"
-            className="bg-white text-black px-8 py-4 brutal-border brutal-shadow brutal-shadow-hover font-black uppercase text-lg transition-colors hover:bg-[var(--brutal-yellow)]"
+            className="flex-1 bg-[#FFD600] text-black px-6 py-4 border-4 border-black font-black uppercase tracking-widest text-sm shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-y-[4px] hover:translate-x-[4px] transition-all text-center"
           >
-            Alışverişe Dön
+            Anasayfaya Dön
           </Link>
+        </div>
+
+        {/* Donation Footer (Dashed border) */}
+        <div className="border-t-4 border-dashed border-black pt-8 flex items-center justify-center gap-3">
+          <span className="text-3xl">🐾</span>
+          <p className="font-black text-xs md:text-sm uppercase tracking-tighter text-black">
+            Her siparişiniz hayvanlar için %10 bağış olarak iletilmektedir.
+          </p>
         </div>
       </div>
 
-      {/* Sipariş Özeti */}
-      {order ? (
-        <div className="max-w-2xl w-full bg-white brutal-border brutal-shadow">
-          {/* Özet Başlığı */}
-          <div className="bg-black text-white px-6 py-4">
-            <h2 className="font-black uppercase text-lg tracking-wider">📦 Sipariş Özeti</h2>
-          </div>
-
-          {/* Ürün Listesi */}
-          <div className="p-6 border-b-2 border-black">
-            <h3 className="font-black uppercase text-xs tracking-widest mb-4 text-gray-500">Ürünler</h3>
-            <ul className="flex flex-col gap-3">
-              {order.items.map((item) => (
-                <li key={item.id} className="flex items-center gap-4">
-                  {/* Ürün Görseli */}
-                  {item.product.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={item.product.imageUrl}
-                      alt={item.product.name}
-                      className="w-14 h-14 object-cover brutal-border flex-shrink-0"
-                      onError={undefined}
-                    />
-                  ) : (
-                    <div className="w-14 h-14 bg-[#f0f0f0] brutal-border flex items-center justify-center flex-shrink-0 text-gray-400 font-black">?</div>
-                  )}
-                  <div className="flex-grow min-w-0">
-                    <p className="font-black truncate">{item.product.name}</p>
-                    <p className="text-sm font-bold text-gray-500">{item.quantity} adet × ₺{item.unitPrice.toFixed(2)}</p>
-                  </div>
-                  <p className="font-black flex-shrink-0">
-                    ₺{(item.unitPrice * item.quantity).toFixed(2)}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Fiyat Özeti */}
-          <div className="p-6 border-b-2 border-black">
-            <h3 className="font-black uppercase text-xs tracking-widest mb-4 text-gray-500">Ödeme Detayı</h3>
-            <div className="flex flex-col gap-2 font-bold text-sm">
-              <div className="flex justify-between">
-                <span>Ara Toplam</span>
-                <span>₺{order.totalPrice.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>KDV (%20)</span>
-                <span>₺{order.tax.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Kargo</span>
-                <span>{order.shippingCost === 0 ? '🎉 Ücretsiz' : `₺${order.shippingCost.toFixed(2)}`}</span>
-              </div>
-              <div className="flex justify-between font-black text-lg border-t-2 border-black pt-2 mt-1">
-                <span>Toplam</span>
-                <span>₺{(order.totalPrice + order.tax + order.shippingCost).toFixed(2)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Teslimat Adresi */}
-          <div className="p-6">
-            <h3 className="font-black uppercase text-xs tracking-widest mb-4 text-gray-500">Teslimat Adresi</h3>
-            <div className="font-bold text-sm flex flex-col gap-1">
-              <p className="font-black text-base">{order.fullName}</p>
-              <p>📞 {order.phone}</p>
-              <p>📍 {order.address}</p>
-              <p>🏙️ {order.city}</p>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="max-w-2xl w-full bg-[#f8f8f8] brutal-border p-8 text-center">
-          <p className="font-bold text-gray-500">Sipariş detayları yükleniyor...</p>
-        </div>
-      )}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes heartbeat {
+          0% { transform: scale(1); }
+          15% { transform: scale(1.15); }
+          30% { transform: scale(1); }
+          45% { transform: scale(1.2); }
+          70% { transform: scale(1); }
+        }
+        .heartbeat-anim {
+          animation: heartbeat 1.5s ease-in-out infinite;
+        }
+      ` }} />
     </div>
   )
 }

@@ -1,14 +1,28 @@
-import prisma from '@/lib/prisma'
+import { getProducts } from '@/app/actions/store'
 import UrunlerClient from './UrunlerClient'
 import { Product as ProductType } from '@/components/ProductCard'
 
 export const dynamic = 'force-dynamic'
 
-export default async function UrunlerPage() {
-  const products = await prisma.product.findMany({
-    orderBy: {
-      createdAt: 'desc'
-    }
+interface PageProps {
+  searchParams: Promise<{
+    kategori?: string;
+    ara?: string;
+    sirala?: string;
+  }>;
+}
+
+export default async function UrunlerPage({ searchParams }: PageProps) {
+  const params = await searchParams
+  
+  const category = params.kategori
+  const search = params.ara
+  const sort = params.sirala as any
+
+  const products = await getProducts({ 
+    category, 
+    search, 
+    sort 
   })
 
   // Prisma modelini ProductCard'ın beklediği tipe dönüştür
@@ -22,5 +36,5 @@ export default async function UrunlerPage() {
     stock_quantity: p.stockQuantity
   }))
 
-  return <UrunlerClient products={formattedProducts} />
+  return <UrunlerClient initialProducts={formattedProducts} />
 }

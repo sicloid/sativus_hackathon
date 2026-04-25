@@ -5,14 +5,67 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 
-// ─── Ürünleri Listele ─────────────────────────────────────────────────────────
-export async function getProducts(category?: string) {
-  const where = category && category !== 'Tümü'
-    ? { category, NOT: { category: 'Reçeteli İlaç' } }
-    : { NOT: { category: 'Reçeteli İlaç' } }
+// ─── Ürünleri Listele (Filtreleme ve Arama ile) ───────────────────────────────
+export async function getProducts(options: { 
+  category?: string, 
+  search?: string, 
+  sort?: 'price_asc' | 'price_desc' | 'newest' 
+} = {}) {
+  const { category, search, sort } = options
+
+  const where: any = {
+    NOT: { category: 'Reçeteli İlaç' }
+  }
+
+  if (category && category !== 'Tümü') {
+    where.category = category
+  }
+
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: 'insensitive' } },
+      { description: { contains: search, mode: 'insensitive' } },
+    ]
+  }
+
+  let orderBy: any = { createdAt: 'desc' }
+  if (sort === 'price_asc') orderBy = { price: 'asc' }
+  if (sort === 'price_desc') orderBy = { price: 'desc' }
+  if (sort === 'newest') orderBy = { createdAt: 'desc' }
+
   return prisma.product.findMany({
     where,
-    orderBy: { createdAt: 'desc' },
+    orderBy,
+  })
+}
+
+// ─── Arama Önerileri Getir (Smart Search) ────────────────────────────────────
+export async function getSearchSuggestions(query: string) {
+  if (!query || query.length < 2) return []
+
+  return prisma.product.findMany({
+    where: {
+      name: { contains: query, mode: 'insensitive' },
+      NOT: { category: 'Reçeteli İlaç' }
+    },
+    select: {
+      id: true,
+      name: true,
+      category: true,
+    },
+    take: 5,
+  })
+}
+
+// ─── Rastgele Ürün Getir (Upselling) ─────────────────────────────────────────
+export async function getRandomProduct() {
+  const count = await prisma.product.count({
+    where: { NOT: { category: 'Reçeteli İlaç' } }
+  })
+  const skip = Math.floor(Math.random() * count)
+  return prisma.product.findFirst({
+    where: { NOT: { category: 'Reçeteli İlaç' } },
+    skip: skip,
   })
 }
 
@@ -98,7 +151,7 @@ export async function createOrder(formData: FormData) {
 
   revalidatePath('/urunler')
   revalidatePath('/profil/siparisler')
-  redirect('/odeme/basarili')
+  return { success: true, orderId: order.id }
 }
 
 // ─── Kullanıcı Siparişlerini Getir ────────────────────────────────────────────
