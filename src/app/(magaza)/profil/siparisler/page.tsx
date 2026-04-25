@@ -78,18 +78,18 @@ export default async function SiparislerPage() {
                     <ul className="flex flex-col gap-3">
                       {order.items.map((item) => (
                         <li key={item.id} className="flex items-center gap-3">
-                          {item.product.imageUrl ? (
+                          {item.product?.imageUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
-                              src={item.product.imageUrl}
-                              alt={item.product.name}
+                              src={item.product?.imageUrl || ''}
+                              alt={item.product?.name || 'Ürün'}
                               className="w-12 h-12 object-cover brutal-border flex-shrink-0"
                             />
                           ) : (
                             <div className="w-12 h-12 bg-[#f0f0f0] brutal-border flex items-center justify-center flex-shrink-0 text-gray-400 font-black text-sm">?</div>
                           )}
                           <div className="min-w-0">
-                            <p className="font-black text-sm leading-tight truncate">{item.product.name}</p>
+                            <p className="font-black text-sm leading-tight truncate">{item.product?.name || 'Silinmiş Ürün'}</p>
                             <p className="text-xs font-bold text-gray-500">
                               {item.quantity} adet × ₺{item.unitPrice.toFixed(2)}
                             </p>

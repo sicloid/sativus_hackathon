@@ -251,7 +251,7 @@ export async function seedCoupons() {
 // ─── Aktif Kupon Sayısını Getir ─────────────────────────────────────────────
 export async function getActiveCouponCount() {
   const coupons = await getCoupons()
-  return coupons.filter(c => !c.isUsed).length
+  return coupons.filter((c: any) => !c.isUsed).length
 }
 
 // ─── Kuponları Getir ──────────────────────────────────────────────────────────
@@ -277,16 +277,16 @@ export async function getCoupons() {
   })
 
   // Kullanıcının hangilerini kullandığını işaretle
-  if (!(prisma as any).usedCoupon) return coupons.map(c => ({ ...c, isUsed: false }))
+  if (!(prisma as any).usedCoupon) return coupons.map((c: any) => ({ ...c, isUsed: false }))
 
   const usedCoupons = await (prisma as any).usedCoupon.findMany({
     where: { userId: user.id },
     select: { couponId: true }
   })
 
-  const usedIds = usedCoupons.map(uc => uc.couponId)
+  const usedIds = usedCoupons.map((uc: any) => uc.couponId)
 
-  return coupons.map(c => ({
+  return coupons.map((c: any) => ({
     ...c,
     isUsed: usedIds.includes(c.id) || (c.usageLimit !== null && c.usedCount >= c.usageLimit)
   }))
