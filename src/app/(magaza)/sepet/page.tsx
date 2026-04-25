@@ -5,29 +5,38 @@ import { useCart } from '@/context/CartContext';
 import CartItem from '@/components/CartItem';
 import UpsellOffer from '@/components/UpsellOffer';
 import Link from 'next/link';
+import { validateCoupon } from '@/app/actions/store';
+import { useToast } from '@/context/ToastContext';
 
 export default function SepetPage() {
   const { items, totalPrice, clearCart } = useCart();
+  const { showToast } = useToast();
   const [coupon, setCoupon] = useState('');
-  const [discount, setDiscount] = useState(0);
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
+  const [isValidating, setIsValidating] = useState(false);
   const [couponError, setCouponError] = useState('');
 
-  const handleApplyCoupon = () => {
-    // Mock coupon logic
-    if (coupon.toUpperCase() === 'PET10') {
-      setDiscount(0.10);
-      setCouponError('');
-    } else if (coupon.toUpperCase() === 'VERSE20') {
-      setDiscount(0.20);
-      setCouponError('');
+  const handleApplyCoupon = async () => {
+    const cleanCode = coupon.trim();
+    if (!cleanCode) return;
+    
+    setIsValidating(true);
+    setCouponError('');
+    
+    const result = await validateCoupon(cleanCode);
+    setIsValidating(false);
+
+    if (result.error) {
+      setCouponError(result.error);
+      setAppliedCoupon(null);
     } else {
-      setDiscount(0);
-      setCouponError('Geçersiz kupon kodu!');
+      setAppliedCoupon(result.coupon);
+      showToast(`Kupon Uygulandı: %${result.coupon.discountPercent} İndirim!`);
     }
   };
 
-  const tax = totalPrice * 0.20; // %20 KDV varsayımı
-  const discountAmount = totalPrice * discount;
+  const tax = totalPrice * 0.20;
+  const discountAmount = appliedCoupon ? (totalPrice * appliedCoupon.discountPercent) / 100 : 0;
   const finalTotal = totalPrice + tax - discountAmount;
 
   if (items.length === 0) {
@@ -83,9 +92,9 @@ export default function SepetPage() {
               <span>KDV (%20):</span>
               <span>{tax.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
             </div>
-            {discount > 0 && (
+            {appliedCoupon && (
               <div className="flex justify-between text-[var(--brutal-yellow)] drop-shadow-[1px_1px_0_rgba(0,0,0,1)]">
-                <span>İndirim:</span>
+                <span>İndirim (%{appliedCoupon.discountPercent}):</span>
                 <span>-{discountAmount.toLocaleString('tr-TR', { style: 'currency', currency: 'TRY' })}</span>
               </div>
             )}
@@ -97,25 +106,26 @@ export default function SepetPage() {
           </div>
 
           <div className="mb-8">
-            <label className="block font-black uppercase mb-2 text-sm" htmlFor="coupon">Kampanya Kodu</label>
+            <label className="block font-black uppercase mb-2 text-sm" htmlFor="coupon">Kupon Kodu</label>
             <div className="flex">
               <input 
                 type="text" 
                 id="coupon"
                 value={coupon}
-                onChange={(e) => setCoupon(e.target.value)}
+                onChange={(e) => setCoupon(e.target.value.toUpperCase())}
                 className="w-full p-2 brutal-border border-r-0 focus:outline-none focus:ring-inset focus:ring-4 focus:ring-black uppercase font-bold text-sm"
                 placeholder="KOD GİRİNİZ"
               />
               <button 
                 onClick={handleApplyCoupon}
-                className="bg-black text-white brutal-border px-4 font-black uppercase text-sm hover:bg-white hover:text-black transition-colors"
+                disabled={isValidating || !coupon.trim()}
+                className="bg-black text-white brutal-border px-4 font-black uppercase text-sm hover:bg-white hover:text-black transition-colors disabled:opacity-50"
               >
-                Uygula
+                {isValidating ? '...' : 'Uygula'}
               </button>
             </div>
             {couponError && <p className="text-[var(--brutal-red)] font-black text-sm mt-2 drop-shadow-[1px_1px_0_rgba(0,0,0,1)]">{couponError}</p>}
-            {discount > 0 && <p className="text-[var(--brutal-yellow)] font-black text-sm mt-2 drop-shadow-[1px_1px_0_rgba(0,0,0,1)]">Kupon uygulandı!</p>}
+            {appliedCoupon && <p className="text-[var(--brutal-yellow)] font-black text-sm mt-2 drop-shadow-[1px_1px_0_rgba(0,0,0,1)]">Kupon uygulandı!</p>}
           </div>
 
           <Link 

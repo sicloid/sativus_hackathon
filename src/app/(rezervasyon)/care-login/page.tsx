@@ -4,16 +4,13 @@ import { useActionState, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, User, Lock, ArrowRight, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { loginAction, signupAction } from "./actions";
+import { authAction } from "./actions";
 
 type Tab = "hasta" | "hekim";
 
 export default function CareLoginPage() {
   const [activeTab, setActiveTab] = useState<Tab>("hasta");
-  const [loginState, loginFormAction, isLoginPending] = useActionState(loginAction, null);
-  const [signupState, signupFormAction, isSignupPending] = useActionState(signupAction, null);
-
-  const isPending = isLoginPending || isSignupPending;
+  const [authState, authFormAction, isPending] = useActionState(authAction, null);
 
   return (
     <div className="min-h-screen bg-[#fdfdfd] text-black font-sans flex flex-col relative overflow-hidden">
@@ -82,13 +79,13 @@ export default function CareLoginPage() {
                     <p className="font-bold text-zinc-700">Randevulara erişmek için giriş yapın.</p>
                   </div>
 
-                  {(loginState?.error || signupState?.error) && (
+                  {(authState?.error) && (
                     <div className="mb-6 bg-red-100 border-4 border-black rounded-xl p-4 font-bold text-red-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                      {loginState?.error || signupState?.error}
+                      {authState.error}
                     </div>
                   )}
 
-                  <form action={loginFormAction} className="space-y-6 flex flex-col">
+                  <form action={authFormAction} className="space-y-6 flex flex-col">
                     <input type="hidden" name="loginType" value="hasta" />
                     
                     <div className="space-y-2">
@@ -127,19 +124,23 @@ export default function CareLoginPage() {
                     <div className="pt-6 space-y-4">
                       <button 
                         type="submit"
+                        name="submitAction"
+                        value="login"
                         disabled={isPending}
                         className="w-full bg-[#a855f7] text-white border-4 border-black rounded-2xl py-4 font-black uppercase text-xl flex items-center justify-center gap-3 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:translate-x-1 active:shadow-none transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                       >
-                        {isLoginPending ? "Bekleniyor..." : "Giriş Yap"}
-                        {!isLoginPending && <ArrowRight className="w-6 h-6" />}
+                        {isPending ? "Bekleniyor..." : "Giriş Yap"}
+                        {!isPending && <ArrowRight className="w-6 h-6" />}
                       </button>
                       
                       <button 
-                        formAction={signupFormAction}
+                        type="submit"
+                        name="submitAction"
+                        value="signup"
                         disabled={isPending}
                         className="w-full bg-white text-black border-4 border-black rounded-2xl py-4 font-black uppercase text-xl flex items-center justify-center gap-3 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:translate-x-1 active:shadow-none transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                       >
-                        {isSignupPending ? "Bekleniyor..." : "Kayıt Ol"}
+                        {isPending ? "Bekleniyor..." : "Kayıt Ol"}
                       </button>
                     </div>
                   </form>
@@ -176,18 +177,18 @@ export default function CareLoginPage() {
                     <p className="font-bold text-zinc-600 text-lg">Yetkili veteriner hekim paneline erişim sağlayın.</p>
                   </div>
 
-                  {loginState?.error && (
+                  {authState?.error && (
                     <motion.div 
                       initial={{ x: -10, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       className="mb-8 bg-rose-100 border-4 border-black rounded-2xl p-5 font-bold text-rose-700 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] flex items-center gap-3"
                     >
                       <div className="w-8 h-8 bg-rose-600 text-white rounded-lg flex items-center justify-center font-black shrink-0">!</div>
-                      {loginState.error}
+                      {authState.error}
                     </motion.div>
                   )}
 
-                  <form action={loginFormAction} className="space-y-8 flex flex-col">
+                  <form action={authFormAction} className="space-y-8 flex flex-col">
                     <input type="hidden" name="loginType" value="hekim" />
 
                     <div className="space-y-3">
@@ -231,10 +232,12 @@ export default function CareLoginPage() {
                     <div className="pt-8 space-y-6">
                       <button 
                         type="submit"
+                        name="submitAction"
+                        value="login"
                         disabled={isPending}
                         className="w-full bg-rose-600 text-white border-4 border-black rounded-2xl py-5 font-black uppercase text-2xl flex items-center justify-center gap-4 shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1.5 hover:shadow-[14px_14px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:translate-x-1 active:shadow-none transition-all disabled:opacity-70 disabled:cursor-not-allowed group"
                       >
-                        {isLoginPending ? (
+                        {isPending ? (
                           <span className="flex items-center gap-2">
                             <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
                             Giriş Yapılıyor...

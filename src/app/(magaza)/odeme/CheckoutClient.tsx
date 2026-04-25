@@ -78,9 +78,10 @@ export default function CheckoutClient({ savedAddresses, isLoggedIn }: CheckoutC
   if (!isLoggedIn || (items.length === 0 && !showSuccess)) return null
 
   const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) return
+    const cleanCode = couponCode.trim()
+    if (!cleanCode) return
     setIsValidating(true)
-    const result = await validateCoupon(couponCode)
+    const result = await validateCoupon(cleanCode)
     setIsValidating(false)
 
     if (result.error) {

@@ -298,18 +298,30 @@ export default function UnifiedBookingPage() {
                 </div>
               </div>
 
-              <div className="bg-zinc-50 border-4 border-black rounded-xl p-4 flex flex-col h-[35vh] overflow-hidden">
+              <div className="bg-zinc-50 border-4 border-black rounded-xl p-4 flex flex-col h-[50vh] min-h-[400px] overflow-hidden">
                 <div className="flex-1 overflow-y-auto space-y-4 pr-2">
-                  {messages.map((msg, idx) => (
-                    <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                      <div className={`
-                        px-4 py-3 rounded-2xl border-2 border-black max-w-[85%] font-bold text-sm sm:text-base whitespace-pre-wrap break-words
-                        ${msg.role === "user" ? "bg-indigo-300 rounded-br-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" : "bg-emerald-300 rounded-bl-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"}
-                      `}>
-                        {msg.content}
+                  {messages.map((msg, idx) => {
+                    // Basit markdown formatlayıcı
+                    const formatMessage = (text: string) => {
+                      let html = text
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>') // Italic
+                        .replace(/\n/g, '<br/>'); // Yeni satır
+                      return { __html: html };
+                    };
+
+                    return (
+                      <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                        <div 
+                          className={`
+                            px-4 py-3 rounded-2xl border-2 border-black max-w-[90%] sm:max-w-[85%] text-sm sm:text-base break-words
+                            ${msg.role === "user" ? "bg-indigo-300 rounded-br-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-bold" : "bg-emerald-300 rounded-bl-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-medium"}
+                          `}
+                          dangerouslySetInnerHTML={formatMessage(msg.content)}
+                        />
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                   {isLoading && !diagnosis && (
                     <div className="flex justify-start">
                       <div className="px-4 py-3 rounded-2xl border-2 border-black bg-emerald-300 rounded-bl-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-bold text-sm animate-pulse">

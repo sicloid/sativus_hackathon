@@ -88,11 +88,10 @@ export async function POST(req: NextRequest): Promise<NextResponse<AiTeshisRespo
     const genAI = getGeminiClient();
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3.1-flash-lite-preview",
       systemInstruction: SYSTEM_PROMPT,
       generationConfig: {
         temperature: finalRequest ? 0.1 : 0.7,   // Teşhiste düşük sıcaklık → deterministik JSON
-        maxOutputTokens: finalRequest ? 1024 : 500,
         candidateCount: 1,
         responseMimeType: finalRequest ? "application/json" : undefined,
       },

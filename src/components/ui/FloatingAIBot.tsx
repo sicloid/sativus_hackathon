@@ -88,18 +88,51 @@ export function FloatingAIBot() {
 
           {/* Chat Body */}
           <div className="flex-1 overflow-y-auto p-4 bg-zinc-50 space-y-4">
-            {messages.map((msg, idx) => (
-              <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`
-                  px-4 py-3 rounded-2xl border-2 border-black max-w-[85%] font-bold text-sm sm:text-base break-words
-                  ${msg.role === "user" 
-                    ? "bg-[#3b82f6] text-white rounded-br-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" 
-                    : "bg-[#bbf7d0] text-black rounded-bl-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"}
-                `}>
-                  {msg.content}
+            {messages.map((msg, idx) => {
+              const hasRandevu = msg.role === 'model' && msg.content.includes('/randevu');
+              const hasMagaza = msg.role === 'model' && msg.content.includes('/magaza');
+              const hasBlog = msg.role === 'model' && msg.content.includes('/blog');
+
+              return (
+                <div key={idx} className={`flex flex-col gap-2 ${msg.role === "user" ? "items-end" : "items-start"}`}>
+                  <div 
+                    className={`
+                      px-4 py-3 rounded-2xl border-2 border-black max-w-[90%] sm:max-w-[85%] text-sm sm:text-base break-words
+                      ${msg.role === "user" 
+                        ? "bg-[#3b82f6] text-white rounded-br-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold" 
+                        : "bg-[#bbf7d0] text-black rounded-bl-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-medium"}
+                    `}
+                    dangerouslySetInnerHTML={{ 
+                      __html: msg.content
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                        .replace(/\n/g, '<br/>')
+                    }}
+                  />
+                  
+                  {/* Action Buttons based on AI suggestions */}
+                  {msg.role === 'model' && (hasRandevu || hasMagaza || hasBlog) && (
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {hasRandevu && (
+                        <a href="/randevu" className="bg-rose-400 text-black border-2 border-black rounded-xl px-4 py-2 font-black uppercase text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-none transition-all">
+                          📅 Randevu Al
+                        </a>
+                      )}
+                      {hasMagaza && (
+                        <a href="/magaza" className="bg-[#fef08a] text-black border-2 border-black rounded-xl px-4 py-2 font-black uppercase text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-none transition-all">
+                          🛍️ Mağazaya Git
+                        </a>
+                      )}
+                      {hasBlog && (
+                        <a href="/blog" className="bg-[#a855f7] text-white border-2 border-black rounded-xl px-4 py-2 font-black uppercase text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-y-0 active:shadow-none transition-all">
+                          📖 Blog Oku
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
             
             {isLoading && (
               <div className="flex justify-start">
