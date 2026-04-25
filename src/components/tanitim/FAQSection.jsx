@@ -17,16 +17,19 @@ const faqs = [
     answer: "Temel semptom kontrolü ücretsizdir, ancak derinlemesine analizler için Plus aboneliği gerekmektedir."
   },
   {
-    question: "Acil durumlarda ne yapmalıyım?",
-    answer: "Uygulamamızdaki 'Acil Yardım' butonuna basarak size en yakın 7/24 açık nöbetçi klinikleri listeleyebilirsiniz."
+    question: "Dijital Pet Karnesi nedir?",
+    answer: "Dostunuzun aşılarını, geçmiş tedavilerini ve sağlık verilerini her an yanınızda taşımanızı sağlayan dijital bir sağlık takip sistemidir."
   },
   {
-    question: "Abonelik sistemi var mı?",
-    answer: "Evet, aylık ve yıllık Plus paketlerimizle kargo avantajları ve AI hizmetlerine sınırsız erişim sağlayabilirsiniz."
+    question: "PetVerse Care üzerinden nasıl randevu alırım?",
+    answer: "Hekim listesinden dilediğiniz uzmanı seçip, takvimindeki uygun boşluklara tıklayarak saniyeler içinde randevunuzu kesinleştirebilirsiniz."
   }
 ];
 
+import { useScrollReveal } from '@/hooks/useScrollReveal';
+
 export default function FAQSection() {
+  const { ref, isVisible } = useScrollReveal();
   const [openIndex, setOpenIndex] = useState(null);
 
   const toggleFAQ = (index) => {
@@ -34,7 +37,7 @@ export default function FAQSection() {
   };
 
   return (
-    <section className="bg-orange-50 px-6 pt-20 border-b-2 border-black overflow-hidden">
+    <section ref={ref} className={`bg-white px-6 pt-20 border-b-2 border-black overflow-hidden transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <div className="max-w-4xl mx-auto space-y-8 mb-16">
         <h2 className="text-4xl md:text-5xl font-black tracking-tight text-black text-center mb-12">
           Sıkça Sorulan Sorular

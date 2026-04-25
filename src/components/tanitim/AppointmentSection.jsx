@@ -2,10 +2,13 @@
 
 import Link from 'next/link';
 import { Bell, RefreshCw, Calendar as CalendarIcon } from 'lucide-react';
+import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 export default function AppointmentSection() {
+  const { ref, isVisible } = useScrollReveal();
+
   return (
-    <section className="bg-orange-50 px-6 pt-16 md:pt-24 border-b-2 border-black overflow-hidden">
+    <section ref={ref} className={`bg-orange-50 px-6 pt-16 md:pt-24 border-b-2 border-black overflow-hidden transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center mb-16">
         {/* Sol - Tablet Mockup */}
         <div className="order-2 md:order-1 bg-gray-900 border-4 border-black rounded-[2.5rem] p-3 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] relative aspect-[4/3] flex flex-col hover:-translate-y-2 hover:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
@@ -82,14 +85,10 @@ export default function AppointmentSection() {
         </div>
       </div>
 
-      {/* Wave Transition to ShopSection (bg-yellow-50) */}
-      <div className="w-full overflow-hidden leading-none relative z-20">
-        <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none" className="w-full h-12 md:h-16">
-          <path
-            d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z"
-            fill="#fefce8"
-          />
+      {/* Wave Transition to ShopSection */}
+      <div className="w-full overflow-hidden leading-none -mb-1">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-12">
+          <path d="M0,80 C400,40 800,100 1200,60 L1200,120 L0,120 Z" fill="#fef3c7" />
         </svg>
       </div>
     </section>

@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
-import { MapPin, Clock, Phone, Navigation } from 'lucide-react'
+import { MapPin, Clock, Phone, ShoppingBag, Stethoscope, Scissors, Home, Search } from 'lucide-react'
 import Footer from '@/components/tanitim/Footer'
 import { mapLocations } from '@/data/mapLocations'
 
@@ -23,35 +23,60 @@ const PetVerseMap = dynamic(
 export default function HaritalarPage() {
   const [selectedId, setSelectedId] = useState<number | null>(1)
   const [filter, setFilter] = useState('Tümü')
+  const [searchTerm, setSearchTerm] = useState('')
 
-  const filteredLocations = filter === 'Tümü' 
-    ? mapLocations 
-    : mapLocations.filter(loc => loc.tip === filter)
+  const filteredLocations = useMemo(() => {
+    let locs = filter === 'Tümü' 
+      ? mapLocations 
+      : mapLocations.filter(loc => loc.tip === filter)
+    
+    return locs
+  }, [filter])
+
+  const handleSearch = () => {
+    if (!searchTerm.trim()) return
+    
+    const searchLower = searchTerm.toLowerCase()
+    const found = mapLocations.find(loc => 
+      loc.isim.toLowerCase().includes(searchLower) || 
+      loc.adres.toLowerCase().includes(searchLower)
+    )
+    
+    if (found) {
+      if (filter !== 'Tümü' && found.tip !== filter) {
+        setFilter('Tümü')
+      }
+      setSelectedId(found.id)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-orange-50 font-sans text-black">
       {/* 1. NAVBAR GÜNCELLEMESİ */}
-      <nav className="bg-white border-b-2 border-black sticky top-0 z-50 px-6 py-3 flex justify-between items-center shadow-[0px_2px_0px_0px_rgba(0,0,0,1)]">
-        {/* SOL — Logo */}
-        <Link href="/">
-          <div className="flex items-center gap-2 group">
-            <span className="text-2xl group-hover:rotate-12 transition-transform">🗺️</span>
-            <div>
-              <span className="font-black text-xl text-black">PETVERSE</span>
-              <span className="font-black text-xl text-blue-600">LOCATION</span>
-            </div>
-          </div>
+      <nav className="bg-white border-b-4 border-black sticky top-0 z-50 px-6 py-4 flex justify-between items-center brutal-shadow">
+        {/* SOL — Logo (PetVerse Shop Stili Birebir) */}
+        <Link href="/haritalar" className="flex items-center gap-2 group w-full md:w-auto justify-center md:justify-start">
+          <span className="text-3xl md:text-4xl">🐾</span>
+          <span className="text-2xl md:text-3xl font-black uppercase tracking-tighter group-hover:underline">
+            PetVerse <span className="text-[#a855f7]">Location</span>
+          </span>
         </Link>
 
         {/* ORTA — Arama */}
         <div className="hidden md:flex items-center gap-2">
-          <div className="flex items-center border-2 border-black rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+          <div className="flex items-center bg-white border-2 border-black rounded-xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus-within:ring-4 ring-blue-400 transition-all">
             <input 
               placeholder="Şehir veya ilçe ara..."
-              className="px-4 py-2 w-56 font-medium outline-none bg-white"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              className="px-4 py-2 w-64 font-bold outline-none bg-white"
             />
-            <button className="bg-black text-white px-4 py-2 font-black border-l-2 border-black hover:bg-gray-800 transition-colors">
-              ARA
+            <button 
+              onClick={handleSearch}
+              className="bg-blue-600 text-white px-4 py-2 font-black border-l-2 border-black hover:bg-black transition-colors"
+            >
+              <Search className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -63,87 +88,50 @@ export default function HaritalarPage() {
               Ana Menü
             </button>
           </Link>
-          <button className="border-2 border-black rounded-xl px-4 py-2 font-black text-sm bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition-transform duration-200 hidden sm:block">
-            Giriş Yap
-          </button>
-          <button className="border-2 border-black rounded-xl px-4 py-2 font-black text-sm bg-blue-600 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition-transform duration-200">
-            Kayıt Ol
-          </button>
+          <Link href="/urunler">
+            <button className="border-2 border-black rounded-xl px-4 py-2 font-black text-sm bg-[var(--brutal-yellow)] shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 transition-transform duration-200 hidden sm:block">
+              Mağaza
+            </button>
+          </Link>
         </div>
       </nav>
 
-      {/* 2. FİLTRE ÇUBUĞU */}
-      <div className="bg-amber-50 border-b-2 border-black px-4 py-3 sticky top-[64px] z-40">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-4">
+      {/* 2. FİLTRE ÇUBUĞU (Renklendirilmiş) */}
+      <div className="bg-white border-b-2 border-black px-4 py-4 sticky top-[76px] z-40">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-4 justify-center md:justify-start">
           <button 
             onClick={() => setFilter('Tümü')}
-            className={`border-4 border-black rounded-2xl px-6 py-3 font-black text-lg transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 ${filter === 'Tümü' ? 'bg-black text-white' : 'bg-white'}`}
+            className={`border-2 border-black rounded-xl px-6 py-2.5 font-black text-sm uppercase transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 flex items-center gap-2 ${filter === 'Tümü' ? 'bg-black text-white' : 'bg-white text-black'}`}
           >
-            🗺️ Tümü
+            <MapPin className="w-4 h-4" /> Tümü
           </button>
 
           <button 
             onClick={() => setFilter('Mağaza')}
-            className={`border-4 border-black rounded-2xl px-6 py-3 font-black text-lg transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 ${filter === 'Mağaza' ? 'bg-black text-white' : 'bg-white'}`}
+            className={`border-2 border-black rounded-xl px-6 py-2.5 font-black text-sm uppercase transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 flex items-center gap-2 ${filter === 'Mağaza' ? 'bg-blue-600 text-white' : 'bg-white text-black hover:bg-blue-50'}`}
           >
-            <div className="flex items-center gap-3">
-              <div className="relative w-10 h-10 border-2 border-black rounded-full overflow-hidden shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <Image
-                  src="https://images.unsplash.com/photo-1534133069152-822d13007ba2?w=100&h=100&fit=crop&q=80"
-                  alt="mağaza" fill
-                  className="object-cover"
-                />
-              </div>
-              <span>Mağaza</span>
-            </div>
+            <ShoppingBag className="w-4 h-4" /> Mağaza
           </button>
 
           <button 
             onClick={() => setFilter('Klinik')}
-            className={`border-4 border-black rounded-2xl px-6 py-3 font-black text-lg transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 ${filter === 'Klinik' ? 'bg-black text-white' : 'bg-white'}`}
+            className={`border-2 border-black rounded-xl px-6 py-2.5 font-black text-sm uppercase transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 flex items-center gap-2 ${filter === 'Klinik' ? 'bg-green-400 text-black' : 'bg-white text-black hover:bg-green-50'}`}
           >
-            <div className="flex items-center gap-3">
-              <div className="relative w-10 h-10 border-2 border-black rounded-full overflow-hidden shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <Image
-                  src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=100&h=100&fit=crop&q=80"
-                  alt="klinik" fill
-                  className="object-cover"
-                />
-              </div>
-              <span>Klinik</span>
-            </div>
+            <Stethoscope className="w-4 h-4" /> Klinik
           </button>
 
           <button 
             onClick={() => setFilter('Kuaför')}
-            className={`border-4 border-black rounded-2xl px-6 py-3 font-black text-lg transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 ${filter === 'Kuaför' ? 'bg-black text-white' : 'bg-white'}`}
+            className={`border-2 border-black rounded-xl px-6 py-2.5 font-black text-sm uppercase transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 flex items-center gap-2 ${filter === 'Kuaför' ? 'bg-orange-400 text-black' : 'bg-white text-black hover:bg-orange-50'}`}
           >
-            <div className="flex items-center gap-3">
-              <div className="relative w-10 h-10 border-2 border-black rounded-full overflow-hidden shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <Image
-                  src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=100&h=100&fit=crop&q=80"
-                  alt="kuaför" fill
-                  className="object-cover"
-                />
-              </div>
-              <span>Kuaför</span>
-            </div>
+            <Scissors className="w-4 h-4" /> Kuaför
           </button>
 
           <button 
             onClick={() => setFilter('Barınak')}
-            className={`border-4 border-black rounded-2xl px-6 py-3 font-black text-lg transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 ${filter === 'Barınak' ? 'bg-black text-white' : 'bg-white'}`}
+            className={`border-2 border-black rounded-xl px-6 py-2.5 font-black text-sm uppercase transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 flex items-center gap-2 ${filter === 'Barınak' ? 'bg-purple-500 text-white' : 'bg-white text-black hover:bg-purple-50'}`}
           >
-            <div className="flex items-center gap-3">
-              <div className="relative w-10 h-10 border-2 border-black rounded-full overflow-hidden shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-                <Image
-                  src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=100&h=100&fit=crop&q=80"
-                  alt="barınak" fill
-                  className="object-cover"
-                />
-              </div>
-              <span>Barınak</span>
-            </div>
+            <Home className="w-4 h-4" /> Barınak
           </button>
         </div>
       </div>

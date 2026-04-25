@@ -195,32 +195,34 @@ export default function UrunlerClient({ initialProducts }: UrunlerClientProps) {
         </div>
       )}
 
-      {/* Product Grid */}
-      {initialProducts.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
-          {initialProducts.map(product => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={handleAddToCart}
-              onToggleFavorite={(id) => toggleFavorite(initialProducts.find(p => p.id === id)!)}
-              isFavorite={isFavorite(product.id)}
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="bg-[var(--brutal-yellow)] brutal-border brutal-shadow p-12 text-center">
-          <div className="text-6xl mb-4">🔍</div>
-          <h2 className="text-3xl font-black uppercase mb-4">Aradığınız kriterlere uygun ürün bulunamadı.</h2>
-          <p className="text-xl font-bold mb-8">Farklı bir arama terimi deneyebilir veya filtreleri sıfırlayabilirsiniz.</p>
-          <button
-            onClick={() => updateFilters({ ara: null, kategori: null, sirala: null })}
-            className="px-8 py-4 bg-black text-white font-black uppercase brutal-border brutal-shadow brutal-shadow-hover hover:bg-white hover:text-black transition-all"
-          >
-            Filtreleri Temizle
-          </button>
-        </div>
-      )}
+      {/* Product Grid Area */}
+      <section className="bg-yellow-50/50 brutal-border p-4 md:p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+        {initialProducts.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8">
+            {initialProducts.map(product => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={handleAddToCart}
+                onToggleFavorite={(id) => toggleFavorite(initialProducts.find(p => p.id === id)!)}
+                isFavorite={isFavorite(product.id)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-[var(--brutal-yellow)] brutal-border brutal-shadow p-12 text-center">
+            <div className="text-6xl mb-4">🔍</div>
+            <h2 className="text-3xl font-black uppercase mb-4">Aradığınız kriterlere uygun ürün bulunamadı.</h2>
+            <p className="text-xl font-bold mb-8">Farklı bir arama terimi deneyebilir veya filtreleri sıfırlayabilirsiniz.</p>
+            <button
+              onClick={() => updateFilters({ ara: null, kategori: null, sirala: null })}
+              className="px-8 py-4 bg-black text-white font-black uppercase brutal-border brutal-shadow brutal-shadow-hover hover:bg-white hover:text-black transition-all"
+            >
+              Filtreleri Temizle
+            </button>
+          </div>
+        )}
+      </section>
 
       {/* Campaign Modal */}
       <AnimatePresence>

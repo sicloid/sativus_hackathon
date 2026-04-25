@@ -5,6 +5,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts'
+import { useScrollReveal } from '@/hooks/useScrollReveal'
 
 const appointmentData = [
   { ay: 'Oca', sayi: 420 },
@@ -23,9 +24,11 @@ const serviceData = [
 ]
 
 export default function CTABanner() {
+  const { ref, isVisible } = useScrollReveal()
+
   return (
-    <section className="bg-amber-50 border-y-2 border-black py-16 px-6">
-      <div className="max-w-7xl mx-auto">
+    <section ref={ref} className={`bg-amber-50 border-y-2 border-black pt-16 px-6 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+      <div className="max-w-7xl mx-auto mb-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* SOL KART — İstatistik Grafikler */}
@@ -156,6 +159,13 @@ export default function CTABanner() {
           </div>
 
         </div>
+      </div>
+
+      {/* Wave Transition to FAQSection */}
+      <div className="w-full overflow-hidden leading-none relative z-20">
+        <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full h-12 md:h-16">
+          <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#ffffff" />
+        </svg>
       </div>
     </section>
   )

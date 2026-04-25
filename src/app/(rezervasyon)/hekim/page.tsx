@@ -1,11 +1,12 @@
 import prisma from "@/lib/prisma";
 import { approveAppointment, rejectAppointment } from "./actions";
-import { logoutAction } from "@/app/actions/auth"; 
+import { logoutAction } from "@/app/actions/auth";
 import Link from "next/link";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { CheckCircle2, XCircle, Clock, Calendar, Phone, User, Activity, LogOut } from "lucide-react";
+import AppointmentActions from "@/components/hekim/AppointmentActions";
 
 export const dynamic = "force-dynamic";
 
@@ -23,12 +24,12 @@ export default async function HekimDashboard() {
   return (
     <div className="min-h-screen bg-[#fdfdfd] text-black font-sans pb-20 p-4 sm:p-6 lg:p-10">
       <div className="max-w-7xl mx-auto space-y-10">
-        
+
         {/* HEADER SECTION */}
         <div className="bg-[#bfdbfe] border-4 border-black rounded-[2.5rem] p-8 sm:p-12 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] relative overflow-hidden">
           {/* Decorative element */}
           <div className="absolute -right-20 -top-20 w-64 h-64 bg-blue-300 rounded-full opacity-30"></div>
-          
+
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 relative z-10">
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 bg-white border-2 border-black px-4 py-1 rounded-full font-black text-xs uppercase tracking-widest shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
@@ -42,7 +43,7 @@ export default async function HekimDashboard() {
                 VetAI asistanı tarafından ön-teşhisi konulmuş aktif randevu taleplerini yönetin.
               </p>
             </div>
-            
+
             <div className="flex flex-wrap gap-4 w-full md:w-auto">
               <Link href="/hekim/ayarlar" className="w-full md:w-auto">
                 <Button variant="outline" className="w-full md:w-auto text-lg px-8 h-14 rounded-2xl shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] bg-white text-black hover:bg-gray-100 border-4 border-black font-black uppercase">
@@ -93,8 +94,8 @@ export default async function HekimDashboard() {
             {appointments.map((appt) => {
               const isUrgent = appt.aiAciliyet === "Yüksek" || appt.aiAciliyet === "Kritik";
               const isNormal = appt.aiAciliyet === "Normal" || appt.aiAciliyet === "Düşük";
-              
-              let cardBgClass = "bg-white"; 
+
+              let cardBgClass = "bg-white";
               let accentColor = "border-zinc-200";
               if (isUrgent) { cardBgClass = "bg-[#fee2e2]"; accentColor = "border-rose-400"; }
               else if (isNormal) { cardBgClass = "bg-[#dcfce7]"; accentColor = "border-emerald-400"; }
@@ -102,7 +103,7 @@ export default async function HekimDashboard() {
 
               return (
                 <Card key={appt.id} className={`${cardBgClass} border-4 border-black rounded-[2.5rem] shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] flex flex-col h-full hover:-translate-y-2 transition-all`}>
-                  
+
                   <CardHeader className="p-8 border-b-4 border-black">
                     <div className="flex justify-between items-start mb-4">
                       <Badge variant="neutral" className="bg-black text-white px-4 py-1 rounded-full font-black text-xs uppercase">
@@ -118,7 +119,7 @@ export default async function HekimDashboard() {
                         </span>
                       </div>
                     </div>
-                    
+
                     <div className="space-y-1">
                       <h2 className="text-3xl font-black uppercase tracking-tighter leading-none">
                         {appt.petName}
@@ -154,7 +155,7 @@ export default async function HekimDashboard() {
                           {appt.aiAciliyet}
                         </Badge>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <p className="font-bold text-xs uppercase text-zinc-400">Olası Teşhis / Hizmet</p>
                         <p className="font-black text-sm">{appt.aiHizmet || 'Belirtilmedi'}</p>
@@ -166,7 +167,7 @@ export default async function HekimDashboard() {
                         </p>
                       </div>
                     </div>
-                    
+
                     {appt.notes && (
                       <div className="bg-white/50 border-2 border-dashed border-black rounded-xl p-4">
                         <p className="text-[10px] font-black uppercase text-zinc-400 mb-1">Hekim Notu</p>
@@ -176,33 +177,9 @@ export default async function HekimDashboard() {
                   </CardContent>
 
                   <CardFooter className="p-8 pt-0 mt-auto">
+                    {/* Action Buttons (Push) */}
                     {appt.status === "PENDING" ? (
-                      <div className="grid grid-cols-2 gap-4 w-full">
-                        <form action={approveAppointment} className="w-full flex flex-col gap-2">
-                          <input type="hidden" name="appointmentId" value={appt.id} />
-                          <div className="relative">
-                            <input 
-                              type="number" 
-                              name="examFee" 
-                              placeholder="Muayene Ücreti (₺)" 
-                              className="w-full h-10 border-2 border-black rounded-xl font-bold px-3 text-sm" 
-                              required 
-                              min="0"
-                              defaultValue="500"
-                            />
-                          </div>
-                          <Button type="submit" className="w-full h-14 bg-emerald-500 hover:bg-emerald-600 text-white border-4 border-black rounded-2xl font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none flex items-center justify-center gap-2">
-                            <CheckCircle2 className="w-5 h-5" />
-                            Onayla
-                          </Button>
-                        </form>
-                        <form action={rejectAppointment.bind(null, appt.id) as any} className="w-full">
-                          <Button type="submit" variant="danger" className="w-full h-14 border-4 border-black rounded-2xl font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none flex items-center justify-center gap-2">
-                            <XCircle className="w-5 h-5" />
-                            İptal
-                          </Button>
-                        </form>
-                      </div>
+                      <AppointmentActions appointmentId={appt.id} />
                     ) : (
                       <div className="w-full py-4 border-4 border-black rounded-2xl bg-zinc-100 text-center font-black uppercase text-sm tracking-widest opacity-50">
                         İşlem Tamamlandı

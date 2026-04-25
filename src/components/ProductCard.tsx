@@ -18,7 +18,19 @@ interface ProductCardProps {
   isFavorite?: boolean;
 }
 
+import { useState } from 'react';
+
 export default function ProductCard({ product, onAddToCart, onToggleFavorite, isFavorite = false }: ProductCardProps) {
+  const [isAdding, setIsAdding] = useState(false);
+
+  const handleAdd = () => {
+    if (onAddToCart) {
+      setIsAdding(true);
+      onAddToCart(product.id);
+      setTimeout(() => setIsAdding(false), 1500);
+    }
+  };
+
   return (
     <div className="brutal-border brutal-shadow brutal-shadow-hover bg-white flex flex-col h-full overflow-hidden">
       <Link href={`/urunler/${product.id}`} className="block relative aspect-square border-b-2 border-black bg-[var(--brutal-yellow)] group cursor-pointer">
@@ -49,10 +61,11 @@ export default function ProductCard({ product, onAddToCart, onToggleFavorite, is
           
           <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
             <button 
-              onClick={() => onAddToCart && onAddToCart(product.id)}
-              className="brutal-border brutal-shadow brutal-shadow-hover bg-[var(--brutal-green)] flex-grow py-1.5 sm:py-2 font-black uppercase text-xs sm:text-sm"
+              onClick={handleAdd}
+              disabled={isAdding}
+              className={`brutal-border brutal-shadow brutal-shadow-hover flex-grow py-1.5 sm:py-2 font-black uppercase text-xs sm:text-sm transition-colors ${isAdding ? 'bg-black text-white' : 'bg-[var(--brutal-green)]'}`}
             >
-              Sepete Ekle
+              {isAdding ? 'Eklendi! ✅' : 'Sepete Ekle'}
             </button>
             <button 
               onClick={() => onToggleFavorite && onToggleFavorite(product.id)}

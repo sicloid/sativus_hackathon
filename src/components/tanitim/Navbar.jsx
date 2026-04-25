@@ -1,8 +1,25 @@
+"use client";
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <nav className="sticky top-0 z-50 bg-white border-b-2 border-black px-6 py-4">
+    <nav className={`sticky top-0 z-50 transition-all duration-300 px-6 py-4 ${
+      scrolled 
+        ? 'bg-white shadow-lg border-b-2 border-black' 
+        : 'bg-white/80 backdrop-blur-md border-b-2 border-black/50'
+    }`}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Sol: PetVerse logo yazısı - Styled with Soft-Brutalist Aesthetic */}
         <Link href="/" className="group flex items-center gap-0 tracking-tighter transition-all hover:-translate-y-0.5">
@@ -15,13 +32,10 @@ export default function Navbar() {
           <div className="w-2.5 h-2.5 bg-orange-500 rounded-full ml-1 self-end mb-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
         </Link>
 
-        {/* Orta: SSS linki KALDIRILDI */}
-        <div className="hidden md:block">
-          {/* Boş bırakıldı veya başka linkler eklenebilir */}
-        </div>
-
         {/* Sağ Alan Boşaltıldı */}
         <div className="flex items-center gap-4">
+          <Link href="/care-login" className="font-bold hover:underline underline-offset-4">Giriş Yap</Link>
+          <Link href="/randevu" className="bg-black text-white px-4 py-2 rounded-xl font-bold hover:bg-blue-600 transition-colors">Randevu Al</Link>
         </div>
       </div>
     </nav>
