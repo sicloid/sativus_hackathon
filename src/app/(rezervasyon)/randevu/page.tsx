@@ -76,8 +76,12 @@ function BookingForm({ diagnosis }: { diagnosis: any }) {
       );
     }
   }, [aiAciliyet, providers]);
-  
-  // Success state handler is removed here, we just render it in the form
+
+  useEffect(() => {
+    if (state?.success) {
+      window.location.href = "/pet-karne?success=true";
+    }
+  }, [state?.success]);
 
   return (
     <form action={formAction} className="space-y-6 flex flex-col">

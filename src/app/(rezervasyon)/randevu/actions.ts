@@ -149,7 +149,6 @@ export async function createAppointment(prevState: any, formData: FormData) {
             }
           }
         });
-      }
     }
 
   } catch (error) {
