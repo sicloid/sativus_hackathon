@@ -5,7 +5,6 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["@prisma/client", "prisma"],
   transpilePackages: ["swiper"],
   images: {
-    unoptimized: true,
     remotePatterns: [
       { protocol: 'https', hostname: 'tse1.mm.bing.net' },
       { protocol: 'https', hostname: 'tse2.mm.bing.net' },

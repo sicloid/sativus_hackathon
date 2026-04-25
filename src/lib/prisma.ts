@@ -6,15 +6,30 @@ import { PrismaClient } from "@prisma/client";
 import { Pool } from "pg";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-const globalForPrisma = globalThis as unknown as { prisma_v3: PrismaClient };
+const globalForPrisma = globalThis as unknown as { prisma_v3: PrismaClient; pool: Pool };
 
-const pool = new Pool({ connectionString: process.env.DIRECT_URL || process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
+let prisma: PrismaClient;
 
-export const prisma =
-  globalForPrisma.prisma_v3 ||
-  new PrismaClient({ adapter });
+if (process.env.NODE_ENV === "production") {
+  const pool = new Pool({ 
+    connectionString: process.env.DATABASE_URL || process.env.DIRECT_URL,
+    max: 15 // Limit production connections per serverless function
+  });
+  const adapter = new PrismaPg(pool);
+  prisma = new PrismaClient({ adapter });
+} else {
+  if (!globalForPrisma.pool) {
+    globalForPrisma.pool = new Pool({ 
+      connectionString: process.env.DATABASE_URL || process.env.DIRECT_URL,
+      max: 5 // Limit local connections
+    });
+  }
+  if (!globalForPrisma.prisma_v3) {
+    const adapter = new PrismaPg(globalForPrisma.pool);
+    globalForPrisma.prisma_v3 = new PrismaClient({ adapter });
+  }
+  prisma = globalForPrisma.prisma_v3;
+}
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma_v3 = prisma;
-
+export { prisma };
 export default prisma;
