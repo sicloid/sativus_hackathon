@@ -149,11 +149,11 @@ export function FloatingAIBot() {
             onClick={() => setIsOpen(true)}
             className="group block"
           >
-            <div className="bg-[#a855f7] border-[4px] border-black rounded-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:translate-y-1 transition-all p-4 md:p-6 flex items-center gap-6 cursor-pointer">
-              <div className="bg-white rounded-full p-3 border-[3px] border-black animate-bounce shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <span className="text-4xl md:text-5xl leading-none block">🤖</span>
+            <div className="bg-[#a855f7] border-[4px] border-black rounded-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:translate-y-1 transition-all py-2 px-4 md:py-3 md:px-5 flex items-center gap-4 md:gap-5 cursor-pointer">
+              <div className="bg-white rounded-full p-2.5 border-[3px] border-black animate-bounce shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <span className="text-4xl leading-none block">🤖</span>
               </div>
-              <div className="flex-1 text-left hidden sm:block pr-4">
+              <div className="flex-1 text-left hidden sm:block pr-2">
                 <p className="text-white font-black uppercase text-xl md:text-2xl leading-tight">VetAI Asistan</p>
                 <p className="text-white font-bold text-sm md:text-base opacity-90 mt-1">Hızlı Rehber ve Sorularınız</p>
               </div>
