@@ -387,7 +387,7 @@ export async function createOrder(formData: FormData) {
   }
 
   // Fiyatları DB'den doğrula (güvenlik)
-  const productIds = cartItems.map(i => i.productId).filter(id => !id.startsWith('exam-fee-') && !id.startsWith('prescription-'))
+  const productIds = cartItems.map(i => i.productId || '').filter(id => id !== '' && !id.startsWith('exam-fee-') && !id.startsWith('prescription-'))
   const dbProducts = await prisma.product.findMany({
     where: { id: { in: productIds } },
   })
@@ -395,8 +395,9 @@ export async function createOrder(formData: FormData) {
   const priceMap = new Map(dbProducts.map((p: any) => [p.id, p.price]))
 
   let totalPrice = cartItems.reduce((sum: number, item) => {
-    const isVirtual = item.productId.startsWith('exam-fee-') || item.productId.startsWith('prescription-')
-    const dbPrice = isVirtual ? item.price : (priceMap.get(item.productId) ?? item.price)
+    const pid = item.productId || '';
+    const isVirtual = pid.startsWith('exam-fee-') || pid.startsWith('prescription-')
+    const dbPrice = isVirtual ? item.price : (priceMap.get(pid) ?? item.price)
     return sum + dbPrice * item.quantity
   }, 0)
 
@@ -409,30 +410,37 @@ export async function createOrder(formData: FormData) {
   const tax = totalPrice * 0.20
   const shippingCost = totalPrice > 500 ? 0 : 50
 
-  const order = await prisma.order.create({
-    data: {
-      userId: user.id,
-      totalPrice,
-      tax,
-      shippingCost,
-      fullName,
-      phone,
-      address,
-      city,
-      status: 'CONFIRMED',
-      items: {
-        create: cartItems.map(item => {
-          const isVirtual = item.productId.startsWith('exam-fee-') || item.productId.startsWith('prescription-')
-          return {
-            productId: isVirtual ? null : item.productId,
-            productName: isVirtual ? item.name : undefined,
-            quantity: item.quantity,
-            unitPrice: isVirtual ? item.price : (priceMap.get(item.productId) ?? item.price),
-          }
-        }),
+  let order;
+  try {
+    order = await prisma.order.create({
+      data: {
+        userId: user.id,
+        totalPrice,
+        tax,
+        shippingCost,
+        fullName,
+        phone,
+        address,
+        city,
+        status: 'CONFIRMED',
+        items: {
+          create: cartItems.map(item => {
+            const pid = item.productId || ''; // Fallback to empty string to prevent startsWith undefined error
+            const isVirtual = pid.startsWith('exam-fee-') || pid.startsWith('prescription-');
+            return {
+              productId: isVirtual ? null : (pid || null),
+              productName: isVirtual ? item.name : undefined,
+              quantity: item.quantity,
+              unitPrice: isVirtual ? item.price : (priceMap.get(pid) ?? item.price),
+            }
+          }),
+        },
       },
-    },
-  })
+    })
+  } catch (e: any) {
+    console.error("Order creation failed:", e)
+    return { error: 'Sipariş oluşturulurken bir hata oluştu: ' + (e.message || String(e)) }
+  }
 
   // Kuponu kullanıldı olarak işaretle ve kullanım sayısını artır
   if (validCoupon) {

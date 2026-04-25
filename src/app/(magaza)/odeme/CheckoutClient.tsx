@@ -140,7 +140,7 @@ export default function CheckoutClient({ savedAddresses, isLoggedIn, availableCo
     formData.set('couponId', appliedCoupon?.id || '')
     formData.set('cartItems', JSON.stringify(
       items.map(item => ({
-        productId: item.productId,
+        productId: item.productId || item.id,
         name: item.name,
         price: item.price,
         quantity: item.quantity,
