@@ -2,26 +2,60 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { createAppointment } from "./actions";
+import { createAppointment, getProviders } from "./actions";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Calendar, Clock, PawPrint, User, Phone, Bot } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar, Clock, PawPrint, User, Phone, Bot, Stethoscope } from "lucide-react";
 import { motion } from "framer-motion";
+import { useFormState } from "react-dom";
 
 interface Message {
   role: "user" | "model";
   content: string;
 }
 
+const initialState = { error: "" };
+
 function BookingForm({ diagnosis }: { diagnosis: any }) {
+  const [providers, setProviders] = useState<any[]>([]);
+  const [state, formAction] = useFormState(createAppointment, initialState);
+  
+  useEffect(() => {
+    getProviders().then(data => setProviders(data));
+  }, []);
+
   const aiAciliyet = diagnosis?.aciliyet || "";
   const aiHizmet = diagnosis?.tavsiye_edilen_hizmet || "";
   const aiOzeti = diagnosis?.ai_ozeti || "";
 
   return (
-    <form action={createAppointment as any} className="space-y-6 flex flex-col">
+    <form action={formAction} className="space-y-6 flex flex-col">
+      {state?.error && (
+        <div className="bg-red-100 border-4 border-red-500 rounded-2xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-4 text-red-900 font-bold">
+          {state.error}
+        </div>
+      )}
       <input type="hidden" name="aiAciliyet" value={aiAciliyet} />
       <input type="hidden" name="aiHizmet" value={aiHizmet} />
       <input type="hidden" name="aiOzeti" value={aiOzeti} />
+
+      <div className="space-y-2">
+        <label className="font-black uppercase text-sm ml-2">Klinik / Hekim Seçimi</label>
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+            <Stethoscope className="w-5 h-5 text-zinc-500" />
+          </div>
+          <select 
+            name="providerId"
+            required
+            className="w-full bg-white border-4 border-black rounded-2xl py-3 pl-12 pr-4 font-bold text-base focus:outline-none focus:bg-[#fef08a] transition-colors shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] appearance-none"
+          >
+            <option value="">Lütfen klinik veya hekim seçin</option>
+            {providers.map(p => (
+              <option key={p.id} value={p.id}>{p.name} - {p.specialty || "Klinik"}</option>
+            ))}
+          </select>
+        </div>
+      </div>
 
       {(aiAciliyet || aiHizmet) && (
         <div className="bg-[#bbf7d0] border-4 border-black rounded-2xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-4">

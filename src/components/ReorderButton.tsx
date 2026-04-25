@@ -34,7 +34,7 @@ export default function ReorderButton({ orderItems }: ReorderButtonProps) {
     })
 
     if (!allInStock) {
-      showToast('Bazı ürünler stokta olmadığı için sepete eklenemedi.', 'error')
+      showToast('Bazı ürünler stokta olmadığı için sepete eklenemedi.')
     }
 
     // Stokta olanları ekle

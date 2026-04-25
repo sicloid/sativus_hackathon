@@ -32,16 +32,13 @@ export default function ProductCard({ product, onAddToCart, onToggleFavorite, is
 
   return (
     <div className="brutal-border brutal-shadow brutal-shadow-hover bg-white flex flex-col h-full overflow-hidden">
-      <Link href={`/urunler/${product.id}`} className="block relative aspect-square border-b-2 border-black bg-[var(--brutal-yellow)] group cursor-pointer">
-        {product.image_url && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img 
-            src={product.image_url}
-            alt={product.name}
-            className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          />
-        )}
-        <div className="absolute top-2 left-2 bg-white brutal-border px-1 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-black uppercase">
+      <Link href={`/urunler/${product.id}`} className="block relative aspect-square border-b-2 border-black bg-[var(--brutal-yellow)] group cursor-pointer overflow-hidden">
+        <img 
+          src={product.image_url || 'https://placehold.co/600x600/fca5a5/000000?text=Pet+Urun'}
+          alt={product.name}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+        />
+        <div className="absolute top-2 left-2 bg-white brutal-border px-1 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-black uppercase z-10">
           {product.category}
         </div>
       </Link>

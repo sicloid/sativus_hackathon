@@ -6,14 +6,14 @@ const nextConfig: NextConfig = {
   transpilePackages: ["swiper"],
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-      {
-        protocol: 'http',
-        hostname: '**',
-      },
+      { protocol: 'https', hostname: 'tse1.mm.bing.net' },
+      { protocol: 'https', hostname: 'tse2.mm.bing.net' },
+      { protocol: 'https', hostname: 'tse3.mm.bing.net' },
+      { protocol: 'https', hostname: 'tse4.mm.bing.net' },
+      { protocol: 'https', hostname: 'thfvnext.bing.com' },
+      { protocol: 'https', hostname: 'placehold.co' },
+      { protocol: 'https', hostname: '**' },
+      { protocol: 'http', hostname: '**' }
     ],
   },
 };

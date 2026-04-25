@@ -27,7 +27,7 @@ export default async function KuponlarPage() {
             <p className="font-black text-xl uppercase text-gray-400">Şu an aktif kuponunuz bulunmuyor.</p>
           </div>
         ) : (
-          coupons.map((coupon) => (
+          coupons.map((coupon: any) => (
             <div 
               key={coupon.id} 
               className={`relative overflow-hidden brutal-border brutal-shadow p-6 flex flex-col justify-between min-h-[180px] transition-all

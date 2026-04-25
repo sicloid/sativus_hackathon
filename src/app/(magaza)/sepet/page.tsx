@@ -30,8 +30,8 @@ export default function SepetPage() {
       setCouponError(result.error);
       setAppliedCoupon(null);
     } else {
-      setAppliedCoupon(result.coupon);
-      showToast(`Kupon Uygulandı: %${result.coupon.discountPercent} İndirim!`);
+      setAppliedCoupon(result.coupon || null);
+      showToast(`Kupon Uygulandı: %${result.coupon?.discountPercent || 0} İndirim!`);
     }
   };
 

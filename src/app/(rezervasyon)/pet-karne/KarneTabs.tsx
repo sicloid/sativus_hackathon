@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { Calendar, Syringe, Pill, Activity } from "lucide-react";
 
-export default function KarneTabs({ 
-  appointments, 
-  vaccinations, 
-  prescriptions 
-}: { 
+export default function KarneTabs({
+  appointments,
+  vaccinations,
+  prescriptions
+}: {
   appointments: any[];
   vaccinations: any[];
   prescriptions: any[];
@@ -22,55 +22,55 @@ export default function KarneTabs({
   ];
 
   const mockPrescriptions = prescriptions.length > 0 ? prescriptions : [
-    { 
-      id: '1', 
-      vetName: 'Dr. Zeynep Yılmaz', 
-      date: new Date('2024-04-10'), 
-      diagnosis: 'Hafif Soğuk Algınlığı', 
+    {
+      id: '1',
+      vetName: 'Dr. Zeynep Yılmaz',
+      date: new Date('2024-04-10'),
+      diagnosis: 'Hafif Soğuk Algınlığı',
       items: [
         { name: 'Vitamin C Takviyesi', dosage: 'Günde 1 kez', quantity: 1 }
-      ] 
+      ]
     },
-    { 
-      id: '2', 
-      vetName: 'Dr. Ali Veli', 
-      date: new Date('2023-11-22'), 
-      diagnosis: 'Mide İltihabı', 
+    {
+      id: '2',
+      vetName: 'Dr. Ali Veli',
+      date: new Date('2023-11-22'),
+      diagnosis: 'Mide İltihabı',
       items: [
         { name: 'Antiasit Şurup', dosage: 'Günde 2 kez, sabah akşam', quantity: 1 },
         { name: 'Probiyotik', dosage: 'Günde 1 kez', quantity: 1 }
-      ] 
+      ]
     }
   ];
 
   const mockXRays = [
-    { id: '1', date: new Date('2024-02-05'), region: 'Sol Arka Bacak', vetName: 'Dr. Zeynep Yılmaz', notes: 'Kemik yapısı normal, çatlak belirtisi yok.', imageUrl: 'https://images.unsplash.com/photo-1574786762391-9e7ecbd1afb8?auto=format&fit=crop&q=80&w=800' },
-    { id: '2', date: new Date('2023-10-12'), region: 'Göğüs Kafesi', vetName: 'Dr. Ahmet Kaya', notes: 'Akciğer kapasitesi iyi durumda, herhangi bir anomali görülmedi.', imageUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=800' }
+    { id: '1', date: new Date('2024-02-05'), region: 'Sol Arka Bacak', vetName: 'Dr. Zeynep Yılmaz', notes: 'Kemik yapısı normal, çatlak belirtisi yok.', imageUrl: '/images/xrays/leg.png' },
+    { id: '2', date: new Date('2023-10-12'), region: 'Göğüs Kafesi', vetName: 'Dr. Cem Özsoy', notes: 'Akciğer kapasitesi iyi durumda, herhangi bir anomali görülmedi.', imageUrl: '/images/xrays/chest.png' }
   ];
 
   return (
     <div className="space-y-6">
       {/* Tabs Header */}
       <div className="flex overflow-x-auto pb-4 gap-2 no-scrollbar">
-        <button 
+        <button
           onClick={() => setActiveTab("randevular")}
           className={`flex-shrink-0 flex items-center gap-2 px-6 py-4 rounded-2xl border-4 border-black font-black uppercase transition-all ${activeTab === "randevular" ? "bg-[#3b82f6] text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] translate-y-[-2px]" : "bg-white text-black hover:bg-zinc-100"}`}
         >
           <Calendar className="w-5 h-5" /> Randevular
         </button>
-        <button 
+        <button
           onClick={() => setActiveTab("asilar")}
           className={`flex-shrink-0 flex items-center gap-2 px-6 py-4 rounded-2xl border-4 border-black font-black uppercase transition-all ${activeTab === "asilar" ? "bg-[#10b981] text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] translate-y-[-2px]" : "bg-white text-black hover:bg-zinc-100"}`}
         >
           <Syringe className="w-5 h-5" /> Aşı Takvimi
         </button>
-        <button 
+        <button
           onClick={() => setActiveTab("receteler")}
           className={`flex-shrink-0 flex items-center gap-2 px-6 py-4 rounded-2xl border-4 border-black font-black uppercase transition-all ${activeTab === "receteler" ? "bg-[#f59e0b] text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] translate-y-[-2px]" : "bg-white text-black hover:bg-zinc-100"}`}
         >
           <Pill className="w-5 h-5" /> Reçeteler
         </button>
-        <button 
+        <button
           onClick={() => setActiveTab("rontgenler")}
           className={`flex-shrink-0 flex items-center gap-2 px-6 py-4 rounded-2xl border-4 border-black font-black uppercase transition-all ${activeTab === "rontgenler" ? "bg-[#a855f7] text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] translate-y-[-2px]" : "bg-white text-black hover:bg-zinc-100"}`}
         >
@@ -80,7 +80,7 @@ export default function KarneTabs({
 
       {/* Content Area */}
       <div className="space-y-6">
-        
+
         {/* Appointments Tab */}
         {activeTab === "randevular" && (
           appointments.length === 0 ? (
@@ -107,8 +107,8 @@ export default function KarneTabs({
                   <div className="bg-zinc-100 border-4 border-black p-4 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                     <h3 className="font-black uppercase mb-2">AI Teşhis Notları</h3>
                     <div className="flex gap-2 mb-2 flex-wrap">
-                       {app.aiAciliyet && <span className="bg-orange-300 border-2 border-black px-2 py-1 font-bold text-sm rounded-full">Aciliyet: {app.aiAciliyet}</span>}
-                       {app.aiHizmet && <span className="bg-cyan-300 border-2 border-black px-2 py-1 font-bold text-sm rounded-full">Hizmet: {app.aiHizmet}</span>}
+                      {app.aiAciliyet && <span className="bg-orange-300 border-2 border-black px-2 py-1 font-bold text-sm rounded-full">Aciliyet: {app.aiAciliyet}</span>}
+                      {app.aiHizmet && <span className="bg-cyan-300 border-2 border-black px-2 py-1 font-bold text-sm rounded-full">Hizmet: {app.aiHizmet}</span>}
                     </div>
                     <p className="font-bold">{app.aiOzeti}</p>
                   </div>
@@ -191,9 +191,9 @@ export default function KarneTabs({
             {mockXRays.map((xray, idx) => (
               <div key={idx} className="border-4 border-black bg-white rounded-2xl shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-hidden flex flex-col">
                 <div className="h-48 bg-zinc-200 border-b-4 border-black relative">
-                  {/* Fake x-ray image using generic image with grayscale to simulate it */}
+                  {/* X-ray image */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={xray.imageUrl} alt="Röntgen" className="w-full h-full object-cover grayscale contrast-125" />
+                  <img src={xray.imageUrl} alt="Röntgen" className="w-full h-full object-cover" />
                   <div className="absolute top-2 right-2 bg-white border-2 border-black px-2 py-1 rounded-lg font-bold text-sm">
                     {new Date(xray.date).toLocaleDateString('tr-TR')}
                   </div>

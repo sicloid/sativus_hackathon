@@ -115,6 +115,7 @@ export default async function HastalarimPage() {
                             <p className="font-black text-sm">{appt.vetDiagnosis}</p>
                           </div>
                         ) : (
+                          // @ts-expect-error Next.js form action type mismatch with custom return types
                           <form action={addVetDiagnosis} className="mb-4 flex flex-col gap-2">
                             <input type="hidden" name="appointmentId" value={appt.id} />
                             <textarea 

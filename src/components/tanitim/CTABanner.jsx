@@ -42,7 +42,7 @@ export default function CTABanner() {
                 Aylık Randevu Trendi
               </p>
               <div className="h-[250px] w-full min-h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
+                <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                   <BarChart data={appointmentData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                     <XAxis dataKey="ay" tick={{ fontSize: 10, fontWeight: 700 }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} />
@@ -67,7 +67,7 @@ export default function CTABanner() {
               </p>
               <div className="flex items-center gap-4">
                 <div className="w-[60%] h-[120px] min-h-[120px]">
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                     <PieChart>
                       <Pie
                         data={serviceData}

@@ -51,6 +51,7 @@ export function RejectButton() {
 export default function AppointmentActions({ appointmentId }: AppointmentActionsProps) {
   return (
     <div className="grid grid-cols-2 gap-4 w-full">
+      {/* @ts-expect-error Next.js form action type mismatch */}
       <form action={approveAppointment} className="w-full flex flex-col gap-2">
         <input type="hidden" name="appointmentId" value={appointmentId} />
         <div className="relative">
@@ -66,6 +67,7 @@ export default function AppointmentActions({ appointmentId }: AppointmentActions
         </div>
         <ApproveButton />
       </form>
+      {/* @ts-expect-error Next.js form action type mismatch */}
       <form action={() => rejectAppointment(appointmentId)} className="w-full">
         <RejectButton />
       </form>

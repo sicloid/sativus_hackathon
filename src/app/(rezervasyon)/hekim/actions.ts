@@ -11,6 +11,15 @@ export async function approveAppointment(formData: FormData) {
     const examFeeStr = formData.get("examFee") as string;
     const examFee = examFeeStr ? parseFloat(examFeeStr) : 0;
 
+    const appointment = await prisma.appointment.findUnique({
+      where: { id: appointmentId },
+      include: { provider: true }
+    });
+
+    if (!appointment) {
+      return { success: false, error: "Randevu bulunamadı." };
+    }
+
     await prisma.appointment.update({
       where: { id: appointmentId },
       data: { 
@@ -18,6 +27,40 @@ export async function approveAppointment(formData: FormData) {
         examFee: examFee
       },
     });
+
+    // Otomatik olarak Muayene Ücreti içeren bir reçete oluştur
+    if (examFee > 0) {
+      const pet = await prisma.pet.findFirst({
+        where: { name: appointment.petName }
+      });
+
+      if (pet) {
+        const supabase = await createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        const vetUserId = user?.id || "hekim-id";
+        const vetName = appointment.provider?.name || "Hekim";
+
+        await prisma.prescription.create({
+          data: {
+            petId: pet.id,
+            vetUserId,
+            vetName,
+            diagnosis: "Genel Muayene",
+            notes: "Muayene Ücreti Otomatik Olarak Eklendi",
+            totalPrice: examFee,
+            items: {
+              create: [
+                {
+                  name: "Muayene Ücreti",
+                  quantity: 1,
+                  price: examFee,
+                }
+              ]
+            }
+          }
+        });
+      }
+    }
     
     revalidatePath("/hekim");
     revalidatePath("/hekim/hastalarim");
