@@ -88,7 +88,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<AiTeshisRespo
     const genAI = getGeminiClient();
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-flash-latest",
+      model: "gemini-2.5-flash",
       systemInstruction: SYSTEM_PROMPT,
       generationConfig: {
         temperature: finalRequest ? 0.1 : 0.7,   // Teşhiste düşük sıcaklık → deterministik JSON
@@ -210,7 +210,7 @@ export async function GET(): Promise<NextResponse> {
   return NextResponse.json({
     status: "ok",
     service: "PetVerse AI Teşhis",
-    model: "gemini-flash-latest",
+    model: "gemini-2.5-flash",
     apiKeyConfigured: hasKey,
     timestamp: new Date().toISOString(),
   });
