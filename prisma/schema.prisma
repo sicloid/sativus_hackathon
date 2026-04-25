@@ -7,10 +7,11 @@ datasource db {
   provider = "postgresql"
 }
 
+// ─── Provider (Hizmet Sağlayıcı/Hekim) ─────────────────────────────────────────
 model Provider {
   id           String        @id @default(cuid())
   name         String
-  type         String
+  type         String        // KLINIK, KUAFÖR, vb.
   specialty    String?
   imageUrl     String?
   rating       Float         @default(0.0)
@@ -24,6 +25,7 @@ model Provider {
   @@map("providers")
 }
 
+// ─── Slot (Randevu Saati) ────────────────────────────────────────────────────
 model Slot {
   id          String       @id @default(cuid())
   providerId  String
@@ -39,6 +41,7 @@ model Slot {
   @@map("slots")
 }
 
+// ─── Appointment (Randevu) ───────────────────────────────────────────────────
 model Appointment {
   id          String   @id @default(cuid())
   providerId  String
@@ -63,20 +66,6 @@ model Appointment {
   @@map("appointments")
 }
 
-<<<<<<< HEAD
-model Product {
-  id                 String               @id @default(cuid())
-  name               String
-  description        String
-  price              Float
-  imageUrl           String?              @map("image_url")
-  category           String
-  stockQuantity      Int                  @default(0) @map("stock_quantity")
-  createdAt          DateTime             @default(now())
-  updatedAt          DateTime             @updatedAt
-  orderItems         OrderItem[]
-  prescription_items prescription_items[]
-=======
 // ═══════════════════════════════════════════════════════════════════════════════
 // EVCİL HAYVAN & SAĞLIK Modelleri
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -175,21 +164,12 @@ model Product {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
->>>>>>> 2198fde99fd72cdcaf78b4bf02fd7f9bc2007e69
 
   @@map("products")
 }
 
+// ─── Order (Sipariş) ──────────────────────────────────────────────────────────
 model Order {
-<<<<<<< HEAD
-  id           String      @id @default(cuid())
-  userId       String      @map("user_id")
-  status       String      @default("PENDING")
-  totalPrice   Float       @map("total_price")
-  shippingCost Float       @default(0) @map("shipping_cost")
-  tax          Float       @default(0)
-  fullName     String      @map("full_name")
-=======
   id           String   @id @default(cuid())
   userId       String   @map("user_id")
   status       String   @default("PENDING")
@@ -198,7 +178,6 @@ model Order {
   tax          Float    @default(0)
 
   fullName     String   @map("full_name")
->>>>>>> 2198fde99fd72cdcaf78b4bf02fd7f9bc2007e69
   phone        String
   address      String
   city         String
@@ -210,6 +189,7 @@ model Order {
   @@map("orders")
 }
 
+// ─── OrderItem (Sipariş Kalemi) ───────────────────────────────────────────────
 model OrderItem {
   id        String  @id @default(cuid())
   orderId   String  @map("order_id")
@@ -222,64 +202,7 @@ model OrderItem {
   @@map("order_items")
 }
 
-model pets {
-  id            String          @id
-  user_id       String
-  name          String
-  species       String
-  breed         String?
-  age           Int?
-  weight        Float?
-  image_url     String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime
-  prescriptions prescriptions[]
-  vaccinations  vaccinations[]
-
-  @@index([user_id])
-}
-
-model prescription_items {
-  id              String        @id
-  prescription_id String
-  product_id      String?
-  name            String
-  dosage          String?
-  quantity        Int           @default(1)
-  price           Float         @default(0)
-  prescriptions   prescriptions @relation(fields: [prescription_id], references: [id], onDelete: Cascade)
-  products        Product?      @relation(fields: [product_id], references: [id])
-}
-
-model prescriptions {
-  id                 String               @id
-  pet_id             String
-  vet_user_id        String
-  vet_name           String
-  diagnosis          String?
-  notes              String?
-  total_price        Float                @default(0)
-  createdAt          DateTime             @default(now())
-  prescription_items prescription_items[]
-  pets               pets                 @relation(fields: [pet_id], references: [id], onDelete: Cascade)
-
-  @@index([pet_id])
-  @@index([vet_user_id])
-}
-
-model vaccinations {
-  id        String    @id
-  pet_id    String
-  name      String
-  date      DateTime
-  next_date DateTime?
-  vet_name  String?
-  notes     String?
-  createdAt DateTime  @default(now())
-  pets      pets      @relation(fields: [pet_id], references: [id], onDelete: Cascade)
-
-  @@index([pet_id])
-}
+// ─── Address (Adres Defteri) ──────────────────────────────────────────────────
 model Address {
   id          String   @id @default(cuid())
   userId      String   @map("user_id")

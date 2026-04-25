@@ -1,85 +1,153 @@
-"use client";
+'use client'
 
-import Link from 'next/link';
+import Link from 'next/link'
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell
+} from 'recharts'
+
+const appointmentData = [
+  { ay: 'Oca', sayi: 420 },
+  { ay: 'Şub', sayi: 380 },
+  { ay: 'Mar', sayi: 510 },
+  { ay: 'Nis', sayi: 620 },
+  { ay: 'May', sayi: 590 },
+  { ay: 'Haz', sayi: 710 },
+]
+
+const serviceData = [
+  { name: 'Mağaza', value: 40, color: '#2563eb' },
+  { name: 'Klinik', value: 35, color: '#22c55e' },
+  { name: 'Kuaför', value: 15, color: '#f97316' },
+  { name: 'Barınak', value: 10, color: '#a855f7' },
+]
 
 export default function CTABanner() {
   return (
-    <section className="bg-blue-600 border-y-2 border-black py-16 px-6 relative overflow-hidden">
-      {/* Subtle background decoration */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500 rounded-full -mr-32 -mt-32 opacity-20 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-700 rounded-full -ml-24 -mb-24 opacity-30 pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
+    <section className="bg-amber-50 border-y-2 border-black py-16 px-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* SOL SÜTUN — İstatistikler */}
-          <div className="bg-white border-2 border-black rounded-2xl p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-transform duration-300">
-            <div className="flex flex-col gap-6">
-              <div className="text-center group">
-                <p className="text-5xl font-black text-blue-600 group-hover:scale-110 transition-transform">40+</p>
-                <p className="text-sm font-bold text-gray-600 uppercase tracking-wider">Türkiye Geneli Şube</p>
+          {/* SOL KART — İstatistik Grafikler */}
+          <div className="bg-white border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <h3 className="font-black text-base mb-4 uppercase tracking-tighter italic">
+              Rakamlarla PetVerse
+            </h3>
+
+            <div className="mb-6">
+              <p className="font-black text-sm mb-2 text-gray-500 uppercase tracking-widest">
+                Aylık Randevu Trendi
+              </p>
+              <div className="h-[120px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={appointmentData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+                    <XAxis dataKey="ay" tick={{ fontSize: 10, fontWeight: 700 }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 9 }} axisLine={false} tickLine={false} />
+                    <Tooltip
+                      contentStyle={{
+                        border: '2px solid black',
+                        borderRadius: '8px',
+                        fontWeight: 700,
+                        fontSize: 11
+                      }}
+                      cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+                    />
+                    <Bar dataKey="sayi" fill="#2563eb" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
-              <div className="border-t-2 border-dashed border-gray-200 pt-6 text-center group">
-                <p className="text-5xl font-black text-orange-500 group-hover:scale-110 transition-transform">12K+</p>
-                <p className="text-sm font-bold text-gray-600 uppercase tracking-wider">Mutlu Evcil Hayvan</p>
-              </div>
-              <div className="border-t-2 border-dashed border-gray-200 pt-6 text-center group">
-                <p className="text-5xl font-black text-green-600 group-hover:scale-110 transition-transform">98%</p>
-                <p className="text-sm font-bold text-gray-600 uppercase tracking-wider">Müşteri Memnuniyeti</p>
+            </div>
+
+            <div>
+              <p className="font-black text-sm mb-2 text-gray-500 uppercase tracking-widest">
+                Hizmet Dağılımı
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="w-[60%] h-[120px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={serviceData}
+                        cx="50%" cy="50%"
+                        innerRadius={25}
+                        outerRadius={45}
+                        dataKey="value"
+                        strokeWidth={2}
+                        stroke="#000"
+                      >
+                        {serviceData.map((entry, index) => (
+                          <Cell key={index} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{
+                          border: '2px solid black',
+                          borderRadius: '8px',
+                          fontWeight: 700,
+                          fontSize: 11
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="flex flex-col gap-1.5 shrink-0">
+                  {serviceData.map((item, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="w-3 h-3 rounded-sm border border-black flex-shrink-0"
+                        style={{ backgroundColor: item.color }} />
+                      <span className="text-[10px] font-black uppercase tracking-tighter">
+                        {item.name} %{item.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
 
           {/* ORTA SÜTUN — Ana Mesaj */}
-          <div className="text-center lg:px-6">
-            <div className="inline-flex items-center gap-2 bg-yellow-400 border-2 border-black rounded-full px-5 py-1.5 mb-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
-              <span className="text-xl">🐾</span>
-              <span className="font-black text-sm text-black uppercase tracking-widest">PetVerse Ailesi</span>
+          <div className="bg-blue-600 border-2 border-black rounded-2xl p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-center flex flex-col items-center justify-center">
+            <div className="inline-flex items-center gap-2 bg-yellow-400 border-2 border-black rounded-full px-4 py-1 mb-6 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+              <span className="text-lg">🐾</span>
+              <span className="font-black text-sm text-black">PetVerse Ailesi</span>
             </div>
 
-            <h2 className="text-white font-black text-5xl md:text-6xl tracking-tighter leading-[1.1] mb-6">
-              Dostunuzun En İyi <br className="hidden md:block" />
-              Arkadaşıyız
+            <h2 className="text-white font-black text-4xl tracking-tight mb-4 leading-tight uppercase">
+              Dostunuzun En İyi<br />Arkadaşıyız
             </h2>
 
-            <p className="text-blue-100 text-xl font-medium mb-10 max-w-md mx-auto leading-relaxed">
-              Sağlık, bakım ve alışveriş — <br />
-              her şey tek çatı altında.
+            <p className="text-blue-100 text-base font-medium mb-8 max-w-[280px]">
+              Sağlık, bakım ve alışveriş — her şey tek çatı altında.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href="/haritalar" className="w-full sm:w-auto">
-                <button className="w-full bg-white text-black font-black border-2 border-black rounded-2xl px-8 py-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 transition-all flex items-center justify-center gap-2 text-lg">
+            <div className="w-full">
+              <Link href="/haritalar">
+                <button className="w-full bg-white text-black font-black border-2 border-black rounded-2xl px-5 py-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 transition-transform duration-200 flex items-center justify-center gap-2 text-base">
                   📍 Bizi Bul
-                </button>
-              </Link>
-              <Link href="/randevu" className="w-full sm:w-auto">
-                <button className="w-full bg-yellow-400 text-black font-black border-2 border-black rounded-2xl px-8 py-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 transition-all flex items-center justify-center gap-2 text-lg">
-                  🩺 Randevu Al
                 </button>
               </Link>
             </div>
           </div>
 
-          {/* SAĞ SÜTUN — Özellik Listesi */}
-          <div className="bg-white border-2 border-black rounded-2xl p-8 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 transition-transform duration-300">
-            <h3 className="font-black text-2xl uppercase tracking-tighter mb-6 italic border-b-2 border-black pb-2">
+          {/* SAĞ KART — Neden PetVerse? */}
+          <div className="bg-white border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <h3 className="font-black text-base mb-6 uppercase tracking-tighter italic border-b-2 border-black pb-2">
               Neden PetVerse?
             </h3>
 
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-3">
               {[
-                { label: "7/24 Acil Veteriner Desteği", color: "bg-green-500" },
-                { label: "Lumina Tech Cihaz Entegrasyonu", color: "bg-blue-500" },
-                { label: "Gemini AI Ön Teşhis", color: "bg-orange-500" },
-                { label: "Türkiye Geneli 40+ Şube", color: "bg-purple-500" },
-                { label: "Güvenli Online Alışveriş", color: "bg-yellow-500" }
+                { label: "7/24 Acil Veteriner Desteği", color: "bg-blue-600", light: "bg-blue-50" },
+                { label: "VetAI Asistan Desteği", color: "bg-green-500", light: "bg-green-50" },
+                { label: "Türkiye Geneli 40+ Şube", color: "bg-purple-500", light: "bg-purple-50" },
+                { label: "Güvenli Online Alışveriş", color: "bg-yellow-400", light: "bg-yellow-50", text: "text-black" }
               ].map((item, idx) => (
-                <div key={idx} className="flex items-center gap-4 group cursor-default">
-                  <div className={`${item.color} w-10 h-10 border-2 border-black rounded-xl flex items-center justify-center flex-shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] group-hover:rotate-6 transition-transform`}>
-                    <span className="text-white font-black text-sm">✓</span>
+                <div key={idx} className={`flex items-center gap-3 ${item.light} border-2 border-black rounded-xl p-3 transition-transform hover:-translate-x-1 cursor-default`}>
+                  <div className={`${item.color} w-8 h-8 border-2 border-black rounded-lg flex items-center justify-center flex-shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}>
+                    <span className={`${item.text || 'text-white'} font-black text-xs`}>✓</span>
                   </div>
-                  <span className="font-bold text-base leading-tight group-hover:text-blue-600 transition-colors">
+                  <span className="font-black text-sm uppercase tracking-tighter">
                     {item.label}
                   </span>
                 </div>
@@ -90,5 +158,5 @@ export default function CTABanner() {
         </div>
       </div>
     </section>
-  );
+  )
 }
