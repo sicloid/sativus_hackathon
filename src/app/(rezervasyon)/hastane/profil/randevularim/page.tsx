@@ -25,6 +25,7 @@ export default async function RandevularimPage({
   // Kullanıcının randevularını getir
   const appointments = await prisma.appointment.findMany({
     where: {
+      status: 'PENDING',
       OR: [
         { userId: user.id },
         { 
@@ -46,7 +47,7 @@ export default async function RandevularimPage({
 
   return (
     <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 sm:p-8 rounded-2xl">
-      <h2 className="text-3xl font-black uppercase mb-6 border-b-4 border-black pb-2">Randevularım</h2>
+      <h2 className="text-3xl font-black uppercase mb-6 border-b-4 border-black pb-2">Onay Bekleyen Randevularım</h2>
       
       {showSuccess && (
         <div className="bg-emerald-300 border-4 border-black p-4 mb-6 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-black uppercase text-center text-emerald-900">
@@ -56,7 +57,7 @@ export default async function RandevularimPage({
 
       {appointments.length === 0 ? (
         <div className="text-zinc-600 font-bold bg-zinc-50 p-6 rounded-xl border-2 border-dashed border-zinc-300 text-center">
-          Henüz alınmış bir randevunuz bulunmuyor.
+          Henüz onay bekleyen bir randevunuz bulunmuyor.
         </div>
       ) : (
         <div className="space-y-6">
