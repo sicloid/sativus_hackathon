@@ -160,5 +160,5 @@ export async function createAppointment(prevState: any, formData: FormData) {
   revalidatePath("/hekim")
   revalidatePath("/pet-karne")
   
-  redirect("/pet-karne?success=true")
+  redirect("/hastane/profil/randevularim?success=true")
 }
