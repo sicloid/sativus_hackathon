@@ -28,8 +28,6 @@ export function Navbar({ user }: { user?: import("@supabase/supabase-js").User |
             </Link>
             <Link href="/randevu" className="font-bold text-base lg:text-lg hover:underline underline-offset-4 flex-shrink-0">Randevu Al</Link>
             <Link href="/pet-karne" className="font-bold text-base lg:text-lg hover:underline underline-offset-4 flex-shrink-0">Pet Karne</Link>
-            <Link href="/receteler" className="font-bold text-base lg:text-lg hover:underline underline-offset-4 flex-shrink-0">Reçeteler</Link>
-            <Link href="/faturalar" className="font-bold text-base lg:text-lg hover:underline underline-offset-4 flex-shrink-0">Faturalar</Link>
             
             {user ? (
               <>
@@ -75,8 +73,6 @@ export function Navbar({ user }: { user?: import("@supabase/supabase-js").User |
             </Link>
             <Link onClick={() => setIsOpen(false)} href="/randevu" className="block px-4 py-3 font-bold text-lg border-b-2 border-zinc-100">Randevu Al</Link>
             <Link onClick={() => setIsOpen(false)} href="/pet-karne" className="block px-4 py-3 font-bold text-lg border-b-2 border-zinc-100">Pet Karne</Link>
-            <Link onClick={() => setIsOpen(false)} href="/receteler" className="block px-4 py-3 font-bold text-lg border-b-2 border-zinc-100">Reçeteler</Link>
-            <Link onClick={() => setIsOpen(false)} href="/faturalar" className="block px-4 py-3 font-bold text-lg border-b-2 border-zinc-100">Faturalar</Link>
             {user ? (
               <>
                 <Link onClick={() => setIsOpen(false)} href={user.user_metadata?.role === 'vet' ? "/hekim" : "/hastane/profil"} className="block px-4 py-3 font-bold text-lg text-indigo-600 border-b-2 border-zinc-100">Profil</Link>
