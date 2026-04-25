@@ -265,6 +265,8 @@ model Coupon {
   discountPercent Int      @map("discount_percent")
   description     String
   isActive        Boolean  @default(true) @map("is_active")
+  usageLimit      Int?     @map("usage_limit")
+  usedCount       Int      @default(0) @map("used_count")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

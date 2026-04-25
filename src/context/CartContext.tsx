@@ -47,11 +47,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       }
       
       const storedCart = localStorage.getItem('petverse_cart')
-      if (storedCart) {
+      if (storedCart && storedCart !== 'undefined' && storedCart !== 'null' && storedCart.trim() !== '') {
         try {
           setItems(JSON.parse(storedCart))
         } catch (e) {
           console.error("Cart parse error", e)
+          localStorage.removeItem('petverse_cart')
         }
       }
       setIsLoaded(true)

@@ -74,10 +74,19 @@ export async function registerAction(prevState: any, formData: FormData) {
   })
 
   if (error) {
-    return { error: error.message || 'Kayıt olurken bir hata oluştu.' }
+    let errorMsg = error.message;
+    if (error.code === 'over_email_send_rate_limit') {
+      errorMsg = 'Çok fazla kayıt isteği gönderildi. Lütfen daha sonra tekrar deneyin veya Supabase üzerinden "Confirm Email" ayarını kapatın.';
+    }
+    return { error: errorMsg || 'Kayıt olurken bir hata oluştu.' }
   }
 
-  redirect('/login?success=Hesabınız oluşturuldu. Lütfen giriş yapın.')
+  if (!data.session) {
+    return { error: 'Kayıt başarılı! Lütfen e-posta adresinize gönderilen onay linkine tıklayın.' }
+  }
+
+  revalidatePath('/', 'layout')
+  redirect('/urunler')
 }
 
 export async function logoutAction() {

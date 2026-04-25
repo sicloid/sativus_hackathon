@@ -32,10 +32,9 @@ export default function Navbar() {
           <div className="w-2.5 h-2.5 bg-orange-500 rounded-full ml-1 self-end mb-2 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]" />
         </Link>
 
-        {/* Sağ Alan Boşaltıldı */}
+        {/* Sağ Alan Temizlendi */}
         <div className="flex items-center gap-4">
-          <Link href="/care-login" className="font-bold hover:underline underline-offset-4">Giriş Yap</Link>
-          <Link href="/randevu" className="bg-black text-white px-4 py-2 rounded-xl font-bold hover:bg-blue-600 transition-colors">Randevu Al</Link>
+          {/* Butonlar kaldırıldı */}
         </div>
       </div>
     </nav>

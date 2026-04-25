@@ -1,10 +1,14 @@
+import { config } from 'dotenv'
+import fs from 'fs'
+config({ path: fs.existsSync('.env.local') ? '.env.local' : '.env' })
+
 import { PrismaClient } from '@prisma/client'
-import * as dotenv from 'dotenv'
+import { Pool } from 'pg'
+import { PrismaPg } from '@prisma/adapter-pg'
 
-dotenv.config({ path: '.env.local' })
-dotenv.config({ path: '.env' })
-
-const prisma = new PrismaClient()
+const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+const adapter = new PrismaPg(pool)
+const prisma = new PrismaClient({ adapter })
 
 async function main() {
   const coupons = [
@@ -36,4 +40,5 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect()
+    await pool.end()
   })
