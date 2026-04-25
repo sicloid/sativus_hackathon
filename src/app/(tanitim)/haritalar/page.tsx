@@ -77,63 +77,71 @@ export default function HaritalarPage() {
         <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-4">
           <button 
             onClick={() => setFilter('Tümü')}
-            className={`border-2 border-black rounded-xl px-4 py-2 font-black text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 ${filter === 'Tümü' ? 'bg-black text-white' : 'bg-white'}`}
+            className={`border-4 border-black rounded-2xl px-6 py-3 font-black text-lg transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 ${filter === 'Tümü' ? 'bg-black text-white' : 'bg-white'}`}
           >
             🗺️ Tümü
           </button>
 
           <button 
             onClick={() => setFilter('Mağaza')}
-            className={`border-2 border-black rounded-xl px-4 py-2 font-black text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 ${filter === 'Mağaza' ? 'bg-black text-white' : 'bg-white'}`}
+            className={`border-4 border-black rounded-2xl px-6 py-3 font-black text-lg transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 ${filter === 'Mağaza' ? 'bg-black text-white' : 'bg-white'}`}
           >
-            <div className="flex items-center gap-2">
-              <Image
-                src="https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?w=32&h=32&fit=crop&q=80"
-                alt="mağaza" width={20} height={20}
-                className="rounded-full border border-black object-cover"
-              />
+            <div className="flex items-center gap-3">
+              <div className="relative w-10 h-10 border-2 border-black rounded-full overflow-hidden shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <Image
+                  src="https://images.unsplash.com/photo-1534133069152-822d13007ba2?w=100&h=100&fit=crop&q=80"
+                  alt="mağaza" fill
+                  className="object-cover"
+                />
+              </div>
               <span>Mağaza</span>
             </div>
           </button>
 
           <button 
             onClick={() => setFilter('Klinik')}
-            className={`border-2 border-black rounded-xl px-4 py-2 font-black text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 ${filter === 'Klinik' ? 'bg-black text-white' : 'bg-white'}`}
+            className={`border-4 border-black rounded-2xl px-6 py-3 font-black text-lg transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 ${filter === 'Klinik' ? 'bg-black text-white' : 'bg-white'}`}
           >
-            <div className="flex items-center gap-2">
-              <Image
-                src="https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?w=32&h=32&fit=crop&q=80"
-                alt="klinik" width={20} height={20}
-                className="rounded-full border border-black object-cover"
-              />
+            <div className="flex items-center gap-3">
+              <div className="relative w-10 h-10 border-2 border-black rounded-full overflow-hidden shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <Image
+                  src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=100&h=100&fit=crop&q=80"
+                  alt="klinik" fill
+                  className="object-cover"
+                />
+              </div>
               <span>Klinik</span>
             </div>
           </button>
 
           <button 
             onClick={() => setFilter('Kuaför')}
-            className={`border-2 border-black rounded-xl px-4 py-2 font-black text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 ${filter === 'Kuaför' ? 'bg-black text-white' : 'bg-white'}`}
+            className={`border-4 border-black rounded-2xl px-6 py-3 font-black text-lg transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 ${filter === 'Kuaför' ? 'bg-black text-white' : 'bg-white'}`}
           >
-            <div className="flex items-center gap-2">
-              <Image
-                src="https://images.unsplash.com/photo-1625316708582-7c38734be31d?w=32&h=32&fit=crop&q=80"
-                alt="kuaför" width={20} height={20}
-                className="rounded-full border border-black object-cover"
-              />
+            <div className="flex items-center gap-3">
+              <div className="relative w-10 h-10 border-2 border-black rounded-full overflow-hidden shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <Image
+                  src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=100&h=100&fit=crop&q=80"
+                  alt="kuaför" fill
+                  className="object-cover"
+                />
+              </div>
               <span>Kuaför</span>
             </div>
           </button>
 
           <button 
             onClick={() => setFilter('Barınak')}
-            className={`border-2 border-black rounded-xl px-4 py-2 font-black text-sm transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-0.5 ${filter === 'Barınak' ? 'bg-black text-white' : 'bg-white'}`}
+            className={`border-4 border-black rounded-2xl px-6 py-3 font-black text-lg transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 active:translate-y-0 ${filter === 'Barınak' ? 'bg-black text-white' : 'bg-white'}`}
           >
-            <div className="flex items-center gap-2">
-              <Image
-                src="https://images.unsplash.com/photo-1548767797-d8c844163c4a?w=32&h=32&fit=crop&q=80"
-                alt="barınak" width={20} height={20}
-                className="rounded-full border border-black object-cover"
-              />
+            <div className="flex items-center gap-3">
+              <div className="relative w-10 h-10 border-2 border-black rounded-full overflow-hidden shrink-0 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <Image
+                  src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=100&h=100&fit=crop&q=80"
+                  alt="barınak" fill
+                  className="object-cover"
+                />
+              </div>
               <span>Barınak</span>
             </div>
           </button>
