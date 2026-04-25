@@ -116,3 +116,21 @@ export async function getUserOrders() {
     orderBy: { createdAt: 'desc' },
   })
 }
+
+// ─── En Son Siparişi Getir (Ödeme Başarı Sayfası için) ───────────────────────
+export async function getLatestOrder() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return null
+
+  return prisma.order.findFirst({
+    where: { userId: user.id },
+    include: {
+      items: {
+        include: { product: true },
+      },
+    },
+    orderBy: { createdAt: 'desc' },
+  })
+}

@@ -1,137 +1,184 @@
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
   engineType = "library"
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
-// ─── Provider (Klinik / Kuaför Uzmanı) ───────────────────────────────────────
 model Provider {
-  id          String   @id @default(cuid())
-  name        String
-  type        String   // "CLINIC" veya "GROOMER"
-  specialty   String?
-  imageUrl    String?
-  rating      Float    @default(0.0)
-  address     String?
-  phone       String?
-
-  slots        Slot[]
+  id           String        @id @default(cuid())
+  name         String
+  type         String
+  specialty    String?
+  imageUrl     String?
+  rating       Float         @default(0.0)
+  address      String?
+  phone        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   appointments Appointment[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  slots        Slot[]
 
   @@map("providers")
 }
 
-// ─── Slot (Zaman Dilimi) ──────────────────────────────────────────────────────
 model Slot {
-  id         String   @id @default(cuid())
-  providerId String
-  date       DateTime
-  startTime  String
-  endTime    String
-  isBooked   Boolean  @default(false)
-
-  provider    Provider     @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  id          String       @id @default(cuid())
+  providerId  String
+  date        DateTime
+  startTime   String
+  endTime     String
+  isBooked    Boolean      @default(false)
+  createdAt   DateTime     @default(now())
   appointment Appointment?
-
-  createdAt DateTime @default(now())
+  provider    Provider     @relation(fields: [providerId], references: [id], onDelete: Cascade)
 
   @@index([providerId, date])
   @@map("slots")
 }
 
-// ─── Appointment (Randevu) ────────────────────────────────────────────────────
 model Appointment {
-  id         String   @id @default(cuid())
-  providerId String
-  slotId     String   @unique
-  status     String   @default("PENDING")
-
-  // Evcil Hayvan Bilgisi
-  petName    String
-  petSpecies String
-  petAge     Int?
-  ownerName  String
-  ownerPhone String?
-  notes      String?
-
-  // AI Teşhis Sonuçları
-  aiDiagnosis    String?
-  aiAciliyet     String?
-  aiHizmet       String?
-  aiOzeti        String?
-
-  provider Provider @relation(fields: [providerId], references: [id])
-  slot     Slot     @relation(fields: [slotId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  providerId  String
+  slotId      String   @unique
+  status      String   @default("PENDING")
+  petName     String
+  petSpecies  String
+  petAge      Int?
+  ownerName   String
+  ownerPhone  String?
+  notes       String?
+  aiDiagnosis String?
+  aiAciliyet  String?
+  aiHizmet    String?
+  aiOzeti     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  provider    Provider @relation(fields: [providerId], references: [id])
+  slot        Slot     @relation(fields: [slotId], references: [id])
 
   @@index([providerId])
   @@map("appointments")
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// MAĞAZA (E-Ticaret) Modelleri
-// ═══════════════════════════════════════════════════════════════════════════════
-
-// ─── Product (Ürün) ───────────────────────────────────────────────────────────
 model Product {
-  id             String   @id @default(cuid())
-  name           String
-  description    String
-  price          Float
-  imageUrl       String?  @map("image_url")
-  category       String
-  stockQuantity  Int      @default(0) @map("stock_quantity")
-
-  orderItems     OrderItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                 String               @id @default(cuid())
+  name               String
+  description        String
+  price              Float
+  imageUrl           String?              @map("image_url")
+  category           String
+  stockQuantity      Int                  @default(0) @map("stock_quantity")
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  orderItems         OrderItem[]
+  prescription_items prescription_items[]
 
   @@map("products")
 }
 
-// ─── Order (Sipariş) ──────────────────────────────────────────────────────────
 model Order {
-  id           String   @id @default(cuid())
-  userId       String   @map("user_id")    // Supabase auth.users id
-  status       String   @default("PENDING") // PENDING, CONFIRMED, SHIPPED, DELIVERED
-  totalPrice   Float    @map("total_price")
-  shippingCost Float    @default(0) @map("shipping_cost")
-  tax          Float    @default(0)
-
-  // Teslimat bilgileri
-  fullName     String   @map("full_name")
+  id           String      @id @default(cuid())
+  userId       String      @map("user_id")
+  status       String      @default("PENDING")
+  totalPrice   Float       @map("total_price")
+  shippingCost Float       @default(0) @map("shipping_cost")
+  tax          Float       @default(0)
+  fullName     String      @map("full_name")
   phone        String
   address      String
   city         String
-
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
   items        OrderItem[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@map("orders")
 }
 
-// ─── OrderItem (Sipariş Kalemi) ───────────────────────────────────────────────
 model OrderItem {
-  id         String  @id @default(cuid())
-  orderId    String  @map("order_id")
-  productId  String  @map("product_id")
-  quantity   Int
-  unitPrice  Float   @map("unit_price")
-
-  order      Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product    Product @relation(fields: [productId], references: [id])
+  id        String  @id @default(cuid())
+  orderId   String  @map("order_id")
+  productId String  @map("product_id")
+  quantity  Int
+  unitPrice Float   @map("unit_price")
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
 
   @@map("order_items")
+}
+
+model pets {
+  id            String          @id
+  user_id       String
+  name          String
+  species       String
+  breed         String?
+  age           Int?
+  weight        Float?
+  image_url     String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime
+  prescriptions prescriptions[]
+  vaccinations  vaccinations[]
+
+  @@index([user_id])
+}
+
+model prescription_items {
+  id              String        @id
+  prescription_id String
+  product_id      String?
+  name            String
+  dosage          String?
+  quantity        Int           @default(1)
+  price           Float         @default(0)
+  prescriptions   prescriptions @relation(fields: [prescription_id], references: [id], onDelete: Cascade)
+  products        Product?      @relation(fields: [product_id], references: [id])
+}
+
+model prescriptions {
+  id                 String               @id
+  pet_id             String
+  vet_user_id        String
+  vet_name           String
+  diagnosis          String?
+  notes              String?
+  total_price        Float                @default(0)
+  createdAt          DateTime             @default(now())
+  prescription_items prescription_items[]
+  pets               pets                 @relation(fields: [pet_id], references: [id], onDelete: Cascade)
+
+  @@index([pet_id])
+  @@index([vet_user_id])
+}
+
+model vaccinations {
+  id        String    @id
+  pet_id    String
+  name      String
+  date      DateTime
+  next_date DateTime?
+  vet_name  String?
+  notes     String?
+  createdAt DateTime  @default(now())
+  pets      pets      @relation(fields: [pet_id], references: [id], onDelete: Cascade)
+
+  @@index([pet_id])
+}
+model Address {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  title       String
+  fullName    String   @map("full_name")
+  phone       String
+  fullAddress String   @map("full_address")
+  city        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@map("addresses")
 }
