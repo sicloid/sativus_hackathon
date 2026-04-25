@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
   transpilePackages: ["swiper"],
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: 'images.unsplash.com' },
+      { protocol: 'https', hostname: '**.unsplash.com' },
       { protocol: 'https', hostname: 'cdn-icons-png.flaticon.com' },
       { protocol: 'https', hostname: 'www.kolaymama.com' },
       { protocol: 'https', hostname: 'cdn-img.pttavm.com' },
@@ -17,6 +17,8 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'm.media-amazon.com' },
       { protocol: 'https', hostname: 'cdn.dsmcdn.com' },
       { protocol: 'https', hostname: 'encrypted-tbn0.gstatic.com' },
+      { protocol: 'https', hostname: '**.bing.com' },
+      { protocol: 'https', hostname: '**.bing.net' },
     ],
   },
 };

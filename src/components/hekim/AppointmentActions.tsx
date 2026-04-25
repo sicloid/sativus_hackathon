@@ -3,7 +3,7 @@
 import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/Button";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
-import { approveAppointment, rejectAppointment } from "../../hekim/actions";
+import { approveAppointment, rejectAppointment } from "@/app/(rezervasyon)/hekim/actions";
 
 interface AppointmentActionsProps {
   appointmentId: string;

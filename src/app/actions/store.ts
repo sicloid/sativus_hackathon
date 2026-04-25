@@ -1,6 +1,6 @@
 'use server'
 
-import prisma from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
@@ -230,13 +230,20 @@ export async function getCoupons() {
   if (!user) return []
 
   // Sistemdeki aktif kuponları getir
-  const coupons = await prisma.coupon.findMany({
+  if (!prisma || !(prisma as any).coupon) {
+    console.error("PRISMA ERROR: coupon model is missing from prisma client")
+    return []
+  }
+
+  const coupons = await (prisma as any).coupon.findMany({
     where: { isActive: true },
     orderBy: { discountPercent: 'desc' }
   })
 
   // Kullanıcının hangilerini kullandığını işaretle
-  const usedCoupons = await prisma.usedCoupon.findMany({
+  if (!(prisma as any).usedCoupon) return coupons.map(c => ({ ...c, isUsed: false }))
+
+  const usedCoupons = await (prisma as any).usedCoupon.findMany({
     where: { userId: user.id },
     select: { couponId: true }
   })
