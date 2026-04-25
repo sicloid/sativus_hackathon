@@ -212,7 +212,7 @@ export default function HaritalarPage() {
         {/* SAĞ TARAF — Harita */}
         <div className="p-4 bg-orange-50">
           <div className="w-full h-[calc(100vh-160px)] rounded-2xl border-4 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] overflow-hidden bg-blue-50">
-            <PetVerseMap selectedId={selectedId} />
+            <PetVerseMap selectedId={selectedId} locations={filteredLocations} />
           </div>
           
           <div className="mt-6">
