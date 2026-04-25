@@ -9,6 +9,7 @@ import { revalidatePath } from 'next/cache'
 export async function loginAction(prevState: any, formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
+  const loginType = formData.get('loginType') as string
   
   if (!email || !password) {
     return { error: 'Lütfen tüm alanları doldurun.' }
@@ -31,6 +32,11 @@ export async function loginAction(prevState: any, formData: FormData) {
   // Rol kontrolü: admin → /admin, diğerleri → /urunler
   const { data: { user } } = await supabase.auth.getUser()
   const role = user?.user_metadata?.role as string | undefined
+
+  if (loginType === 'admin' && role !== 'admin') {
+    await supabase.auth.signOut()
+    return { error: 'Bu alana sadece yöneticiler giriş yapabilir.' }
+  }
 
   revalidatePath('/', 'layout')
 
