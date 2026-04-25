@@ -7,7 +7,14 @@ import { Badge } from '@/components/ui/Badge';
 
 export const dynamic = 'force-dynamic';
 
-export default async function RandevularimPage() {
+export default async function RandevularimPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const resolvedSearchParams = await searchParams;
+  const showSuccess = resolvedSearchParams.success === 'true';
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -33,6 +40,12 @@ export default async function RandevularimPage() {
     <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6 sm:p-8 rounded-2xl">
       <h2 className="text-3xl font-black uppercase mb-6 border-b-4 border-black pb-2">Randevularım</h2>
       
+      {showSuccess && (
+        <div className="bg-emerald-300 border-4 border-black p-4 mb-6 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-black uppercase text-center text-emerald-900">
+          🎉 Randevunuz başarıyla oluşturuldu!
+        </div>
+      )}
+
       {appointments.length === 0 ? (
         <div className="text-zinc-600 font-bold bg-zinc-50 p-6 rounded-xl border-2 border-dashed border-zinc-300 text-center">
           Henüz alınmış bir randevunuz bulunmuyor.
