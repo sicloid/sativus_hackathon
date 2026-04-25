@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export default async function RecetelerimPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/hasta-login");
+  if (!user) redirect("/care-login");
 
   // Kullanıcının petlerine yazılan reçeteleri getir
   const prescriptions = await prisma.prescription.findMany({

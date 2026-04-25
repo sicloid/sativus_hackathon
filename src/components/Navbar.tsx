@@ -51,7 +51,7 @@ export default function Navbar() {
             <span className="text-white font-black text-xs">L</span>
           </div>
           <span className="font-bold text-lg tracking-tight text-white">
-            Lumina<span className="grad-text">Tech</span>
+            Pet<span className="grad-text">Verse</span>
           </span>
         </button>
 

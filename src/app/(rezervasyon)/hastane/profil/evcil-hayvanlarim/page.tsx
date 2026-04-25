@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export default async function EvcilHayvanlarimPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/hasta-login");
+  if (!user) redirect("/care-login");
 
   const pets = await prisma.pet.findMany({
     where: { userId: user.id },

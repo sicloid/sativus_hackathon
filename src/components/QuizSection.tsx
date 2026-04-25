@@ -34,34 +34,34 @@ const questions = [
 
 const results: Record<string, { name: string; subtitle: string; img: string; desc: string; color: string; price: string }> = {
   band: {
-    name: "LuminaBand X",
-    subtitle: "Akıllı Bileklik",
+    name: "PetVerse GPS Tasma",
+    subtitle: "Akıllı Tasma",
     img: "/lumina_band.png",
-    desc: "Aktif yaşam tarzın için mükemmel eşlik. Sağlık verilerini anlık takip et, GPS ile her antrenmanda yanında.",
+    desc: "Aktif dostlar için mükemmel eşlik. Sağlık verilerini anlık takip et, GPS ile nerede olduğunu gör.",
     color: "#7c3aed",
     price: "₺2.499",
   },
   pods: {
-    name: "LuminaPods",
-    subtitle: "Kablosuz Kulaklık",
+    name: "PetVerse Çip",
+    subtitle: "Akıllı Kimlik",
     img: "/lumina_pods.png",
-    desc: "40 saate varan pil ömrü ve aktif gürültü engelleme ile müziğe dalmak için doğdun.",
+    desc: "Veteriner uyumlu, ömür boyu güvenli kimlik tespiti ve sağlık geçmişi takibi.",
     color: "#06b6d4",
     price: "₺1.799",
   },
   boom: {
-    name: "LuminaBoom",
-    subtitle: "Mini Hoparlör",
+    name: "PetVerse Kamera",
+    subtitle: "İzleme Sistemi",
     img: "/lumina_boom.png",
-    desc: "RGB ışık şovu ve 360° ses ile her buluşmayı efsaneye dönüştür. IPX7 su geçirmez.",
+    desc: "Gece görüşü ve çift yönlü ses ile evdeki dostunuzu uzaktan izleyin ve güvende tutun.",
     color: "#ec4899",
     price: "₺1.199",
   },
   case: {
-    name: "LuminaCase",
-    subtitle: "Mobil Aksesuar",
+    name: "PetVerse Karne",
+    subtitle: "Dijital Takip",
     img: "/lumina_case.png",
-    desc: "Tarzını tamamlayan MagSafe destekli şeffaf kılıf. Her telefon modeline uygun.",
+    desc: "Aşı takvimi ve sağlık geçmişi artık bulutta. Hatırlatıcılar ile hiçbir kontrolü kaçırma.",
     color: "#f97316",
     price: "₺699",
   },
@@ -136,7 +136,7 @@ export default function QuizSection() {
                 backgroundClip: "text",
               }}
             >
-              Lumina
+              PetVerse
             </span>
           </h2>
           <p className="mt-3 text-slate-400 text-lg">

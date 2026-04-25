@@ -5,49 +5,49 @@ import { useRef, useState } from "react";
 const products = [
   {
     id: "band",
-    name: "LuminaBand X",
-    subtitle: "Akıllı Bileklik",
+    name: "PetVerse GPS Tasma",
+    subtitle: "Akıllı Tasma",
     price: "₺2.499",
     badge: "Çok Satan",
     badgeColor: "#7c3aed",
     img: "/lumina_band.png",
-    features: ["7 Gün Pil", "Kalp Atışı", "GPS", "Su Geçirmez"],
+    features: ["7 Gün Pil", "Konum Takibi", "GPS", "Su Geçirmez"],
     color: "#7c3aed",
     glow: "rgba(124,58,237,0.4)",
   },
   {
     id: "pods",
-    name: "LuminaPods",
-    subtitle: "Kablosuz Kulaklık",
+    name: "PetVerse Çip",
+    subtitle: "Akıllı Kimlik",
     price: "₺1.799",
     badge: "Yeni",
     badgeColor: "#06b6d4",
     img: "/lumina_pods.png",
-    features: ["ANC", "40 Saat", "Hızlı Şarj", "Hi-Fi Ses"],
+    features: ["Hızlı Okuma", "Ömür Boyu", "Güvenli", "Vet Uyumlu"],
     color: "#06b6d4",
     glow: "rgba(6,182,212,0.4)",
   },
   {
     id: "boom",
-    name: "LuminaBoom",
-    subtitle: "Mini Hoparlör",
+    name: "PetVerse Kamera",
+    subtitle: "İzleme Sistemi",
     price: "₺1.199",
     badge: "Popüler",
     badgeColor: "#ec4899",
     img: "/lumina_boom.png",
-    features: ["RGB LED", "360° Ses", "IPX7", "12 Saat"],
+    features: ["Gece Görüşü", "Çift Yönlü Ses", "Sensör", "Wi-Fi"],
     color: "#ec4899",
     glow: "rgba(236,72,153,0.4)",
   },
   {
     id: "case",
-    name: "LuminaCase",
-    subtitle: "Mobil Aksesuar",
+    name: "PetVerse Karne",
+    subtitle: "Dijital Takip",
     price: "₺699",
     badge: "Sınırlı",
     badgeColor: "#f97316",
     img: "/lumina_case.png",
-    features: ["MagSafe", "Şeffaf", "Antibakteriyel", "Tüm Modeller"],
+    features: ["Bulut Tabanlı", "Aşı Takibi", "Hatırlatıcı", "Anlık"],
     color: "#f97316",
     glow: "rgba(249,115,22,0.4)",
   },
@@ -238,7 +238,7 @@ export default function ProductsSection() {
             </span>
           </h2>
           <p className="mt-4 text-lg text-slate-400 max-w-xl mx-auto">
-            Her ürün genç yaşam tarzı için tasarlandı. Fareyi üzerinde gezdirerek detayları incele.
+            Her ürün evcil hayvanınızın konforu için tasarlandı. Fareyi üzerinde gezdirerek detayları incele.
           </p>
         </div>
 
@@ -269,7 +269,7 @@ export default function ProductsSection() {
             }}
           >
             {Array.from({ length: 6 }).map((_, i) =>
-              ["LuminaBand X", "∞", "LuminaPods", "∞", "LuminaBoom", "∞", "LuminaCase", "∞"].map((item, j) => (
+              ["PetVerse Tasma", "∞", "PetVerse Çip", "∞", "PetVerse Kamera", "∞", "PetVerse Karne", "∞"].map((item, j) => (
                 <span key={`${i}-${j}`}>{item}</span>
               ))
             )}

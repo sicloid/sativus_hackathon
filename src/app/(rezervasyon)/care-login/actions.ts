@@ -4,11 +4,12 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 
-export async function login(formData: FormData) {
+export async function loginAction(prevState: any, formData: FormData) {
   const supabase = await createClient()
 
   const email = formData.get('email') as string
   const password = formData.get('password') as string
+  const loginType = formData.get('loginType') as string
 
   if (!email || !password) {
     return { error: 'E-posta ve şifre gereklidir.' }
@@ -26,18 +27,28 @@ export async function login(formData: FormData) {
     return { error: 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.' }
   }
 
-  // Rol kontrolü — hekim bu portaldan giriş yapamaz
   const role = data.user?.user_metadata?.role
-  if (role === 'vet') {
+
+  if (loginType === 'hekim' && role !== 'vet') {
     await supabase.auth.signOut()
-    return { error: 'Hekim hesabıyla hasta portalına giriş yapılamaz. Lütfen Hekim Girişi\'ni kullanın.' }
+    return { error: 'Bu alana sadece veteriner hekimler giriş yapabilir.' }
+  }
+
+  if (loginType === 'hasta' && role === 'vet') {
+    await supabase.auth.signOut()
+    return { error: 'Hekim hesabıyla hasta portalına giriş yapılamaz. Lütfen Hekim sekmesini kullanın.' }
   }
 
   revalidatePath('/', 'layout')
-  redirect('/hastane/profil')
+
+  if (loginType === 'hekim') {
+    redirect('/hekim')
+  } else {
+    redirect('/hastane/profil')
+  }
 }
 
-export async function signup(formData: FormData) {
+export async function signupAction(prevState: any, formData: FormData) {
   const supabase = await createClient()
 
   const email = formData.get('email') as string
@@ -70,5 +81,5 @@ export async function logout() {
   await supabase.auth.signOut()
   
   revalidatePath('/', 'layout')
-  redirect('/hasta-login')
+  redirect('/care-login')
 }

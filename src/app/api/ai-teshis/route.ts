@@ -31,7 +31,7 @@ export interface AiTeshisResponse {
   // JSON teşhis sonucu (finalRequest=true olduğunda)
   diagnosis?: {
     aciliyet: "Yüksek" | "Orta" | "Düşük";
-    tavsiye_edilen_hizmet: "Klinik" | "Kuaför";
+    tavsiye_edilen_hizmet: "Dahiliye" | "Cerrahi" | "Dermatoloji" | "Genel Muayene" | "Kuaför";
     ai_ozeti: string;
   };
   error?: string;
@@ -39,38 +39,32 @@ export interface AiTeshisResponse {
 
 // ─── Sistem Promptu ────────────────────────────────────────────────────────────
 // İki aşamalı davranış tanımı:
-// 1. Sohbet aşaması: Semptomları topla, empati kur, Türkçe konuş
+// 1. Sohbet aşaması: Semptomları detaylıca topla, eksik bilgileri sor, empati kur
 // 2. Teşhis aşaması: Katı JSON formatı döndür, başka hiçbir şey yazma
 const SYSTEM_PROMPT = `Sen "VetAI", PetVerse platformunun uzman veteriner yapay zeka asistanısın.
-Görevin: Evcil hayvan sahiplerinin anlattığı semptomları dinleyerek hızlı ve güvenilir bir ön teşhis yapmak.
+Görevin: Evcil hayvan sahiplerinin anlattığı semptomları detaylıca analiz etmek, eksik bilgileri sorarak durumu netleştirmek ve güvenilir bir ön teşhis yapmak.
 
 DAVRANIŞ KURALLARI:
-- Türkçe konuş, sıcak ve güven verici bir ton kullan.
-- Maksimum 2-3 kısa soru sor; sahipten gerekli bilgileri al.
-- Felsefi tartışmalara, genel sohbete veya konu dışı sorulara GİRME. Kibarca yönlendir.
-- Kesin teşhis koyma. "Bu bir ön değerlendirmedir, mutlaka veterinere gidin" uyarısını her zaman ekle.
-- Acil durum sinyalleri (nefes darlığı, bilinç kaybı, aşırı kanama, felç): Hemen "ACİL - KLİNİĞE GÖTÜRÜN" uyarısı ver.
+- Türkçe konuş, empati kur, bilimsel ve güven verici bir ton kullan.
+- İlk mesajda TEŞHİS KOYMA. Hasta sahibinden mutlaka "Ateşi var mı?", "Ne zamandır devam ediyor?", "İştahsızlık veya halsizlik var mı?" gibi durumu aydınlatacak kritik sorular sor.
+- Hastanın yaşı, türü ve mevcut hastalık geçmişi hakkında bilgi almaya çalış.
+- Felsefi tartışmalara, genel sohbete GİRME. Sadece tıbbi ve veterinerlik bağlamında kal.
+- Acil durum sinyalleri (nefes darlığı, bilinç kaybı, aşırı kanama, felç, zehirlenme): Hemen "ACİL DURUM - LÜTFEN VAKİT KAYBETMEDEN KLİNİĞE GÖTÜRÜN" uyarısı ver.
 
-TOPLAMANIZ GEREKEN BİLGİLER:
-1. Semptomlar neler? Ne zamandır devam ediyor?
-2. Hayvanın yaşı ve genel sağlık geçmişi?
-3. Son zamanlarda yeni bir yiyecek, ilaç veya ortam değişikliği oldu mu?
-
-SONUÇ ÇIKTISI (finalRequest=true olduğunda KESİNLİKLE SADECE aşağıdaki JSON'u döndür, hiç metin ekleme):
+SONUÇ ÇIKTISI (Sistem senden "finalRequest: true" ile nihai teşhisi istediğinde, KESİNLİKLE SADECE aşağıdaki formatta JSON döndür, başına veya sonuna markdown ( \`\`\`json vb. ) veya metin ekleme):
 {
   "aciliyet": "Yüksek|Orta|Düşük",
-  "tavsiye_edilen_hizmet": "Klinik|Kuaför",
-  "ai_ozeti": "2-3 cümle kısa değerlendirme"
+  "tavsiye_edilen_hizmet": "Dahiliye|Cerrahi|Dermatoloji|Genel Muayene|Kuaför",
+  "ai_ozeti": "Hastalığın tıbbi özeti ve klinik değerlendirme (Maks 3 cümle)"
 }
 
 ACİLİYET KRITERLERI:
-- Yüksek: Hayatı tehdit eden belirtiler, acil müdahale gerekli
-- Orta: 24-48 saat içinde veteriner ziyareti önerilir
-- Düşük: Rutin kontrol veya estetik bakım yeterli
+- Yüksek: Hayatı tehdit eden belirtiler (örn: kanama, solunum güçlüğü, nöbet, yüksek ateş).
+- Orta: 24-48 saat içinde müdahale edilmeli (örn: kusma, topallama, geçmeyen ishal).
+- Düşük: Acil olmayan, rutin işlemler veya hafif semptomlar (örn: hafif kaşıntı, tüy bakımı, aşı).
 
 HİZMET KRİTERLERİ:
-- Klinik: Tıbbi müdahale, ilaç veya tanı gerektirenler
-- Kuaför: Sadece bakım/estetik (tırnak, tüy, banyo vb.) gerektiren durumlar`;
+- En uygun bölümü seç: Dahiliye, Cerrahi, Dermatoloji, Genel Muayene veya Kuaför.`;
 
 // ─── Gemini Client Başlatma ─────────────────────────────────────────────────────
 function getGeminiClient() {
@@ -149,7 +143,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<AiTeshisRespo
           // JSON yarım kalmış olabilir — regex ile alanları çıkar
           console.warn("[AI-TESHIS] JSON parse başarısız, regex ile kurtarılıyor. Ham:", cleaned);
           const aciliyetMatch = cleaned.match(/"aciliyet"\s*:\s*"(Yüksek|Orta|Düşük)"/);
-          const hizmetMatch = cleaned.match(/"tavsiye_edilen_hizmet"\s*:\s*"(Klinik|Kuaför)"/);
+          const hizmetMatch = cleaned.match(/"tavsiye_edilen_hizmet"\s*:\s*"(Dahiliye|Cerrahi|Dermatoloji|Genel Muayene|Kuaför)"/);
           const ozetMatch = cleaned.match(/"ai_ozeti"\s*:\s*"([^"]+)"/);
 
           if (aciliyetMatch && hizmetMatch && ozetMatch) {
@@ -165,7 +159,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<AiTeshisRespo
 
         // Zorunlu alan kontrolü
         const validAciliyet = ["Yüksek", "Orta", "Düşük"];
-        const validHizmet = ["Klinik", "Kuaför"];
+        const validHizmet = ["Dahiliye", "Cerrahi", "Dermatoloji", "Genel Muayene", "Kuaför"];
 
         if (
           !validAciliyet.includes(parsed.aciliyet) ||

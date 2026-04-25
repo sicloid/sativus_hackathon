@@ -9,7 +9,7 @@ export default async function CareProfilPage() {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect('/hasta-login');
+    redirect('/care-login');
   }
 
   const name = user.user_metadata?.username || user.email?.split('@')[0] || 'Kullanıcı';

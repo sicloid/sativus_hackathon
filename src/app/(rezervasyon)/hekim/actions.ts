@@ -69,7 +69,7 @@ export async function logoutHekim() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
-  redirect("/hekim-login");
+  redirect("/care-login");
 }
 
 export async function addVaccination(formData: FormData) {

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
-import { logout } from '../../hasta-login/actions';
+import { logout } from '../../care-login/actions';
 
 const MENU_ITEMS = [
   { name: 'Profil Özeti', path: '/hastane/profil' },

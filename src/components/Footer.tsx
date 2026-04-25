@@ -30,10 +30,10 @@ export default function Footer() {
                 className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-black text-xs"
                 style={{ background: "linear-gradient(135deg, #7c3aed, #06b6d4)" }}
               >
-                L
+                P
               </div>
               <span className="font-bold text-lg text-white">
-                Lumina<span
+                Pet<span
                   style={{
                     background: "linear-gradient(135deg, #a855f7, #06b6d4)",
                     WebkitBackgroundClip: "text",
@@ -44,7 +44,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-sm text-slate-500 leading-relaxed max-w-xs">
-              Gençler için akıllı teknoloji ürünleri. Hayatını ışılt, enerjini göster.
+              Evcil hayvanlar için akıllı teknoloji ürünleri. Dostunuzun sağlığını yakından takip edin.
             </p>
           </div>
 
@@ -126,7 +126,7 @@ export default function Footer() {
           className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-8 text-xs text-slate-600"
           style={{ borderTop: "1px solid rgba(124,58,237,0.1)" }}
         >
-          <span>© 2025 Lumina Tech. Tüm hakları saklıdır.</span>
+          <span>© 2025 PetVerse. Tüm hakları saklıdır.</span>
           <span
             style={{
               background: "linear-gradient(135deg, #a855f7, #06b6d4)",
@@ -135,7 +135,7 @@ export default function Footer() {
               backgroundClip: "text",
             }}
           >
-            Gençlik Enerjisi Seninle! ✦
+            Dostunuzun Sağlığı Güvende! ✦
           </span>
         </div>
       </div>

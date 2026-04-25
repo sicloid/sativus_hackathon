@@ -11,10 +11,10 @@ export default async function HekimLayout({ children }: { children: React.ReactN
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) redirect("/hekim-login");
+  if (!user) redirect("/care-login");
 
   const role = user.user_metadata?.role;
-  if (role !== "vet" && role !== "admin") redirect("/hasta-login");
+  if (role !== "vet" && role !== "admin") redirect("/care-login");
 
   const userName = user.user_metadata?.username || user.email?.split("@")[0] || "Hekim";
 
@@ -58,7 +58,7 @@ export default async function HekimLayout({ children }: { children: React.ReactN
                   "use server";
                   const supabase = await createClient();
                   await supabase.auth.signOut();
-                  redirect("/hekim-login");
+                  redirect("/care-login");
                 }}>
                   <button
                     type="submit"

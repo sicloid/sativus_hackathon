@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { X, Send, Stethoscope } from "lucide-react";
+import { X, Send } from "lucide-react";
 
 interface Message {
   role: "user" | "model";
@@ -19,9 +18,7 @@ export function FloatingAIBot() {
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [diagnosis, setDiagnosis] = useState<{ aciliyet: string; tavsiye_edilen_hizmet: string; ai_ozeti: string } | null>(null);
   
-  const router = useRouter();
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   // Initial animation
@@ -35,7 +32,7 @@ export function FloatingAIBot() {
     if (isOpen) {
       chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, diagnosis, isOpen]);
+  }, [messages, isOpen]);
 
   const sendMessage = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -47,10 +44,10 @@ export function FloatingAIBot() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("/api/ai-teshis", {
+      const res = await fetch("/api/ai-global", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages, finalRequest: false })
+        body: JSON.stringify({ messages: newMessages })
       });
       const data = await res.json();
       
@@ -62,37 +59,6 @@ export function FloatingAIBot() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const finishDiagnosis = async () => {
-    setIsLoading(true);
-    try {
-      const res = await fetch("/api/ai-teshis", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages, finalRequest: true })
-      });
-      const data = await res.json();
-      
-      if (data.diagnosis) {
-        setDiagnosis(data.diagnosis);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const goToReservation = () => {
-    const params = new URLSearchParams();
-    if (diagnosis) {
-      params.set("aciliyet", diagnosis.aciliyet);
-      params.set("hizmet", diagnosis.tavsiye_edilen_hizmet);
-      params.set("ozet", diagnosis.ai_ozeti);
-    }
-    setIsOpen(false);
-    router.push(`/randevu?${params.toString()}`);
   };
 
   return (
@@ -109,7 +75,7 @@ export function FloatingAIBot() {
               </div>
               <div className="min-w-0">
                 <h3 className="text-white font-black uppercase text-lg sm:text-xl truncate">VetAI Asistan</h3>
-                <p className="text-white font-bold text-[10px] sm:text-xs opacity-90 mt-1 truncate">Anında Teşhis Sistemi</p>
+                <p className="text-white font-bold text-[10px] sm:text-xs opacity-90 mt-1 truncate">7/24 Pet Rehberi</p>
               </div>
             </div>
             <button 
@@ -135,7 +101,7 @@ export function FloatingAIBot() {
               </div>
             ))}
             
-            {isLoading && !diagnosis && (
+            {isLoading && (
               <div className="flex justify-start">
                 <div className="px-4 py-3 rounded-2xl border-2 border-black bg-[#bbf7d0] rounded-bl-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold text-base flex gap-2 items-center">
                   <div className="w-2 h-2 bg-black rounded-full animate-bounce" />
@@ -145,75 +111,29 @@ export function FloatingAIBot() {
               </div>
             )}
             
-            {/* Diagnosis Result Box */}
-            {diagnosis && (
-              <div className="mt-4 border-4 border-black bg-white rounded-2xl overflow-hidden shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <div className="bg-[#fef08a] border-b-4 border-black p-3 text-center">
-                  <span className="font-black uppercase text-lg">VetAI Teşhis Raporu</span>
-                </div>
-                <div className="p-4 space-y-4">
-                  <div className="flex justify-between items-center border-b-2 border-zinc-200 pb-2">
-                    <span className="font-bold text-zinc-500 uppercase text-xs">Aciliyet Durumu</span>
-                    <span className={`font-black uppercase px-3 py-1 rounded-full border-2 border-black text-sm
-                      ${diagnosis.aciliyet.includes('Yüksek') || diagnosis.aciliyet.includes('Acil') ? 'bg-rose-400' : 
-                        diagnosis.aciliyet.includes('Orta') ? 'bg-orange-300' : 'bg-emerald-300'}
-                    `}>
-                      {diagnosis.aciliyet}
-                    </span>
-                  </div>
-                  <div className="border-b-2 border-zinc-200 pb-2">
-                    <span className="font-bold text-zinc-500 uppercase text-xs block mb-1">Tavsiye Edilen Hizmet</span>
-                    <span className="font-black text-lg">{diagnosis.tavsiye_edilen_hizmet}</span>
-                  </div>
-                  <div>
-                    <span className="font-bold text-zinc-500 uppercase text-xs block mb-1">Özet Analiz</span>
-                    <p className="font-bold text-sm leading-snug">{diagnosis.ai_ozeti}</p>
-                  </div>
-                  <button 
-                    onClick={goToReservation}
-                    className="w-full mt-2 bg-[#3b82f6] text-white border-4 border-black rounded-xl px-4 py-3 font-black uppercase tracking-wide shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:translate-x-1 active:shadow-none transition-all"
-                  >
-                    Hemen Randevu Al
-                  </button>
-                </div>
-              </div>
-            )}
-
             <div ref={chatEndRef} />
           </div>
 
           {/* Footer Input Area */}
-          {!diagnosis && (
-            <div className="p-4 bg-white border-t-4 border-black">
-              {!diagnosis && messages.length > 2 && (
-                <button 
-                  onClick={finishDiagnosis}
-                  disabled={isLoading}
-                  className="w-full mb-3 bg-[#fef08a] text-black border-4 border-black rounded-xl px-4 py-2 font-black uppercase text-sm flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-none transition-all disabled:opacity-50 disabled:transform-none"
-                >
-                  <Stethoscope className="w-5 h-5" />
-                  Teşhisi Tamamla
-                </button>
-              )}
-              <form onSubmit={sendMessage} className="flex gap-2">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Sorunuzu yazın..."
-                  className="flex-1 border-4 border-black rounded-xl px-4 py-3 font-bold text-base bg-zinc-50 focus:outline-none focus:bg-white shadow-inner placeholder:text-zinc-400"
-                  disabled={isLoading}
-                />
-                <button 
-                  type="submit" 
-                  disabled={isLoading}
-                  className="bg-black text-white border-2 border-black rounded-xl w-14 flex items-center justify-center hover:bg-zinc-800 transition-colors disabled:opacity-50"
-                >
-                  <Send className="w-5 h-5" />
-                </button>
-              </form>
-            </div>
-          )}
+          <div className="p-4 bg-white border-t-4 border-black">
+            <form onSubmit={sendMessage} className="flex gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Sorunuzu yazın..."
+                className="flex-1 border-4 border-black rounded-xl px-4 py-3 font-bold text-base bg-zinc-50 focus:outline-none focus:bg-white shadow-inner placeholder:text-zinc-400"
+                disabled={isLoading}
+              />
+              <button 
+                type="submit" 
+                disabled={isLoading}
+                className="bg-black text-white border-2 border-black rounded-xl w-14 flex items-center justify-center hover:bg-zinc-800 transition-colors disabled:opacity-50"
+              >
+                <Send className="w-5 h-5" />
+              </button>
+            </form>
+          </div>
         </div>
       )}
 

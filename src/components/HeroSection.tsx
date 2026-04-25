@@ -144,7 +144,7 @@ export default function HeroSection() {
           className="text-5xl sm:text-7xl md:text-8xl font-black leading-none tracking-tight anim-fadeup"
           style={{ animationDelay: "0.2s" }}
         >
-          <span className="block text-white mb-2">Gençlik Enerjisi</span>
+          <span className="block text-white mb-2">Dostunuzun Sağlığı</span>
           <span
             className="block"
             style={{
@@ -163,8 +163,8 @@ export default function HeroSection() {
           className="mt-6 text-lg sm:text-xl text-slate-400 max-w-xl mx-auto leading-relaxed anim-fadeup"
           style={{ animationDelay: "0.35s" }}
         >
-          Lumina Tech ile hayatını ışılt. Akıllı teknoloji,{" "}
-          <span style={{ color: "#c4b5fd", fontWeight: 600 }}>genç ruh</span>, sınırsız enerji.
+          PetVerse ile can dostunuzun hayatına değer katın. Modern veterinerlik,{" "}
+          <span style={{ color: "#c4b5fd", fontWeight: 600 }}>şefkatli bakım</span>, kesintisiz takip.
         </p>
 
         {/* CTA */}

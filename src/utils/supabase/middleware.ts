@@ -53,9 +53,9 @@ export async function updateSession(request: NextRequest) {
     }
 
     // Hekim paneli → hekim login'e yönlendir
-    if (pathname.startsWith('/hekim') && !pathname.startsWith('/hekim-login')) {
+    if (pathname.startsWith('/hekim') && !pathname.startsWith('/care-login')) {
       const url = request.nextUrl.clone()
-      url.pathname = '/hekim-login'
+      url.pathname = '/care-login'
       return NextResponse.redirect(url)
     }
 
@@ -68,7 +68,7 @@ export async function updateSession(request: NextRequest) {
       
     if (isCareProtectedRoute) {
       const url = request.nextUrl.clone()
-      url.pathname = '/hasta-login'
+      url.pathname = '/care-login'
       return NextResponse.redirect(url)
     }
 
@@ -108,13 +108,7 @@ export async function updateSession(request: NextRequest) {
       url.pathname = '/urunler'
       return NextResponse.redirect(url)
     }
-    if (pathname === '/hasta-login') {
-      const url = request.nextUrl.clone()
-      // Hekim giriş yapmışsa hekim paneline, değilse hasta profiline
-      url.pathname = role === 'vet' ? '/hekim' : '/hastane/profil'
-      return NextResponse.redirect(url)
-    }
-    if (pathname === '/hekim-login') {
+    if (pathname === '/care-login') {
       const url = request.nextUrl.clone()
       // Hekim veya admin → hekim paneli, değilse hasta profiline
       url.pathname = (role === 'vet' || role === 'admin') ? '/hekim' : '/hastane/profil'
@@ -122,10 +116,10 @@ export async function updateSession(request: NextRequest) {
     }
 
     // Hekim paneline sadece vet/admin erişebilir
-    if (pathname.startsWith('/hekim') && !pathname.startsWith('/hekim-login')) {
+    if (pathname.startsWith('/hekim') && !pathname.startsWith('/care-login')) {
       if (role !== 'vet' && role !== 'admin') {
         const url = request.nextUrl.clone()
-        url.pathname = '/hasta-login'
+        url.pathname = '/care-login'
         return NextResponse.redirect(url)
       }
     }

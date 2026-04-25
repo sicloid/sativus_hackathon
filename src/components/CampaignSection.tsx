@@ -11,7 +11,7 @@ const values = [
   {
     icon: "🎯",
     title: "Sana Özel Tasarım",
-    desc: "Genç estetiği ve modern tasarım anlayışıyla birleştirilen Lumina ürünleri, tarzını yansıtır.",
+    desc: "Genç estetiği ve modern tasarım anlayışıyla birleştirilen PetVerse ürünleri, can dostunuzun sağlığını destekler.",
     color: "#06b6d4",
   },
   {
@@ -29,8 +29,8 @@ const values = [
 ];
 
 const timeline = [
-  { step: "01", title: "Keşfet", desc: "Lumina Tech dünyasını ve kampanyayı tanı.", color: "#7c3aed" },
-  { step: "02", title: "Seç", desc: "Yaşam tarzına en uygun Lumina ürününü bul.", color: "#06b6d4" },
+  { step: "01", title: "Keşfet", desc: "PetVerse dünyasını ve özelliklerini tanı.", color: "#7c3aed" },
+  { step: "02", title: "Seç", desc: "Dostunuza en uygun PetVerse paketini bul.", color: "#06b6d4" },
   { step: "03", title: "Işılt", desc: "Ürününü kullan, enerjini paylaş, dünyayı ışılt.", color: "#ec4899" },
 ];
 
@@ -77,7 +77,7 @@ export default function CampaignSection() {
           </div>
           <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white leading-tight">
             Neden{" "}
-            <span className="grad-text">Lumina Tech?</span>
+            <span className="grad-text">PetVerse?</span>
           </h2>
           <p className="mt-4 text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
             &ldquo;Gençlik Enerjisi Seninle!&rdquo; kampanyası, gençlerle dijital bağ kurarak
@@ -93,8 +93,8 @@ export default function CampaignSection() {
                 Kampanyanın Amacı
               </h3>
               <p className="text-slate-400 leading-relaxed mb-6">
-                Lumina Tech, teknoloji ile gençliği bir araya getiriyor. Bu kampanya ile 18-28 yaş
-                arası genç kitleye dokunarak marka bilinirliğini dijital kanallar üzerinden güçlendirmeyi
+                PetVerse, teknoloji ile veteriner hekimliği bir araya getiriyor. Bu proje ile
+                evcil hayvan sahiplerine dokunarak marka bilinirliğini dijital kanallar üzerinden güçlendirmeyi
                 ve yenilikçi ürünleri eğlenceli bir deneyimle tanıtmayı amaçlıyoruz.
               </p>
               <div className="flex flex-wrap gap-3">
