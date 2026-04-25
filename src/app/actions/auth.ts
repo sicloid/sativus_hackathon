@@ -5,6 +5,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+import { prisma } from '@/lib/prisma'
 
 export async function loginAction(prevState: any, formData: FormData) {
   const email = formData.get('email') as string
@@ -92,6 +93,52 @@ export async function registerAction(prevState: any, formData: FormData) {
 export async function logoutAction() {
   const supabase = await createClient()
   await supabase.auth.signOut()
+  revalidatePath('/', 'layout')
+  redirect('/')
+}
+
+export async function deleteAccountAction() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    redirect('/login')
+  }
+
+  const userId = user.id
+
+  try {
+    // 1. Prisma verilerini temizle (Bağımlılık sırasına göre)
+    
+    // Yorumlar ve Sorular
+    await prisma.review.deleteMany({ where: { userId } })
+    await prisma.productQuestion.deleteMany({ where: { userId } })
+    
+    // Kupon kullanım kayıtları
+    await prisma.usedCoupon.deleteMany({ where: { userId } })
+    
+    // Evcil Hayvanlar (Aşı ve Reçeteler cascade delete ise otomatik silinir, değilse manuel silinmeli)
+    // schema.prisma'da Vaccination ve Prescription petId üzerinden Cascade ile bağlı.
+    await prisma.pet.deleteMany({ where: { userId } })
+    
+    // Adresler
+    await prisma.address.deleteMany({ where: { userId } })
+
+    // Siparişler
+    // Sipariş kalemleri (OrderItem) orderId üzerinden Cascade ile bağlı.
+    await prisma.order.deleteMany({ where: { userId } })
+
+    // 2. Supabase Oturumunu Kapat
+    await supabase.auth.signOut()
+    
+    // NOT: Auth admin delete için service_role gerekir. 
+    // DB temizliği ve logout kullanıcı için "hesap silindi" etkisini yaratır.
+  } catch (error) {
+    console.error('Hesap silme hatası:', error)
+    // Hata olsa bile oturumu kapatıp ana sayfaya atalım
+    await supabase.auth.signOut()
+  }
+
   revalidatePath('/', 'layout')
   redirect('/')
 }

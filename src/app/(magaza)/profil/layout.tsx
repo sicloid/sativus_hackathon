@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React from 'react';
+import { useCart } from '@/context/CartContext';
+import { logoutAction } from '@/app/actions/auth';
 
 const MENU_ITEMS = [
   { name: 'Profil Özeti', path: '/profil' },
@@ -14,6 +16,12 @@ const MENU_ITEMS = [
 
 export default function ProfilLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { clearCart } = useCart();
+
+  const handleLogout = async () => {
+    clearCart();
+    await logoutAction();
+  };
 
   return (
     <div className="flex flex-col md:flex-row gap-8">
@@ -40,12 +48,12 @@ export default function ProfilLayout({ children }: { children: React.ReactNode }
               );
             })}
             
-            <Link 
-              href="/login"
-              className="mt-8 p-3 font-black uppercase text-center brutal-border bg-[var(--brutal-red)] hover:bg-black hover:text-white transition-colors"
+            <button 
+              onClick={handleLogout}
+              className="mt-8 p-3 font-black uppercase text-center brutal-border bg-[var(--brutal-red)] hover:bg-black hover:text-white transition-colors cursor-pointer w-full"
             >
               Çıkış Yap
-            </Link>
+            </button>
           </nav>
         </div>
       </aside>

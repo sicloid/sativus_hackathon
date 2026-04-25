@@ -1,9 +1,10 @@
 import { createClient } from '@/utils/supabase/server';
 import { getUserOrderCount } from '@/app/actions/store';
-import { logoutAction } from '@/app/actions/auth';
+import { logoutAction, deleteAccountAction } from '@/app/actions/auth';
 import { redirect } from 'next/navigation';
 import ProfileUpdateForm from '@/components/profile/ProfileUpdateForm';
 import PasswordChangeForm from '@/components/profile/PasswordChangeForm';
+import DeleteAccountButton from '@/components/profile/DeleteAccountButton';
 
 export default async function ProfilPage() {
   const supabase = await createClient();
@@ -25,11 +26,9 @@ export default async function ProfilPage() {
     <div className="flex flex-col gap-8">
       <div className="flex justify-between items-center flex-wrap gap-4">
         <h1 className="text-4xl font-black uppercase">Hoş Geldin, {name}</h1>
-        <form action={logoutAction}>
-          <button type="submit" className="bg-[var(--brutal-red)] text-white px-6 py-3 font-black uppercase brutal-border brutal-shadow brutal-shadow-hover hover:bg-black transition-colors">
-            Çıkış Yap
-          </button>
-        </form>
+        <div className="flex flex-wrap gap-4">
+          <DeleteAccountButton />
+        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
