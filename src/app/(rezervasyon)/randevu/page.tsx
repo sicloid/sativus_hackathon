@@ -77,20 +77,11 @@ function BookingForm({ diagnosis }: { diagnosis: any }) {
     }
   }, [aiAciliyet, providers]);
 
-  useEffect(() => {
-    if (state?.success) {
-      window.location.href = "/pet-karne?success=true";
-    }
-  }, [state?.success]);
+
 
   return (
     <form action={formAction} className="space-y-6 flex flex-col">
-      {state?.success && (
-        <div className="bg-emerald-300 border-4 border-black p-4 mb-4 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-black uppercase text-center text-emerald-900 animate-pulse">
-          🎉 Randevunuz Başarıyla Oluşturuldu! 
-          <p className="text-sm font-bold mt-2 lowercase opacity-80">(Profilinizdeki Randevularım sekmesinden görüntüleyebilirsiniz)</p>
-        </div>
-      )}
+
       {state?.error && (
         <div className="bg-red-100 border-4 border-red-500 rounded-2xl p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] mb-4 text-red-900 font-bold">
           {state.error}

@@ -10,7 +10,7 @@ export default function EditPetModal({ pet }: { pet: any }) {
   return (
     <>
       <Button 
-        variant="neutral" 
+        variant="outline" 
         onClick={() => setIsOpen(true)}
         className="text-sm border-2 border-black font-black"
       >
