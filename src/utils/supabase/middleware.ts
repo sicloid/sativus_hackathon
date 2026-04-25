@@ -63,8 +63,7 @@ export async function updateSession(request: NextRequest) {
     if (
       pathname.startsWith('/hastane/profil') ||
       pathname.startsWith('/pet-karne') ||
-      pathname.startsWith('/randevu') ||
-      pathname.startsWith('/odeme')
+      pathname.startsWith('/randevu')
     ) {
       const url = request.nextUrl.clone()
       url.pathname = '/care-login'

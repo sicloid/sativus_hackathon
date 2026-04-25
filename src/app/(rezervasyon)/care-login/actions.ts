@@ -58,7 +58,7 @@ export async function signupAction(prevState: any, formData: FormData) {
     return { error: 'E-posta ve şifre gereklidir.' }
   }
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -69,11 +69,27 @@ export async function signupAction(prevState: any, formData: FormData) {
   })
 
   if (error) {
-    return { error: 'Kayıt başarısız. Lütfen tekrar deneyin.' }
+    let errorMsg = error.message;
+    if (error.code === 'over_email_send_rate_limit') {
+      errorMsg = 'Çok fazla kayıt isteği gönderildi. Lütfen daha sonra tekrar deneyin veya Supabase üzerinden "Confirm Email" ayarını kapatın.';
+    }
+    return { error: errorMsg || 'Kayıt başarısız. Lütfen tekrar deneyin.' }
+  }
+
+  if (!data.session) {
+    return { error: 'Kayıt başarılı! Lütfen e-posta adresinize gönderilen onay linkine tıklayın.' }
   }
 
   revalidatePath('/', 'layout')
   redirect('/hastane/profil')
+}
+
+export async function authAction(prevState: any, formData: FormData) {
+  const actionType = formData.get('submitAction') as string;
+  if (actionType === 'signup') {
+    return signupAction(prevState, formData);
+  }
+  return loginAction(prevState, formData);
 }
 
 export async function logout() {

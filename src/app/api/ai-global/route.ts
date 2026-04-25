@@ -44,11 +44,10 @@ export async function POST(req: NextRequest) {
     const genAI = getGeminiClient();
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3.1-flash-lite-preview",
       systemInstruction: SYSTEM_PROMPT,
       generationConfig: {
         temperature: 0.7,
-        maxOutputTokens: 500,
       },
       safetySettings: [
         { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
