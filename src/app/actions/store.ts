@@ -226,20 +226,22 @@ export async function getUserOrderCount() {
 // ─── Kuponları Tohumla (Seed) ────────────────────────────────────────────────
 export async function seedCoupons() {
   const coupons = [
-    { code: 'HOSGELDIN5', discountPercent: 5, description: 'İlk Siparişe Özel Hoş Geldin İndirimi' },
-    { code: 'MERHABA10', discountPercent: 10, description: 'PetVerse Dünyasına Merhaba İndirimi' },
-    { code: 'PATI20', discountPercent: 20, description: 'Sevimli Dostlarımız İçin Büyük İndirim' },
+    { code: 'HOSGELDIN5', discountPercent: 5, description: 'İlk Siparişe Özel Hoş Geldin İndirimi', usageLimit: 100 },
+    { code: 'MERHABA10', discountPercent: 10, description: 'PetVerse Dünyasına Merhaba İndirimi', usageLimit: 50 },
+    { code: 'PATI20', discountPercent: 20, description: 'Sevimli Dostlarımız İçin Büyük İndirim', usageLimit: 20 },
   ]
 
   for (const c of coupons) {
     await prisma.coupon.upsert({
       where: { code: c.code },
-      update: { isActive: true }, 
+      update: { isActive: true, usageLimit: c.usageLimit }, 
       create: {
         code: c.code,
         discountPercent: c.discountPercent,
         description: c.description,
         isActive: true,
+        usageLimit: c.usageLimit,
+        usedCount: 0
       },
     })
   }
@@ -280,7 +282,7 @@ export async function getCoupons() {
 
   return coupons.map(c => ({
     ...c,
-    isUsed: usedIds.includes(c.id)
+    isUsed: usedIds.includes(c.id) || (c.usageLimit !== null && c.usedCount >= c.usageLimit)
   }))
 }
 
@@ -304,6 +306,10 @@ export async function validateCoupon(code: string) {
 
   if (!coupon) {
     return { error: 'Geçersiz veya süresi dolmuş kupon kodu.' }
+  }
+  
+  if (coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit) {
+    return { error: 'Bu kuponun genel kullanım limiti dolmuştur.' }
   }
 
   const alreadyUsed = await prisma.usedCoupon.findUnique({
@@ -354,6 +360,7 @@ export async function createOrder(formData: FormData) {
   }
 
   // Kupon kullanım kontrolü (Ek güvenlik)
+  let validCoupon = null;
   if (couponId) {
     const alreadyUsed = await prisma.usedCoupon.findUnique({
       where: {
@@ -365,6 +372,11 @@ export async function createOrder(formData: FormData) {
     })
     if (alreadyUsed) {
       return { error: 'Bu kupon daha önce kullanılmış.' }
+    }
+    
+    validCoupon = await prisma.coupon.findUnique({ where: { id: couponId } })
+    if (!validCoupon || !validCoupon.isActive || (validCoupon.usageLimit !== null && validCoupon.usedCount >= validCoupon.usageLimit)) {
+      return { error: 'Kupon artık geçerli değil veya limiti dolmuş.' }
     }
   }
 
@@ -383,12 +395,9 @@ export async function createOrder(formData: FormData) {
   }, 0)
 
   // Kupon İndirimi
-  if (couponId) {
-    const coupon = await prisma.coupon.findUnique({ where: { id: couponId } })
-    if (coupon && coupon.isActive) {
-      const discount = (totalPrice * coupon.discountPercent) / 100
-      totalPrice -= discount
-    }
+  if (validCoupon) {
+    const discount = (totalPrice * validCoupon.discountPercent) / 100
+    totalPrice -= discount
   }
 
   const tax = totalPrice * 0.20
@@ -419,8 +428,8 @@ export async function createOrder(formData: FormData) {
     },
   })
 
-  // Kuponu kullanıldı olarak işaretle ve pasif yap
-  if (couponId) {
+  // Kuponu kullanıldı olarak işaretle ve kullanım sayısını artır
+  if (validCoupon) {
     await prisma.usedCoupon.create({
       data: {
         userId: user.id,
@@ -429,11 +438,19 @@ export async function createOrder(formData: FormData) {
       }
     })
     
-    // Kuponu sistem genelinde inaktif yap
-    await prisma.coupon.update({
+    // Kupon kullanımını artır
+    const updatedCoupon = await prisma.coupon.update({
       where: { id: couponId },
-      data: { isActive: false }
+      data: { usedCount: { increment: 1 } }
     })
+    
+    // Eğer limite ulaştıysa inaktif yap
+    if (updatedCoupon.usageLimit !== null && updatedCoupon.usedCount >= updatedCoupon.usageLimit) {
+      await prisma.coupon.update({
+        where: { id: couponId },
+        data: { isActive: false }
+      })
+    }
   }
 
   // Stok güncelle
