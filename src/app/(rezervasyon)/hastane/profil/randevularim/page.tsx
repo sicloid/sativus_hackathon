@@ -25,16 +25,7 @@ export default async function RandevularimPage({
   // Kullanıcının randevularını getir
   const appointments = await prisma.appointment.findMany({
     where: {
-      status: 'PENDING',
-      OR: [
-        { userId: user.id },
-        { 
-          ownerName: {
-            equals: user.user_metadata?.full_name || 'NO_MATCH',
-            mode: 'insensitive'
-          }
-        }
-      ]
+      status: 'PENDING'
     },
     include: {
       provider: true,
