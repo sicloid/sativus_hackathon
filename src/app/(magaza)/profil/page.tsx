@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
-import { getUserOrderCount } from '@/app/actions/store';
+import { getUserOrderCount, getActiveCouponCount } from '@/app/actions/store';
 import { logoutAction } from '@/app/actions/auth';
 import { redirect } from 'next/navigation';
 import ProfileUpdateForm from '@/components/profile/ProfileUpdateForm';
@@ -19,7 +19,7 @@ export default async function ProfilPage() {
 
   // Dinamik verileri çek
   const totalOrders = await getUserOrderCount();
-  const activeCoupons = 1;
+  const activeCoupons = await getActiveCouponCount();
 
   return (
     <div className="flex flex-col gap-8">

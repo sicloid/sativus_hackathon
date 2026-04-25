@@ -246,6 +246,12 @@ export async function seedCoupons() {
   return { success: true }
 }
 
+// ─── Aktif Kupon Sayısını Getir ─────────────────────────────────────────────
+export async function getActiveCouponCount() {
+  const coupons = await getCoupons()
+  return coupons.filter(c => !c.isUsed).length
+}
+
 // ─── Kuponları Getir ──────────────────────────────────────────────────────────
 export async function getCoupons() {
   const supabase = await createClient()
