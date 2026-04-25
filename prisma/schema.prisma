@@ -11,7 +11,7 @@ datasource db {
 model Provider {
   id           String        @id @default(cuid())
   name         String
-  type         String        // KLINIK, KUAFÖR, vb.
+  type         String // KLINIK, KUAFÖR, vb.
   specialty    String?
   imageUrl     String?
   rating       Float         @default(0.0)
@@ -57,6 +57,8 @@ model Appointment {
   aiAciliyet  String?
   aiHizmet    String?
   aiOzeti     String?
+  examFee     Float?   @map("exam_fee")
+  vetDiagnosis String? @map("vet_diagnosis")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   provider    Provider @relation(fields: [providerId], references: [id])
@@ -72,14 +74,14 @@ model Appointment {
 
 // ─── Pet (Evcil Hayvan) ───────────────────────────────────────────────────────
 model Pet {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id") // Supabase auth user (sahip)
-  name      String
-  species   String   // Köpek, Kedi, Kuş...
-  breed     String?  // Cins
-  age       Int?
-  weight    Float?
-  imageUrl  String?  @map("image_url")
+  id       String  @id @default(cuid())
+  userId   String  @map("user_id") // Supabase auth user (sahip)
+  name     String
+  species  String // Köpek, Kedi, Kuş...
+  breed    String? // Cins
+  age      Int?
+  weight   Float?
+  imageUrl String? @map("image_url")
 
   vaccinations  Vaccination[]
   prescriptions Prescription[]
@@ -93,13 +95,13 @@ model Pet {
 
 // ─── Vaccination (Aşı Kaydı) ─────────────────────────────────────────────────
 model Vaccination {
-  id        String    @id @default(cuid())
-  petId     String    @map("pet_id")
-  name      String    // Kuduz, Karma, vb.
-  date      DateTime
-  nextDate  DateTime? @map("next_date") // Sonraki aşı tarihi
-  vetName   String?   @map("vet_name")
-  notes     String?
+  id       String    @id @default(cuid())
+  petId    String    @map("pet_id")
+  name     String // Kuduz, Karma, vb.
+  date     DateTime
+  nextDate DateTime? @map("next_date") // Sonraki aşı tarihi
+  vetName  String?   @map("vet_name")
+  notes    String?
 
   pet Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
 
@@ -120,7 +122,7 @@ model Prescription {
   totalPrice Float   @default(0) @map("total_price")
 
   items PrescriptionItem[]
-  pet   Pet @relation(fields: [petId], references: [id], onDelete: Cascade)
+  pet   Pet                @relation(fields: [petId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
@@ -151,13 +153,13 @@ model PrescriptionItem {
 
 // ─── Product (Ürün) ───────────────────────────────────────────────────────────
 model Product {
-  id             String   @id @default(cuid())
-  name           String
-  description    String
-  price          Float
-  imageUrl       String?  @map("image_url")
-  category       String
-  stockQuantity  Int      @default(0) @map("stock_quantity")
+  id            String  @id @default(cuid())
+  name          String
+  description   String
+  price         Float
+  imageUrl      String? @map("image_url")
+  category      String
+  stockQuantity Int     @default(0) @map("stock_quantity")
 
   orderItems        OrderItem[]
   prescriptionItems PrescriptionItem[]
@@ -170,20 +172,20 @@ model Product {
 
 // ─── Order (Sipariş) ──────────────────────────────────────────────────────────
 model Order {
-  id           String   @id @default(cuid())
-  userId       String   @map("user_id")
-  status       String   @default("PENDING")
-  totalPrice   Float    @map("total_price")
-  shippingCost Float    @default(0) @map("shipping_cost")
-  tax          Float    @default(0)
+  id           String @id @default(cuid())
+  userId       String @map("user_id")
+  status       String @default("PENDING")
+  totalPrice   Float  @map("total_price")
+  shippingCost Float  @default(0) @map("shipping_cost")
+  tax          Float  @default(0)
 
-  fullName     String   @map("full_name")
-  phone        String
-  address      String
-  city         String
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  items        OrderItem[]
+  fullName  String      @map("full_name")
+  phone     String
+  address   String
+  city      String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  items     OrderItem[]
 
   @@index([userId])
   @@map("orders")

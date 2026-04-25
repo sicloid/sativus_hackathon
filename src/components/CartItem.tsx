@@ -19,8 +19,8 @@ export default function CartItem({ item }: { item: CartItemType }) {
       </div>
       
       <div className="flex items-center gap-4">
-        {item.isPrescription ? (
-          <div className="flex brutal-border h-10 w-24 items-center justify-center font-black bg-[#f8f8f8] cursor-not-allowed text-zinc-500" title="Reçeteli ilaçların adedi değiştirilemez">
+        {item.isPrescription || item.isExamFee ? (
+          <div className="flex brutal-border h-10 w-24 items-center justify-center font-black bg-[#f8f8f8] cursor-not-allowed text-zinc-500" title={item.isExamFee ? "Muayene ücreti adedi değiştirilemez" : "Reçeteli ilaçların adedi değiştirilemez"}>
             {item.quantity} Adet
           </div>
         ) : (

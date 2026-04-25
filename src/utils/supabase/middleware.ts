@@ -60,13 +60,12 @@ export async function updateSession(request: NextRequest) {
     }
 
     // Care korumalı rotalar → hasta login'e yönlendir
-    const isCareProtectedRoute = 
-      pathname.startsWith('/pet-karne') || 
-      pathname.startsWith('/receteler') || 
-      pathname.startsWith('/faturalar') ||
-      pathname.startsWith('/hastane/profil')
-      
-    if (isCareProtectedRoute) {
+    if (
+      pathname.startsWith('/hastane/profil') ||
+      pathname.startsWith('/pet-karne') ||
+      pathname.startsWith('/randevu') ||
+      pathname.startsWith('/odeme')
+    ) {
       const url = request.nextUrl.clone()
       url.pathname = '/care-login'
       return NextResponse.redirect(url)
@@ -116,6 +115,17 @@ export async function updateSession(request: NextRequest) {
         const url = request.nextUrl.clone()
         url.pathname = '/care-login'
         return NextResponse.redirect(url)
+      }
+
+      // 2FA (MFA) kontrolü
+      if (!pathname.startsWith('/care-login/2fa') && !pathname.startsWith('/hekim/ayarlar/2fa')) {
+        const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+        // nextLevel 'aal2' ise, kullanıcının en az bir 2FA faktörü (TOTP) kuruludur.
+        if (aal && aal.nextLevel === 'aal2' && aal.currentLevel === 'aal1') {
+          const url = request.nextUrl.clone()
+          url.pathname = '/care-login/2fa'
+          return NextResponse.redirect(url)
+        }
       }
     }
 

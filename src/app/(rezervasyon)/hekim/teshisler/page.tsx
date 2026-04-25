@@ -7,7 +7,10 @@ export const dynamic = "force-dynamic";
 export default async function TeshislerPage() {
   const appointments = await prisma.appointment.findMany({
     where: {
-      aiOzeti: { not: null },
+      OR: [
+        { aiOzeti: { not: null } },
+        { vetDiagnosis: { not: null } },
+      ]
     },
     include: {
       provider: true,
@@ -109,8 +112,14 @@ export default async function TeshislerPage() {
                             📋 Ön Teşhis: {appt.aiDiagnosis}
                           </p>
                         )}
+                        {appt.vetDiagnosis && (
+                          <div className="mt-2 bg-emerald-50 border-2 border-emerald-200 p-3 rounded-xl">
+                            <p className="font-bold text-xs uppercase text-emerald-600 mb-1">👩‍⚕️ Hekim Teşhisi</p>
+                            <p className="font-black text-sm">{appt.vetDiagnosis}</p>
+                          </div>
+                        )}
                         {appt.notes && (
-                          <p className="font-bold text-xs text-zinc-500">
+                          <p className="font-bold text-xs text-zinc-500 mt-2">
                             📝 Not: {appt.notes}
                           </p>
                         )}

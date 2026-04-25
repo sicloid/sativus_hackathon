@@ -12,11 +12,12 @@ export interface CartItem {
   quantity: number
   image_url: string
   isPrescription?: boolean
+  isExamFee?: boolean
 }
 
 interface CartContextType {
   items: CartItem[]
-  addToCart: (product: { id: string, name: string, price: number, image_url: string, isPrescription?: boolean }, quantity?: number) => void
+  addToCart: (product: { id: string, name: string, price: number, image_url: string, isPrescription?: boolean, isExamFee?: boolean }, quantity?: number) => void
   removeFromCart: (productId: string) => void
   updateQuantity: (productId: string, quantity: number) => void
   clearCart: () => void
@@ -67,7 +68,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [items, isLoaded])
 
-  const addToCart = (product: { id: string, name: string, price: number, image_url: string, isPrescription?: boolean }, quantity = 1) => {
+  const addToCart = (product: { id: string, name: string, price: number, image_url: string, isPrescription?: boolean, isExamFee?: boolean }, quantity = 1) => {
     setItems(prev => {
       const existing = prev.find(item => item.productId === product.id)
       if (existing) {
@@ -84,7 +85,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         price: product.price,
         quantity,
         image_url: product.image_url,
-        isPrescription: product.isPrescription
+        isPrescription: product.isPrescription,
+        isExamFee: product.isExamFee
       }]
     })
   }
