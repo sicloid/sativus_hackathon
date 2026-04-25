@@ -32,6 +32,7 @@ export function AddPrescriptionToCart({
           name: item.name,
           price: item.price,
           image_url: item.imageUrl || "",
+          isPrescription: true,
         },
         item.quantity
       );
