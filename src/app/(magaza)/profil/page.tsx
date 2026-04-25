@@ -1,5 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
-import { getUserOrderCount } from '@/app/actions/store';
+import { getUserOrderCount, getCoupons } from '@/app/actions/store';
 import { logoutAction } from '@/app/actions/auth';
 import { redirect } from 'next/navigation';
 import ProfileUpdateForm from '@/components/profile/ProfileUpdateForm';
