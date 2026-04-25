@@ -48,8 +48,31 @@ export async function createAppointment(prevState: any, formData: FormData) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     
+    let petIdForPrescription: string | null = null;
+
     if (user && user.user_metadata?.full_name) {
       finalOwnerName = user.user_metadata.full_name;
+    }
+
+    if (user) {
+      // Check if pet exists for this user, if not create a stub
+      let pet = await prisma.pet.findFirst({
+        where: { 
+          name: petName,
+          userId: user.id
+        }
+      });
+
+      if (!pet) {
+        pet = await prisma.pet.create({
+          data: {
+            userId: user.id,
+            name: petName,
+            species: petSpecies || "Belirtilmedi"
+          }
+        });
+      }
+      petIdForPrescription = pet.id;
     }
 
     // Auto Approve High Urgency AI cases
@@ -105,15 +128,10 @@ export async function createAppointment(prevState: any, formData: FormData) {
     })
 
     // Auto create prescription for high urgency exam fee
-    if (status === "ONAYLANDI" && examFee) {
-      const pet = await prisma.pet.findFirst({
-        where: { name: petName }
-      });
-      
-      if (pet) {
+    if (status === "ONAYLANDI" && examFee && petIdForPrescription) {
         await prisma.prescription.create({
           data: {
-            petId: pet.id,
+            petId: petIdForPrescription,
             vetUserId: provider.id,
             vetName: provider.name,
             diagnosis: aiOzeti || "Yüksek Aciliyetli AI Ön Teşhisi",

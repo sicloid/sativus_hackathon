@@ -6,6 +6,7 @@ import { addPet, deletePet } from "@/app/actions/pet";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import EditPetModal from "./EditPetModal";
 
 export const dynamic = "force-dynamic";
 
@@ -138,15 +139,18 @@ export default async function EvcilHayvanlarimPage() {
                       <div className="flex flex-wrap gap-2 mt-2">
                         <Badge variant="default">{pet.species}</Badge>
                         {pet.breed && <Badge variant="neutral">{pet.breed}</Badge>}
-                        {pet.age && <Badge variant="neutral">{pet.age} yaş</Badge>}
-                        {pet.weight && <Badge variant="neutral">{pet.weight} kg</Badge>}
+                        {pet.age ? <Badge variant="neutral">{pet.age} yaş</Badge> : null}
+                        {pet.weight ? <Badge variant="neutral">{pet.weight} kg</Badge> : null}
                       </div>
                     </div>
-                    <form action={deletePet.bind(null, pet.id) as any}>
-                      <Button type="submit" variant="danger" className="text-sm">
-                        🗑️ Sil
-                      </Button>
-                    </form>
+                    <div className="flex gap-2">
+                      <EditPetModal pet={pet} />
+                      <form action={deletePet.bind(null, pet.id) as any}>
+                        <Button type="submit" variant="danger" className="text-sm">
+                          🗑️ Sil
+                        </Button>
+                      </form>
+                    </div>
                   </div>
 
                   {/* AŞI TAKVİMİ */}

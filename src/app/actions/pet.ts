@@ -47,3 +47,31 @@ export async function deletePet(petId: string) {
   revalidatePath("/hastane/profil/evcil-hayvanlarim");
   revalidatePath("/hastane/profil");
 }
+
+export async function updatePet(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const petId = formData.get("petId") as string;
+  const ageStr = formData.get("age") as string;
+  const weightStr = formData.get("weight") as string;
+
+  if (!petId) return;
+
+  const pet = await prisma.pet.findFirst({
+    where: { id: petId, userId: user.id },
+  });
+  if (!pet) return;
+
+  await prisma.pet.update({
+    where: { id: petId },
+    data: {
+      age: ageStr ? parseInt(ageStr) : null,
+      weight: weightStr ? parseFloat(weightStr) : null,
+    },
+  });
+
+  revalidatePath("/hastane/profil/evcil-hayvanlarim");
+  revalidatePath("/hastane/profil");
+}
