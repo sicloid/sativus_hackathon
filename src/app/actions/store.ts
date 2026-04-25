@@ -7,7 +7,9 @@ import { revalidatePath } from 'next/cache'
 
 // ─── Ürünleri Listele ─────────────────────────────────────────────────────────
 export async function getProducts(category?: string) {
-  const where = category && category !== 'Tümü' ? { category } : {}
+  const where = category && category !== 'Tümü'
+    ? { category, NOT: { category: 'Reçeteli İlaç' } }
+    : { NOT: { category: 'Reçeteli İlaç' } }
   return prisma.product.findMany({
     where,
     orderBy: { createdAt: 'desc' },

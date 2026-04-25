@@ -29,6 +29,7 @@ function LoginForm({ activeTab }: { activeTab: Tab }) {
       )}
 
       <form action={formAction} className="flex flex-col gap-5">
+        <input type="hidden" name="loginType" value={activeTab} />
         <div>
           <label className="block font-black uppercase mb-2 text-sm tracking-widest" htmlFor={`email-${activeTab}`}>
             E-posta

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Calendar, ShoppingBag } from 'lucide-react';
+import { Calendar, ShoppingBag, MapPin } from 'lucide-react';
 
 export default function HeroSection() {
   return (
@@ -28,8 +28,8 @@ export default function HeroSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mb-16">
           {/* Blog Kartı */}
-          <div className="h-full">
-            <Link href="/blog" className="relative group block h-full border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all overflow-hidden min-h-[250px]">
+          <div className="md:h-full">
+            <Link href="/blog" className="relative group block h-full border-2 border-black rounded-2xl shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all overflow-hidden min-h-[300px] md:min-h-full">
               <img src="https://picsum.photos/id/1025/600/400" alt="Blog" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
               <div className="absolute bottom-6 left-6 right-6">
@@ -46,7 +46,7 @@ export default function HeroSection() {
             <div className="h-full">
               <Link href="/hastane" className="h-full bg-green-400 border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center gap-4 text-black">
                 <div className="bg-white p-4 border-2 border-black rounded-xl">
-                  <span className="text-3xl leading-none">🐾</span>
+                  <span className="text-3xl leading-none">🩺</span>
                 </div>
                 <div className="text-left">
                   <h3 className="text-2xl font-black tracking-tight">PetVerse Care</h3>
@@ -57,13 +57,28 @@ export default function HeroSection() {
 
             {/* Mağaza Şeridi */}
             <div className="h-full">
-              <Link href="/urunler" className="h-full bg-yellow-300 border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center gap-4 text-black">
+              <Link href="/urunler" className="h-full bg-yellow-400 border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all flex items-center gap-4 text-black">
                 <div className="bg-white p-4 border-2 border-black rounded-xl">
                   <ShoppingBag className="w-8 h-8" />
                 </div>
                 <div className="text-left">
                   <h3 className="text-2xl font-black tracking-tight">Mağaza</h3>
                   <p className="font-bold">Oyuncak, mama, aksesuar</p>
+                </div>
+              </Link>
+            </div>
+
+            {/* Haritalar Kartı */}
+            <div className="h-full">
+              <Link href="/haritalar">
+                <div className="flex items-center gap-4 bg-blue-500 border-2 border-black rounded-2xl p-6 cursor-pointer shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-y-1 active:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all text-white">
+                  <div className="w-16 h-16 bg-white border-2 border-black rounded-xl flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-8 h-8 text-blue-500" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-black text-2xl uppercase tracking-tighter">PetVerse Haritalar</p>
+                    <p className="font-bold opacity-90">Yakınındaki PetVerse birimleri</p>
+                  </div>
                 </div>
               </Link>
             </div>

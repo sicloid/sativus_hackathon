@@ -19,23 +19,29 @@ export default function CartItem({ item }: { item: CartItemType }) {
       </div>
       
       <div className="flex items-center gap-4">
-        <div className="flex brutal-border h-10 w-24">
-          <button 
-            onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-            className="w-8 flex items-center justify-center font-black hover:bg-[var(--brutal-red)] transition-colors"
-          >
-            -
-          </button>
-          <div className="flex-grow flex items-center justify-center font-black border-l-2 border-r-2 border-black bg-[#f8f8f8]">
-            {item.quantity}
+        {item.isPrescription ? (
+          <div className="flex brutal-border h-10 w-24 items-center justify-center font-black bg-[#f8f8f8] cursor-not-allowed text-zinc-500" title="Reçeteli ilaçların adedi değiştirilemez">
+            {item.quantity} Adet
           </div>
-          <button 
-            onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-            className="w-8 flex items-center justify-center font-black hover:bg-[var(--brutal-green)] transition-colors"
-          >
-            +
-          </button>
-        </div>
+        ) : (
+          <div className="flex brutal-border h-10 w-24">
+            <button 
+              onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+              className="w-8 flex items-center justify-center font-black hover:bg-[var(--brutal-red)] transition-colors"
+            >
+              -
+            </button>
+            <div className="flex-grow flex items-center justify-center font-black border-l-2 border-r-2 border-black bg-[#f8f8f8]">
+              {item.quantity}
+            </div>
+            <button 
+              onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+              className="w-8 flex items-center justify-center font-black hover:bg-[var(--brutal-green)] transition-colors"
+            >
+              +
+            </button>
+          </div>
+        )}
         
         <button 
           onClick={() => removeFromCart(item.productId)}
