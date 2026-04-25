@@ -16,21 +16,21 @@ const prisma = new PrismaClient({ adapter })
 
 const storeProducts = [
   // ─── KÖPEK (10 ürün) ────────────────────────────────────────────────────────
-  { name: 'Premium Köpek Maması 15kg', description: 'Yetişkin köpekler için somonlu, tahılsız yüksek proteinli premium kuru mama.', price: 1250, imageUrl: 'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=800&q=80', category: 'Köpek', stockQuantity: 45 },
-  { name: 'Köpek Gezdirme Tasması 5m', description: 'Otomatik sarmallı, stop tuşlu, fosforlu şeritli gezdirme kayışı.', price: 220, imageUrl: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&q=80', category: 'Köpek', stockQuantity: 56 },
-  { name: 'Köpek Yatağı Ortopedik', description: 'Eklem dostu, hafızalı süngerli, yıkanabilir kılıflı lüks köpek yatağı.', price: 890, imageUrl: 'https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?w=800&q=80', category: 'Köpek', stockQuantity: 15 },
-  { name: 'Köpek Oyun Topu Seti', description: 'Dayanıklı kauçuktan üretilmiş, diş temizlemeye yardımcı 3\'lü top seti.', price: 185, imageUrl: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=800&q=80', category: 'Köpek', stockQuantity: 30 },
-  { name: 'Köpek Tüy Tarağı', description: 'Ölü tüyleri kolayca toplayan, masaj etkili ergonomik tarak.', price: 145, imageUrl: 'https://images.unsplash.com/photo-1625316708582-7c38734be31d?w=800&q=80', category: 'Köpek', stockQuantity: 40 },
-  { name: 'Köpek Şampuanı Doğal', description: 'Hassas ciltler için uygun, aloe vera özlü doğal içerikli şampuan.', price: 220, imageUrl: 'https://images.unsplash.com/photo-1591946614720-90a587da4a36?w=800&q=80', category: 'Köpek', stockQuantity: 25 },
-  { name: 'Köpek Ödül Maması', description: 'Eğitim için ideal, kuzu etli ve vitamin katkılı yumuşak lokmalar.', price: 95, imageUrl: 'https://images.unsplash.com/photo-1568640347023-a616a30bc3bd?w=800&q=80', category: 'Köpek', stockQuantity: 100 },
-  { name: 'Köpek Tasması Deri', description: 'Gerçek deriden üretilmiş, dayanıklı metal tokalı şık boyun tasması.', price: 340, imageUrl: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=800&q=80', category: 'Köpek', stockQuantity: 20 },
-  { name: 'Köpek Taşıma Çantası', description: 'Hava alan fileli bölmeler, omuz askılı, orta boy köpekler için uygun.', price: 650, imageUrl: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=800&q=80', category: 'Köpek', stockQuantity: 10 },
-  { name: 'Köpek Kulübesi Ahşap', description: 'Dış mekana dayanıklı, izolasyonlu, çatılı ahşap köpek evi.', price: 1750, imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80', category: 'Köpek', stockQuantity: 5 },
+  { name: 'Premium Köpek Maması 15kg', description: 'Yetişkin köpekler için somonlu, tahılsız yüksek proteinli premium kuru mama.', price: 1250, imageUrl: 'https://www.kolaymama.com/cex-premium-puppy-kuzulu-ve-pirincli-yavru-kopek-mamasi-15-kg-kopek-kuru-mamalari-cex-111687-21-B.jpg', category: 'Köpek', stockQuantity: 45 },
+  { name: 'Köpek Gezdirme Tasması 5m', description: 'Otomatik sarmallı, stop tuşlu, fosforlu şeritli gezdirme kayışı.', price: 220, imageUrl: 'https://cdn-img.pttavm.com/pimages/592/266/916/3d6c383e-d5ac-472c-bf8a-1f2c32a5d6ff.webp', category: 'Köpek', stockQuantity: 56 },
+  { name: 'Köpek Yatağı Ortopedik', description: 'Eklem dostu, hafızalı süngerli, yıkanabilir kılıflı lüks köpek yatağı.', price: 890, imageUrl: 'https://pecpets.com/wp-content/uploads/2025/09/a8f3543e-1baa-4d0d-94a1-949b0c8396f4.jpg', category: 'Köpek', stockQuantity: 15 },
+  { name: 'Köpek Oyun Topu Seti', description: 'Dayanıklı kauçuktan üretilmiş, diş temizlemeye yardımcı 3\'lü top seti.', price: 185, imageUrl: 'https://productimages.hepsiburada.net/s/777/424-600/110000791038314.jpg', category: 'Köpek', stockQuantity: 30 },
+  { name: 'Köpek Tüy Tarağı', description: 'Ölü tüyleri kolayca toplayan, masaj etkili ergonomik tarak.', price: 145, imageUrl: 'https://cdn03.ciceksepeti.com/cicek/kcm96840103-1/L/evcil-hayvan-bakim-taragi-tuy-kesici-tarak-kedi-kopek-tuy-toparlayici-tuy-ali-kcm96840103-1-0b3205f7741944a88073047f5ed5a6b7.jpg', category: 'Köpek', stockQuantity: 40 },
+  { name: 'Köpek Şampuanı Doğal', description: 'Hassas ciltler için uygun, aloe vera özlü doğal içerikli şampuan.', price: 220, imageUrl: 'https://productimages.hepsiburada.net/s/777/960-1280/110000695876312.jpg', category: 'Köpek', stockQuantity: 25 },
+  { name: 'Köpek Ödül Maması', description: 'Eğitim için ideal, kuzu etli ve vitamin katkılı yumuşak lokmalar.', price: 95, imageUrl: 'https://cdn.akakce.com/z/pedigree/pedigree-biscrok-200-gr-kopek-biskuvisi.jpg', category: 'Köpek', stockQuantity: 100 },
+  { name: 'Köpek Tasması Deri', description: 'Gerçek deriden üretilmiş, dayanıklı metal tokalı şık boyun tasması.', price: 340, imageUrl: 'https://m.media-amazon.com/images/I/71UiRgH3TDL._AC_SX679_.jpg', category: 'Köpek', stockQuantity: 20 },
+  { name: 'Köpek Taşıma Çantası', description: 'Hava alan fileli bölmeler, omuz askılı, orta boy köpekler için uygun.', price: 650, imageUrl: 'https://cdn.dsmcdn.com/mnresize/420/620/ty1763/prod/QC_ENRICHMENT/20250921/11/173cfd97-8e12-3391-918d-525625429be5/1_org_zoom.jpg', category: 'Köpek', stockQuantity: 10 },
+  { name: 'Köpek Kulübesi Ahşap', description: 'Dış mekana dayanıklı, izolasyonlu, çatılı ahşap köpek evi.', price: 1750, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQT9gonycVoY68qF-JPYQv0m8ycR4Wi42RVVUBO9Cd5kw&s=10', category: 'Köpek', stockQuantity: 5 },
 
   // ─── KEDİ (10 ürün) ─────────────────────────────────────────────────────────
-  { name: 'Kedi Kumu İnce Taneli 10L', description: 'Ekstra topaklaşan, parfümlü, tozsuz bentonit kedi kumu.', price: 180, imageUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=800&q=80', category: 'Kedi', stockQuantity: 120 },
-  { name: 'Kedi Tırmalama Tahtası', description: 'Kedi nanesi hediyeli, dayanıklı sisal ipli tırmalama platformu.', price: 290, imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=800&q=80', category: 'Kedi', stockQuantity: 34 },
-  { name: 'Kedi Evi Ahşap', description: 'İç mekan için şık tasarımlı, minderli ahşap kedi yuvası.', price: 1200, imageUrl: 'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?w=800&q=80', category: 'Kedi', stockQuantity: 8 },
+  { name: 'Kedi Kumu İnce Taneli 10L', description: 'Ekstra topaklaşan, parfümlü, tozsuz bentonit kedi kumu.', price: 180, imageUrl: 'https://productimages.hepsiburada.net/s/321/375-375/110000315108452.jpg', category: 'Kedi', stockQuantity: 120 },
+  { name: 'Kedi Tırmalama Tahtası', description: 'Kedi nanesi hediyeli, dayanıklı sisal ipli tırmalama platformu.', price: 290, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTbx0nO3_fj5TjKxuvkxPOnP4etrzcLvlc2utQwXnSSQy8hqQQNyw&s&ec=121643124', category: 'Kedi', stockQuantity: 34 },
+  { name: 'Kedi Evi Ahşap', description: 'İç mekan için şık tasarımlı, minderli ahşap kedi yuvası.', price: 1200, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTM7kitZjeSxyvm5sk8spJx-Tjef7h0cnIxHYi2AQLgqK1JA5pOjg&s&ec=121643124', category: 'Kedi', stockQuantity: 8 },
   { name: 'Kedi Oyun Çubuğu', description: 'Tüylü ve zilli, interaktif oyun için ideal kedi oltası.', price: 75, imageUrl: 'https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=800&q=80', category: 'Kedi', stockQuantity: 50 },
   { name: 'Kedi Maması Premium', description: 'Kısırlaştırılmış kediler için tavuklu, düşük yağlı dengeli mama.', price: 320, imageUrl: 'https://images.unsplash.com/photo-1604848698030-c434ba08ece1?w=800&q=80', category: 'Kedi', stockQuantity: 60 },
   { name: 'Kedi Taşıma Kafesi', description: 'Dayanıklı plastik gövde, emniyet kilitli kapı, standart boy.', price: 480, imageUrl: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=800&q=80', category: 'Kedi', stockQuantity: 15 },
@@ -39,7 +39,7 @@ const storeProducts = [
   { name: 'Kedi Mama Kabı Otomatik', description: 'Programlanabilir öğün saatleri, paslanmaz çelik hazneli dijital besleyici.', price: 750, imageUrl: 'https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?w=800&q=80', category: 'Kedi', stockQuantity: 12 },
   { name: 'Kedi Yatağı Peluş', description: 'Ekstra yumuşak, sıcak tutan, yuvarlak pofuduk kedi yatağı.', price: 380, imageUrl: 'https://images.unsplash.com/photo-1623387641168-d9803ddd3f35?w=800&q=80', category: 'Kedi', stockQuantity: 20 },
 
-  // ─── KUŞ (10 ürün) ──────────────────────────────────────────────────────────
+  // ... (rest of the products)
   { name: 'Kuş Kafesi Tam Takım', description: 'Muhabbet kuşları ve kanaryalar için uygun, yemlik ve suluk dahil kafes.', price: 450, imageUrl: 'https://images.unsplash.com/photo-1522858547137-f1dcec554f55?w=800&q=80', category: 'Kuş', stockQuantity: 12 },
   { name: 'Muhabbet Kuşu Yemi', description: 'Karışık tohumlu, vitaminli ve enerji veren taze kuş yemi.', price: 85, imageUrl: 'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=800&q=80', category: 'Kuş', stockQuantity: 80 },
   { name: 'Kuş Tüneği Ahşap', description: 'Doğal ağaç dalından üretilmiş, tırnak törpülemeye yardımcı tünek.', price: 120, imageUrl: 'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=800&q=80', category: 'Kuş', stockQuantity: 35 },
@@ -51,7 +51,6 @@ const storeProducts = [
   { name: 'Kuş Kafesi Küçük', description: 'Tek kuş için uygun, kolay temizlenebilir alt çekmeceli kafes.', price: 280, imageUrl: 'https://images.unsplash.com/photo-1555000395-66992976503c?w=800&q=80', category: 'Kuş', stockQuantity: 10 },
   { name: 'Kuş Banyosu Plastik', description: 'Kafes kapısına asılan, şeffaf kapaklı banyo havuzu.', price: 65, imageUrl: 'https://images.unsplash.com/photo-1470114756577-bb1b1f5a721c?w=800&q=80', category: 'Kuş', stockQuantity: 25 },
 
-  // ─── BALIK (10 ürün) ────────────────────────────────────────────────────────
   { name: 'Akvaryum Dış Filtre 1000L/h', description: 'Sessiz çalışan, 3 sepetli, enerji tasarruflu akvaryum dış motoru.', price: 1850, imageUrl: 'https://images.unsplash.com/photo-1522069169874-c58ec4b76be5?w=800&q=80', category: 'Balık', stockQuantity: 8 },
   { name: 'Akvaryum Starter Set 60L', description: 'Cam akvaryum, iç filtre, LED aydınlatma ve ısıtıcı dahil başlangıç seti.', price: 1200, imageUrl: 'https://images.unsplash.com/photo-1534043464124-3be32fe000c9?w=800&q=80', category: 'Balık', stockQuantity: 6 },
   { name: 'Balık Yemi Granül', description: 'Tüm tropikal balıklar için uygun, renk canlandırıcı kaliteli granül yem.', price: 75, imageUrl: 'https://images.unsplash.com/photo-1498100673548-9eb2cfd66462?w=800&q=80', category: 'Balık', stockQuantity: 100 },
@@ -63,7 +62,6 @@ const storeProducts = [
   { name: 'Akvaryum Dekor Taş', description: 'Doğal volkanik kayalar, su değerlerini bozmayan dekoratif taş seti.', price: 145, imageUrl: 'https://images.unsplash.com/photo-1517924161044-8975836437d4?w=800&q=80', category: 'Balık', stockQuantity: 15 },
   { name: 'Balık Ağı Seti', description: 'Yumuşak fileli, paslanmaz saplı 2\'li balık yakalama ağı.', price: 55, imageUrl: 'https://images.unsplash.com/photo-1535591273668-578e31182c4f?w=800&q=80', category: 'Balık', stockQuantity: 40 },
 
-  // ─── KEMİRGEN (10 ürün) ─────────────────────────────────────────────────────
   { name: 'Hamster Kafesi Geniş', description: 'Çok katlı, tünelli, çarklı ve suluklu büyük boy hamster kafesi.', price: 380, imageUrl: 'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=800&q=80', category: 'Kemirgen', stockQuantity: 10 },
   { name: 'Hamster Koşu Tekeri', description: 'Sessiz rulmanlı, ayak yaralanmalarını önleyen geniş çaplı tekerlek.', price: 120, imageUrl: 'https://images.unsplash.com/photo-1548767797-d8c844163c4a?w=800&q=80', category: 'Kemirgen', stockQuantity: 25 },
   { name: 'Tavşan Yemi Granül', description: 'Yüksek lifli, sindirim sistemini destekleyen tavşanlar için pelet yem.', price: 95, imageUrl: 'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=800&q=80', category: 'Kemirgen', stockQuantity: 50 },
@@ -77,33 +75,29 @@ const storeProducts = [
 ]
 
 async function main() {
-  console.log('🌱 Mağaza ürünleri seed ediliyor...')
+  console.log('🌱 Mağaza ürünleri güncelleniyor (upsert)...')
 
-  // Her ürünü ismine göre kontrol edip yok ise ekle (idempotent)
+  let updated = 0
   let added = 0
-  let skipped = 0
 
   for (const product of storeProducts) {
     const existing = await prisma.product.findFirst({
       where: { name: product.name },
     })
+    
     if (existing) {
-      skipped++
+      await prisma.product.update({
+        where: { id: existing.id },
+        data: { imageUrl: product.imageUrl }
+      })
+      updated++
     } else {
       await prisma.product.create({ data: product })
       added++
     }
   }
 
-  const total = await prisma.product.count()
-  console.log(`✅ ${added} yeni ürün eklendi, ${skipped} ürün zaten vardı.`)
-  console.log(`📦 Veritabanındaki toplam ürün: ${total}`)
-
-  const cats = ['Köpek', 'Kedi', 'Kuş', 'Balık', 'Kemirgen']
-  for (const cat of cats) {
-    const c = await prisma.product.count({ where: { category: cat } })
-    console.log(`  ${cat}: ${c}`)
-  }
+  console.log(`✅ ${added} yeni ürün eklendi, ${updated} ürün görseli güncellendi.`)
 }
 
 main()

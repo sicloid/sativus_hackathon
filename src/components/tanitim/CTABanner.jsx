@@ -41,7 +41,7 @@ export default function CTABanner() {
               <p className="font-black text-sm mb-2 text-gray-500 uppercase tracking-widest">
                 Aylık Randevu Trendi
               </p>
-              <div className="h-[120px] w-full">
+              <div className="h-[250px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={appointmentData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                     <XAxis dataKey="ay" tick={{ fontSize: 10, fontWeight: 700 }} axisLine={false} tickLine={false} />

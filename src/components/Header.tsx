@@ -5,8 +5,8 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import { Home, Search, ShoppingCart, Heart, User as UserIcon } from 'lucide-react'
-import { useCart } from '../context/CartContext'
-import { useFavorites } from '../context/FavoritesContext'
+import { useCart } from '@/context/CartContext'
+import { useFavorites } from '@/context/FavoritesContext'
 import { getSearchSuggestions } from '@/app/actions/store'
 
 export default function Header({ user }: { user: User | null }) {
