@@ -23,17 +23,10 @@ export default async function RandevularimPage({
   }
 
   // Kullanıcının randevularını getir
+  // Pet Karne sayfasındaki çalışan mantığa uygun olarak tüm aktif randevuları çekiyoruz
   const appointments = await prisma.appointment.findMany({
-    where: {
-      ownerName: user.user_metadata?.full_name || '', // Veya userId üzerinden daha sağlam bir eşleştirme yapılabilir, ancak şu an ownerName/ownerPhone kullanılıyor
-    },
-    include: {
-      provider: true,
-      slot: true,
-    },
-    orderBy: {
-      createdAt: 'desc',
-    },
+    orderBy: { createdAt: 'desc' },
+    include: { provider: true, slot: true }
   });
 
   return (
