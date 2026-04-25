@@ -469,8 +469,12 @@ export async function createOrder(formData: FormData) {
 
   // Stok güncelle
   for (const item of cartItems) {
+    const pid = item.productId || '';
+    if (pid.startsWith('exam-fee-') || pid.startsWith('prescription-')) {
+      continue;
+    }
     await prisma.product.update({
-      where: { id: item.productId },
+      where: { id: pid },
       data: { stockQuantity: { decrement: item.quantity } },
     })
   }

@@ -76,26 +76,35 @@ export default async function SiparislerPage() {
                   <div className="p-5 md:col-span-1">
                     <h3 className="font-black uppercase text-xs tracking-widest mb-3 text-gray-500">Ürünler ({order.items.length})</h3>
                     <ul className="flex flex-col gap-3">
-                      {order.items.map((item) => (
+                      {order.items.map((item) => {
+                        const isVirtual = !item.productId;
+                        const isExamFee = isVirtual && item.productName?.toLowerCase().includes('muayene');
+                        const isPrescription = isVirtual && !isExamFee;
+                        const defaultIcon = isExamFee ? '🩺' : isPrescription ? '💊' : '📦';
+                        
+                        return (
                         <li key={item.id} className="flex items-center gap-3">
                           {item.product?.imageUrl ? (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={item.product?.imageUrl || ''}
-                              alt={item.product?.name || 'Ürün'}
+                              alt={item.product?.name || item.productName || 'Ürün'}
                               className="w-12 h-12 object-cover brutal-border flex-shrink-0"
                             />
                           ) : (
-                            <div className="w-12 h-12 bg-[#f0f0f0] brutal-border flex items-center justify-center flex-shrink-0 text-gray-400 font-black text-sm">?</div>
+                            <div className="w-12 h-12 bg-[#f0f0f0] brutal-border flex items-center justify-center flex-shrink-0 text-xl">
+                              {defaultIcon}
+                            </div>
                           )}
                           <div className="min-w-0">
-                            <p className="font-black text-sm leading-tight truncate">{item.product?.name || 'Silinmiş Ürün'}</p>
+                            <p className="font-black text-sm leading-tight truncate">{item.productName || item.product?.name || 'Silinmiş Ürün'}</p>
                             <p className="text-xs font-bold text-gray-500">
                               {item.quantity} adet × ₺{item.unitPrice.toFixed(2)}
                             </p>
                           </div>
                         </li>
-                      ))}
+                        )
+                      })}
                     </ul>
                   </div>
 
