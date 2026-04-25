@@ -77,6 +77,12 @@ function BookingForm({ diagnosis }: { diagnosis: any }) {
     }
   }, [aiAciliyet, providers]);
 
+  useEffect(() => {
+    if (state?.success) {
+      window.location.href = "/hastane/profil/randevularim?success=true";
+    }
+  }, [state?.success]);
+
   return (
     <form action={formAction} className="space-y-6 flex flex-col">
       {state?.error && (

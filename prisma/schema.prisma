@@ -58,6 +58,7 @@ model Appointment {
   aiHizmet    String?
   aiOzeti     String?
   examFee     Float?   @map("exam_fee")
+  userId      String?  @map("user_id")
   vetDiagnosis String? @map("vet_diagnosis")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

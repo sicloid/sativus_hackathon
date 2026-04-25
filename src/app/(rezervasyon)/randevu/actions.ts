@@ -122,6 +122,7 @@ export async function createAppointment(prevState: any, formData: FormData) {
         aiOzeti: aiOzeti || null,
         status,
         examFee,
+        userId: user?.id || null,
         slotId: slot.id,
         providerId: provider.id,
       }
@@ -158,5 +159,6 @@ export async function createAppointment(prevState: any, formData: FormData) {
 
   revalidatePath("/hastane/profil/randevularim")
   revalidatePath("/hekim")
-  redirect("/hastane/profil/randevularim?success=true")
+  
+  return { success: true }
 }
